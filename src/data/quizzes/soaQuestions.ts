@@ -69,5 +69,28 @@ export const SOA_QUESTIONS: QuizQuestion[] = [
       ],
       examTip: 'Đánh giá tuân thủ cấu hình tài nguyên (Compliance) + Tự động sửa lỗi cấu hình (Auto-Remediation) -> AWS Config + SSM Automation Document.'
     }
+  },
+  {
+    id: 'soa-4',
+    certCode: 'SOA-C02',
+    category: 'Gỡ lỗi Mạng & Tường lửa (VPC Flow Logs)',
+    difficulty: 'Khó',
+    scenario: 'Một kỹ sư vận hành nhận được phản ánh rằng máy chủ web trong Public Subnet không thể kết nối tới máy chủ cơ sở dữ liệu RDS trong Private Subnet. Kỹ sư muốn kiểm tra xem lưu lượng mạng có bị chặn bởi Security Group hay NACL không. Công cụ nào cung cấp chi tiết nhật ký các gói tin được chấp thuận (ACCEPT) hoặc bị từ chối (REJECT) ở tầng card mạng ENI?',
+    options: [
+      { id: 'A', text: 'AWS CloudTrail Event History' },
+      { id: 'B', text: 'VPC Flow Logs xuất dữ liệu ra Amazon CloudWatch Logs' },
+      { id: 'C', text: 'Amazon GuardDuty Findings' },
+      { id: 'D', text: 'Amazon Route 53 Query Logs' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      whyCorrect: 'VPC Flow Logs ghi lại toàn bộ thông tin lưu lượng mạng IP đi vào và đi ra khỏi các giao diện mạng mạng (Network Interfaces - ENI) trong VPC của bạn. Bằng cách kiểm tra trường trạng thái `NODATA`, `ACCEPT` (cho phép) hoặc `REJECT` (bị chặn bởi Security Group hoặc NACL), kỹ sư có thể chẩn đoán chính xác nguyên nhân chặn kết nối.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'CloudTrail chỉ ghi lại các lệnh gọi API quản trị AWS (như CreateInstance, DeleteBucket), không ghi lại lưu lượng gói tin mạng IP thực tế.' },
+        { optionId: 'C', reason: 'GuardDuty chỉ phát hiện hành vi tấn công độc hại, không phải công cụ debug luồng mạng thông thường.' },
+        { optionId: 'D', reason: 'Route 53 logs chỉ ghi lại các truy vấn phân giải tên miền DNS.' }
+      ],
+      examTip: 'Debug lưu lượng mạng IP, kiểm tra gói tin bị ACCEPT hay REJECT ở tầng mạng -> VPC Flow Logs.'
+    }
   }
 ];

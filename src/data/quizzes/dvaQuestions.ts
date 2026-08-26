@@ -69,5 +69,28 @@ export const DVA_QUESTIONS: QuizQuestion[] = [
       ],
       examTip: 'Canary = Chuyển 1 phần nhỏ (VD: 10%) trong X phút, sau đó chuyển hết. Linear = Tăng đều đặn từng đợt X% mỗi Y phút.'
     }
+  },
+  {
+    id: 'dva-4',
+    certCode: 'DVA-C02',
+    category: 'Quản lý Phiên & Bộ nhớ Đệm Ứng dụng (ElastiCache Redis)',
+    difficulty: 'Trung bình',
+    scenario: 'Ứng dụng thi trực tuyến của trường đại học đang lưu trữ thông tin phiên đăng nhập (User Session state) trong bộ nhớ RAM cục bộ của từng máy chủ EC2. Khi người dùng được Load Balancer điều hướng sang máy chủ EC2 khác, họ bị văng ra và phải đăng nhập lại từ đầu. Giải pháp kiến trúc chuẩn stateless nào giải quyết triệt để vấn đề này?',
+    options: [
+      { id: 'A', text: 'Bật tính năng Sticky Sessions (Session Affinity) trên Application Load Balancer.' },
+      { id: 'B', text: 'Lưu trữ Session State tập trung bên ngoài máy chủ trong cụm Amazon ElastiCache for Redis.' },
+      { id: 'C', text: 'Lưu Session State vào ổ đĩa EBS của máy chủ EC2 đầu tiên.' },
+      { id: 'D', text: 'Yêu cầu sinh viên không làm mới (F5) trang web trong khi làm bài thi.' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      whyCorrect: 'Chuyển toàn bộ Session State ra lưu trữ ngoài trên một cụm bộ nhớ đệm phân tán tập trung như Amazon ElastiCache for Redis (hoặc DynamoDB) giúp máy chủ ứng dụng trở thành phi trạng thái (Stateless). Bất kỳ máy chủ EC2 nào trong Auto Scaling Group cũng có thể xử lý request của sinh viên mà không bị mất phiên làm việc.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'Sticky Sessions chỉ là giải pháp tạm thời, nếu máy chủ đó bị sập hoặc Auto Scaling giảm tải thì người dùng vẫn bị mất phiên.' },
+        { optionId: 'C', reason: 'Ổ đĩa EBS không thể gắn và chia sẻ đồng thời nhiều máy chủ EC2 để đọc/ghi session tốc độ cao.' },
+        { optionId: 'D', reason: 'Không phải là giải pháp kỹ thuật.' }
+      ],
+      examTip: 'Quản lý User Session State phi trạng thái (Stateless application) cho hàng chục ngàn người dùng -> Amazon ElastiCache for Redis hoặc DynamoDB.'
+    }
   }
 ];

@@ -115,5 +115,51 @@ export const SAA_QUESTIONS: QuizQuestion[] = [
       ],
       examTip: 'Từ khóa "Tách rời kiến trúc (Decouple), đệm dữ liệu (Buffer), chống mất tin nhắn khi hệ thống backend quá tải" -> Luôn chọn Amazon SQS.'
     }
+  },
+  {
+    id: 'saa-6',
+    certCode: 'SAA-C03',
+    category: 'Định tuyến Tên miền & Chịu lỗi (Route 53 Routing Policies)',
+    difficulty: 'Trung bình',
+    scenario: 'Một ứng dụng web của trường đại học được triển khai trên 2 AWS Regions: Region chính là `us-east-1` (Bắc Virginia) và Region dự phòng là `us-west-2` (Oregon). Ban quản trị muốn 100% người dùng được điều hướng về Region chính khi hệ thống khỏe mạnh. Chỉ khi Region chính gặp sự cố (Health check thất bại), lưu lượng mới tự động chuyển hướng sang Region dự phòng. Chính sách định tuyến Route 53 nào nên được áp dụng?',
+    options: [
+      { id: 'A', text: 'Weighted Routing Policy' },
+      { id: 'B', text: 'Latency-based Routing Policy' },
+      { id: 'C', text: 'Failover Routing Policy với cấu hình Active-Passive' },
+      { id: 'D', text: 'Geolocation Routing Policy' }
+    ],
+    correctOptionId: 'C',
+    explanation: {
+      whyCorrect: 'Route 53 Failover Routing Policy được thiết kế riêng cho kiến trúc Active-Passive Disaster Recovery: Nó định tuyến toàn bộ lưu lượng tới Primary Resource khi Route 53 Health Check xác nhận tài nguyên đó khỏe mạnh, và tự động chuyển hướng (Failover) sang Secondary Backup Resource ngay khi Primary Health Check báo lỗi.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'Weighted Routing dùng để chia tỷ lệ phần trăm (ví dụ 80% - 20%) giữa các cụm máy chủ, không tối ưu cho kiến trúc Active-Passive hoàn toàn.' },
+        { optionId: 'B', reason: 'Latency-based định tuyến người dùng tới Region có độ trễ mạng thấp nhất, không đảm bảo 100% người dùng vào Region chính ban đầu.' },
+        { optionId: 'D', reason: 'Geolocation định tuyến dựa trên vị trí địa lý của người truy cập (ví dụ châu Âu vào Frankfurt, châu Mỹ vào Virginia).' }
+      ],
+      examTip: 'Active-Passive Disaster Recovery với Route 53 Health Check -> Luôn chọn Failover Routing Policy.'
+    }
+  },
+  {
+    id: 'saa-7',
+    certCode: 'SAA-C03',
+    category: 'Quản lý Bí mật & Mật khẩu (Secrets Manager vs Parameter Store)',
+    difficulty: 'Trung bình',
+    scenario: 'Một ứng dụng đám mây cần kết nối với cơ sở dữ liệu Amazon RDS MySQL. Theo tiêu chuẩn bảo mật, mật khẩu cơ sở dữ liệu phải được tự động thay đổi (Xoay vòng - Automatic Rotation) mỗi 30 ngày mà không làm gián đoạn ứng dụng đang chạy. Dịch vụ nào đáp ứng hoàn hảo tính năng tự động xoay vòng mật khẩu này?',
+    options: [
+      { id: 'A', text: 'AWS Systems Manager Parameter Store Standard Tier' },
+      { id: 'B', text: 'AWS Secrets Manager tích hợp sẵn hàm Lambda xoay vòng mật khẩu RDS' },
+      { id: 'C', text: 'Lưu mật khẩu trong biến môi trường của máy chủ EC2 (Environment Variables)' },
+      { id: 'D', text: 'Mã hóa file mật khẩu và tải lên một Private S3 Bucket' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      whyCorrect: 'AWS Secrets Manager được thiết kế chuyên biệt để lưu trữ và quản lý vòng đời của các bí mật (Database credentials, API keys). Nó hỗ trợ tính năng Tự động xoay vòng mật khẩu (Automatic Rotation) tích hợp sẵn với Amazon RDS/Aurora thông qua hàm Lambda mà không cần viết code phức tạp.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'SSM Parameter Store là kho lưu trữ tham số cấu hình tĩnh, không có tính năng tự động xoay vòng mật khẩu RDS tích hợp sẵn như Secrets Manager.' },
+        { optionId: 'C', reason: 'Lưu trong biến môi trường không có cơ chế tự động xoay vòng và có nguy cơ lộ bí mật khi dump process.' },
+        { optionId: 'D', reason: 'Lưu trên S3 không tự động cập nhật vào cơ sở dữ liệu RDS.' }
+      ],
+      examTip: 'Quản lý mật khẩu Database + Cần TỰ ĐỘNG XOAY VÒNG (Automatic Rotation) -> Luôn chọn AWS Secrets Manager.'
+    }
   }
 ];

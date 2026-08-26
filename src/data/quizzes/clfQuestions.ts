@@ -69,5 +69,51 @@ export const CLF_QUESTIONS: QuizQuestion[] = [
       ],
       examTip: 'Phân phối nội dung toàn cầu với độ trễ thấp nhất -> Amazon CloudFront kết hợp mạng lưới AWS Edge Locations.'
     }
+  },
+  {
+    id: 'clf-4',
+    certCode: 'CLF-C02',
+    category: 'Các Gói Hỗ Trợ Kỹ Thuật (AWS Support Plans)',
+    difficulty: 'Cơ bản',
+    scenario: 'Trường đại học cần một gói hỗ trợ của AWS cho phép liên hệ với Kỹ sư hỗ trợ đám mây (Cloud Support Engineers) 24/7 qua điện thoại và chat trực tuyến, với cam kết thời gian phản hồi cho các sự cố nghiêm trọng (Business-critical system down) là dưới 15 phút, đồng thời có một Quản lý Kỹ thuật Tài khoản riêng (Designated Technical Account Manager - TAM). Gói hỗ trợ nào đáp ứng yêu cầu này?',
+    options: [
+      { id: 'A', text: 'AWS Basic Support' },
+      { id: 'B', text: 'AWS Developer Support' },
+      { id: 'C', text: 'AWS Business Support' },
+      { id: 'D', text: 'AWS Enterprise Support' }
+    ],
+    correctOptionId: 'D',
+    explanation: {
+      whyCorrect: 'AWS Enterprise Support là gói hỗ trợ cao cấp nhất của AWS cung cấp: Chỉ định riêng một Technical Account Manager (TAM), thời gian phản hồi sự cố khẩn cấp dưới 15 phút cho các hệ thống sống còn (Business-critical), hỗ trợ 24/7 qua điện thoại/chat và đánh giá kiến trúc chuyên sâu.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'Basic Support miễn phí chỉ hỗ trợ về thanh toán và tài khoản, không hỗ trợ kỹ thuật.' },
+        { optionId: 'B', reason: 'Developer Support chỉ hỗ trợ qua email trong giờ hành chính, không có TAM.' },
+        { optionId: 'C', reason: 'Business Support hỗ trợ 24/7 nhưng thời gian phản hồi sự cố khẩn cấp là 1 giờ (Production down) và không có Dedicated TAM riêng.' }
+      ],
+      examTip: 'Gói hỗ trợ có Technical Account Manager (TAM) + phản hồi dưới 15 phút -> Luôn là AWS Enterprise Support.'
+    }
+  },
+  {
+    id: 'clf-5',
+    certCode: 'CLF-C02',
+    category: 'Mô hình Mua Máy chủ EC2 (Pricing Models)',
+    difficulty: 'Cơ bản',
+    scenario: 'Khoa Công nghệ Thông tin cần chạy các bài tập huấn luyện mô hình Trí tuệ Nhân tạo (AI Training) cho sinh viên. Các tác vụ này có thể bị tạm dừng và tiếp tục lại sau mà không làm mất kết quả cuối cùng. Mô hình mua máy chủ EC2 nào giúp tiết kiệm tới 90% chi phí so với giá thông thường?',
+    options: [
+      { id: 'A', text: 'On-Demand Instances' },
+      { id: 'B', text: 'Spot Instances' },
+      { id: 'C', text: 'Reserved Instances kỳ hạn 3 năm' },
+      { id: 'D', text: 'Dedicated Hosts' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      whyCorrect: 'Amazon EC2 Spot Instances tận dụng dung lượng máy chủ nhàn rỗi (Spare compute capacity) của AWS với mức giá giảm tới 90% so với giá On-Demand. Đổi lại, AWS có thể thu hồi (interrupt) máy chủ với cảnh báo trước 2 phút khi khách hàng trả giá cao hơn cần đến.',
+      whyOthersIncorrect: [
+        { optionId: 'A', reason: 'On-Demand linh hoạt nhưng có mức giá cao nhất theo giờ/giây.' },
+        { optionId: 'C', reason: 'Reserved Instances yêu cầu cam kết thời hạn 1 hoặc 3 năm, không linh hoạt cho các tác vụ sinh viên chạy ngắt quãng.' },
+        { optionId: 'D', reason: 'Dedicated Hosts là máy chủ vật lý riêng biệt, chi phí đắt đỏ nhất.' }
+      ],
+      examTip: 'Tác vụ chịu được gián đoạn (Fault-tolerant/Interruptible workloads), giảm chi phí tối đa tới 90% -> Chọn EC2 Spot Instances.'
+    }
   }
 ];

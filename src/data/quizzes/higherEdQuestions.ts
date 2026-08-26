@@ -69,5 +69,28 @@ export const HIGHER_ED_QUESTIONS: QuizQuestion[] = [
       ],
       examTip: 'Bất kỳ câu hỏi nào về tích hợp danh tính trường học/doanh nghiệp có sẵn (Corporate Directory) với AWS -> Hãy chọn SAML 2.0 Identity Federation hoặc AWS IAM Identity Center.'
     }
+  },
+  {
+    id: 'hed-4',
+    certCode: 'SAA-C03',
+    category: 'Phòng Lab Ảo Cho Sinh Viên (Virtual Computer Labs)',
+    difficulty: 'Trung bình',
+    scenario: 'Khoa Kiến trúc và Đồ họa của trường cần cung cấp các phần mềm đồ họa 3D nặng (AutoCAD, Adobe Premiere) cho 500 sinh viên thực hành từ xa trên máy tính xách tay cá nhân (Laptop cấu hình yếu hoặc Chromebook). Dịch vụ nào của AWS cho phép truyền phát (Stream) ứng dụng máy tính trực tiếp qua trình duyệt web mà không cần sinh viên phải mua máy tính đắt tiền?',
+    options: [
+      { id: 'A', text: 'Amazon AppStream 2.0' },
+      { id: 'B', text: 'Amazon Elastic Container Registry (ECR)' },
+      { id: 'C', text: 'AWS Direct Connect' },
+      { id: 'D', text: 'Amazon Kinesis Video Streams' }
+    ],
+    correctOptionId: 'A',
+    explanation: {
+      whyCorrect: 'Amazon AppStream 2.0 là dịch vụ truyền phát ứng dụng (Application Streaming) được quản lý hoàn toàn. Nó cho phép trường đại học cài đặt các phần mềm máy tính để bàn (Desktop applications) trên đám mây và truyền phát giao diện tương tác mượt mà tới bất kỳ trình duyệt web HTML5 nào của sinh viên.',
+      whyOthersIncorrect: [
+        { optionId: 'B', reason: 'ECR là kho lưu trữ Docker images, không phải dịch vụ streaming ứng dụng cho người dùng cuối.' },
+        { optionId: 'C', reason: 'Direct Connect là đường truyền cáp quang vật lý chuyên dụng.' },
+        { optionId: 'D', reason: 'Kinesis Video Streams dùng để thu thập luồng video từ camera an ninh IoT, không phải là ứng dụng truyền phát phần mềm tương tác.' }
+      ],
+      examTip: 'Phòng máy ảo trường học (Virtual Computer Lab) / Stream ứng dụng desktop qua trình duyệt web cho sinh viên -> Luôn chọn Amazon AppStream 2.0 hoặc Amazon WorkSpaces.'
+    }
   }
 ];
