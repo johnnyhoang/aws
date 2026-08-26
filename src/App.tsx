@@ -3,6 +3,7 @@ import { LearningProvider } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { RoadmapView } from './components/RoadmapView';
 import { VideoLearningView } from './components/VideoLearningView';
+import { GamesHubView } from './components/GamesHubView';
 import { DeepDiveView } from './components/DeepDiveView';
 import { PortfolioView } from './components/PortfolioView';
 import { ExamSimulatorView } from './components/ExamSimulatorView';
@@ -31,6 +32,7 @@ function AppContent() {
           />
         )}
         {activeTab === 'video' && <VideoLearningView />}
+        {activeTab === 'games' && <GamesHubView />}
         {activeTab === 'deepdive' && <DeepDiveView />}
         {activeTab === 'portfolio' && <PortfolioView />}
         {activeTab === 'quiz' && <ExamSimulatorView />}

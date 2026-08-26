@@ -21,12 +21,14 @@ import {
   Smartphone,
   RefreshCw,
   UserCheck,
-  Tv
+  Tv,
+  Gamepad2
 } from 'lucide-react';
 
 export type NavTab = 
   | 'roadmap' 
   | 'video'
+  | 'games'
   | 'deepdive' 
   | 'portfolio' 
   | 'quiz' 
@@ -61,6 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const navItems: { id: NavTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'roadmap', label: 'Lộ Trình', icon: Layers },
     { id: 'video', label: 'Học Qua Video', icon: Tv },
+    { id: 'games', label: 'Game Học Tập', icon: Gamepad2 },
     { id: 'deepdive', label: 'Chuyên Đề Kỹ Năng', icon: BookOpen },
     { id: 'portfolio', label: 'Dự Án CV', icon: FolderGit2 },
     { id: 'quiz', label: 'Luyện Đề', icon: CheckCircle2 },
