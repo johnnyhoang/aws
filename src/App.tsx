@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LearningProvider } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { RoadmapView } from './components/RoadmapView';
+import { VideoLearningView } from './components/VideoLearningView';
 import { DeepDiveView } from './components/DeepDiveView';
 import { PortfolioView } from './components/PortfolioView';
 import { ExamSimulatorView } from './components/ExamSimulatorView';
@@ -15,7 +16,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState<NavTab>('roadmap');
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200 pb-16 md:pb-0">
       
       {/* Top Sticky Navigation Bar */}
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -29,6 +30,7 @@ function AppContent() {
             onNavigateQuiz={() => setActiveTab('quiz')}
           />
         )}
+        {activeTab === 'video' && <VideoLearningView />}
         {activeTab === 'deepdive' && <DeepDiveView />}
         {activeTab === 'portfolio' && <PortfolioView />}
         {activeTab === 'quiz' && <ExamSimulatorView />}
