@@ -27,7 +27,10 @@ export const MemoryMatchGame: React.FC<Props> = ({ isEn, gameLangMode, onGameWin
 
   const initMemoryGame = (pairs = pairCount) => {
     const cards: MemoryCard[] = [];
-    MEMORY_CARD_PAIRS.slice(0, pairs).forEach((pair, idx) => {
+    // Randomly pick unique pairs from the pool of 16 AWS services
+    const randomizedPairs = [...MEMORY_CARD_PAIRS].sort(() => Math.random() - 0.5).slice(0, pairs);
+
+    randomizedPairs.forEach((pair, idx) => {
       const roleText = (isEn || (gameLangMode === 'random' && idx % 2 === 1)) && pair.roleEn 
         ? pair.roleEn 
         : pair.role;

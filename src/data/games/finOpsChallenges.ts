@@ -28,10 +28,10 @@ export interface FinOpsChallenge {
 export const FINOPS_CHALLENGES: FinOpsChallenge[] = [
   {
     id: 'finops-1',
-    title: 'Cắt Giảm Hóa Đơn AWS Trường Đại Học Từ $25,000 Xuống < $8,000/Tháng',
-    titleEn: 'Campus FinOps Battle: Slash AWS Monthly Bill from $25,000 to < $8,000',
+    title: 'Cắt Giảm Hóa Đơn AWS Trường Đại Học Từ $25,400 Xuống < $15,000/Tháng',
+    titleEn: 'Campus FinOps Battle: Slash AWS Monthly Bill from $25,400 to < $15,000',
     initialMonthlyCost: 25400,
-    targetCost: 8000,
+    targetCost: 15000,
     department: 'Kent State University IT & LMS Cloud Infrastructure',
     items: [
       {
@@ -84,13 +84,13 @@ export const FINOPS_CHALLENGES: FinOpsChallenge[] = [
           },
           {
             id: 'opt-2b',
-            title: 'Xóa vĩnh viễn toàn bộ hồ sơ sinh viên cũ',
+            title: 'Xóa vĩnh viễn toàn bộ hồ sơ sinh viên cũ để không tốn tiền lưu trữ',
             titleEn: 'Delete all student alumni records permanently',
-            newCost: 0,
-            savings: 4600,
+            newCost: 10000,
+            savings: -5400,
             isOptimal: false,
-            explanation: '❌ VI PHẠM PHÁP LUẬT! Xóa hồ sơ sinh viên vi phạm quy định kiểm toán của Bộ Giáo Dục.',
-            explanationEn: '❌ COMPLIANCE VIOLATION! Deleting academic records breaches federal accreditation laws.'
+            explanation: '❌ PHẠT VI PHẠM PHÁP LUẬT! Xóa hồ sơ sinh viên vi phạm quy định kiểm toán của Bộ Giáo Dục, bị phạt tiền nặng hơn tiền lưu trữ.',
+            explanationEn: '❌ REGULATORY FINES! Deleting academic records breaches federal accreditation laws.'
           }
         ]
       },
@@ -111,6 +111,16 @@ export const FINOPS_CHALLENGES: FinOpsChallenge[] = [
             isOptimal: true,
             explanation: '✅ TIẾT KIỆM $3,450/tháng! VPC Endpoint cho S3/DynamoDB chuyển toàn bộ lưu lượng nội bộ miễn phí, không tốn phí NAT Gateway xử lý dữ liệu.',
             explanationEn: '✅ SAVED $3,450/mo! Gateway VPC Endpoints route S3 traffic free of charge without hitting NAT data fees.'
+          },
+          {
+            id: 'opt-3b',
+            title: 'Tạo thêm 8 NAT Gateways mới cho mỗi Subnet để dự phòng',
+            titleEn: 'Deploy 8 additional NAT Gateways per subnet',
+            newCost: 6500,
+            savings: -2600,
+            isOptimal: false,
+            explanation: '❌ LÃNG PHÍ GẤP ĐÔI! Các VPC thử nghiệm không cần số lượng NAT Gateway dày đặc như vậy.',
+            explanationEn: '❌ OVER-PROVISIONED! Dev VPCs do not need dozens of dedicated NAT gateways.'
           }
         ]
       },
@@ -131,6 +141,16 @@ export const FINOPS_CHALLENGES: FinOpsChallenge[] = [
             isOptimal: true,
             explanation: '✅ TIẾT KIỆM NGAY $1,000/tháng! gp3 rẻ hơn gp2 đúng 20% và cung cấp sẵn 3,000 IOPS miễn phí mà không cần tắt máy chủ.',
             explanationEn: '✅ INSTANT $1,000/mo SAVING! gp3 is 20% cheaper than gp2 and includes 3,000 IOPS baseline for free.'
+          },
+          {
+            id: 'opt-4b',
+            title: 'Chuyển sang ổ đĩa EBS io2 Block Express giá đắt nhất ($0.125/GB + $0.065/IOPS)',
+            titleEn: 'Switch to ultra-expensive io2 Block Express volumes',
+            newCost: 11000,
+            savings: -6000,
+            isOptimal: false,
+            explanation: '❌ QUÁ ĐẮT ĐỎ! io2 Block Express chỉ dành cho các hệ thống SAP/Oracle đặc thù chịu tải hàng trăm ngàn IOPS.',
+            explanationEn: '❌ EXCESSIVE! io2 is only for mission-critical sub-millisecond databases.'
           }
         ]
       }
