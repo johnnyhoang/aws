@@ -24,12 +24,18 @@ import {
   Heart,
   ChevronRight,
   ShieldCheck,
-  Check
+  Check,
+  Languages,
+  Shuffle
 } from 'lucide-react';
 
 export const GamesHubView: React.FC = () => {
   const { logStudyHours } = useLearning();
   const [activeGame, setActiveGame] = useState<'arch' | 'memory' | 'incident'>('arch');
+  
+  // Language mode: 'vi' | 'en' | 'random'
+  const [gameLangMode, setGameLangMode] = useState<'vi' | 'en' | 'random'>('vi');
+  const isEn = gameLangMode === 'en';
 
   // ==========================================
   // GAME 1: ARCHITECTURE BUILDER STATE
@@ -91,6 +97,10 @@ export const GamesHubView: React.FC = () => {
   const initMemoryGame = () => {
     const cards: MemoryCard[] = [];
     MEMORY_CARD_PAIRS.slice(0, 6).forEach((pair, idx) => {
+      const roleText = (isEn || (gameLangMode === 'random' && idx % 2 === 1)) && pair.roleEn 
+        ? pair.roleEn 
+        : pair.role;
+
       cards.push({
         uid: `card-s-${idx}`,
         pairId: pair.id,
@@ -102,7 +112,7 @@ export const GamesHubView: React.FC = () => {
       cards.push({
         uid: `card-r-${idx}`,
         pairId: pair.id,
-        text: pair.role,
+        text: roleText,
         type: 'role',
         isFlipped: false,
         isMatched: false
@@ -118,10 +128,10 @@ export const GamesHubView: React.FC = () => {
   };
 
   useEffect(() => {
-    if (activeGame === 'memory' && memoryCards.length === 0) {
+    if (activeGame === 'memory') {
       initMemoryGame();
     }
-  }, [activeGame]);
+  }, [activeGame, gameLangMode]);
 
   const handleFlipCard = (index: number) => {
     if (flippedIndices.length >= 2 || memoryCards[index].isFlipped || memoryCards[index].isMatched) {
@@ -228,15 +238,50 @@ export const GamesHubView: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-slate-100">
       
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-700 p-6 md:p-8 shadow-2xl space-y-3">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-          <Gamepad2 className="w-3.5 h-3.5" />
-          Học AWS Qua Trò Chơi Tương Tác
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-700 p-5 md:p-8 shadow-2xl space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+            <Gamepad2 className="w-3.5 h-3.5" />
+            Trò Chơi Tương Tác Song Ngữ (VI / EN)
+          </div>
+
+          {/* Language Switcher */}
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 self-start sm:self-auto">
+            <span className="text-[11px] font-bold text-slate-400 px-1.5 flex items-center gap-1">
+              <Languages className="w-3 h-3 text-amber-400" /> Ngôn ngữ:
+            </span>
+            <button
+              onClick={() => setGameLangMode('vi')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                gameLangMode === 'vi' ? 'bg-amber-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🇻🇳 VI
+            </button>
+            <button
+              onClick={() => setGameLangMode('en')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                gameLangMode === 'en' ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🇺🇸 EN
+            </button>
+            <button
+              onClick={() => setGameLangMode('random')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                gameLangMode === 'random' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Shuffle className="w-3 h-3" />
+              <span>Xáo Trộn</span>
+            </button>
+          </div>
         </div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white">
+
+        <h1 className="text-xl md:text-3xl font-extrabold text-white">
           Khu Trò Chơi Giải Trí & Khắc Sâu Kiến Thức
         </h1>
-        <p className="text-sm md:text-base text-slate-300 max-w-3xl leading-relaxed">
+        <p className="text-xs md:text-sm text-slate-300 max-w-3xl leading-relaxed">
           Vừa chơi game vừa rèn luyện tư duy thiết kế kiến trúc đám mây, ghép cặp thuật ngữ và xử lý sự cố khẩn cấp tại phòng IT trường đại học Mỹ.
         </p>
       </div>

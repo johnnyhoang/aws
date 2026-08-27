@@ -113,7 +113,12 @@ export interface QuizQuestion {
   category: string;
   difficulty: 'Cơ bản' | 'Trung bình' | 'Khó' | 'Chuyên gia';
   scenario: string;
+  scenarioEn?: string;
   options: {
+    id: string;
+    text: string;
+  }[];
+  optionsEn?: {
     id: string;
     text: string;
   }[];
@@ -126,15 +131,27 @@ export interface QuizQuestion {
     }[];
     examTip: string;
   };
+  explanationEn?: {
+    whyCorrect: string;
+    whyOthersIncorrect: {
+      optionId: string;
+      reason: string;
+    }[];
+    examTip: string;
+  };
 }
 
 export interface Flashcard {
   id: string;
   term: string;
+  termEn?: string;
   category: 'AWS Services' | 'Security & IAM' | 'Networking' | 'Higher-Ed & LMS' | 'IaC & DevOps';
   definition: string;
+  definitionEn?: string;
   realWorldUsage: string;
+  realWorldUsageEn?: string;
   examKeyword: string;
+  examKeywordEn?: string;
 }
 
 export interface InterviewQA {
