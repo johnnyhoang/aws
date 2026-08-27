@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ARCHITECTURE_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, XCircle, RotateCcw, Award, Check } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw, Award, Check, Shuffle } from 'lucide-react';
 
 interface Props {
   isEn: boolean;
@@ -12,7 +12,30 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [currentArchIdx, setCurrentArchIdx] = useState<number>(0);
   const [selectedLayerOptions, setSelectedLayerOptions] = useState<Record<number, string>>({});
   const [isArchVerified, setIsArchVerified] = useState<boolean>(false);
+  
+  // Shuffled options per layer: { [layerIndex]: options[] }
+  const [shuffledLayers, setShuffledLayers] = useState<Record<number, typeof ARCHITECTURE_CHALLENGES[0]['layers'][0]['options']>>({});
+
   const activeArchChallenge = ARCHITECTURE_CHALLENGES[currentArchIdx] || ARCHITECTURE_CHALLENGES[0];
+
+  // Helper function to shuffle options for all layers using Fisher-Yates
+  const shuffleChallengeOptions = (challenge = activeArchChallenge) => {
+    const result: Record<number, typeof challenge.layers[0]['options']> = {};
+    challenge.layers.forEach((layer, idx) => {
+      const opts = [...layer.options];
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      result[idx] = opts;
+    });
+    setShuffledLayers(result);
+  };
+
+  // Re-shuffle on challenge change or mount
+  useEffect(() => {
+    shuffleChallengeOptions(activeArchChallenge);
+  }, [currentArchIdx]);
 
   const handleSelectLayerOption = (layerIdx: number, serviceName: string) => {
     if (isArchVerified) return;
@@ -44,6 +67,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const handleResetArch = () => {
     setSelectedLayerOptions({});
     setIsArchVerified(false);
+    shuffleChallengeOptions(activeArchChallenge);
   };
 
   const archTitle = (isEn && activeArchChallenge.titleEn) ? activeArchChallenge.titleEn : activeArchChallenge.title;
@@ -68,8 +92,10 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
-              setCurrentArchIdx((currentArchIdx + 1) % ARCHITECTURE_CHALLENGES.length);
-              handleResetArch();
+              const nextIdx = (currentArchIdx + 1) % ARCHITECTURE_CHALLENGES.length;
+              setCurrentArchIdx(nextIdx);
+              setSelectedLayerOptions({});
+              setIsArchVerified(false);
             }}
             className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
           >
@@ -77,10 +103,11 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
           </button>
           <button
             onClick={handleResetArch}
-            className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700"
-            title="Làm lại"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 text-amber-400 hover:bg-slate-700 border border-slate-700 text-xs font-bold transition-all"
+            title="Xáo trộn lại vị trí các đáp án và làm lại"
           >
-            <RotateCcw className="w-4 h-4" />
+            <Shuffle className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Shuffle Options' : 'Xáo Đáp Án'}</span>
           </button>
         </div>
       </div>
@@ -97,6 +124,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
           const isLayerCorrect = selectedOption === layer.correctService;
           const layerName = (isEn && layer.nameEn) ? layer.nameEn : layer.name;
           const layerDesc = (isEn && layer.descriptionEn) ? layer.descriptionEn : layer.description;
+          const layerOptionsToRender = shuffledLayers[lIdx] || layer.options;
 
           return (
             <div 
@@ -112,9 +140,9 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                 <span className="text-xs text-slate-400">{layerDesc}</span>
               </div>
 
-              {/* Options for this layer */}
+              {/* Dynamically Shuffled Options for this layer */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
-                {layer.options.map((opt, optIdx) => {
+                {layerOptionsToRender.map((opt, optIdx) => {
                   const isSelected = selectedOption === opt.service;
 
                   return (
@@ -135,19 +163,23 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
               </div>
 
               {/* Feedback when verified */}
-              {isArchVerified && selectedOption && (
-                <div className={`text-xs p-3 rounded-xl flex items-start gap-2 ${
-                  isLayerCorrect ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' :
-                  'bg-red-500/10 text-red-300 border border-red-500/30'
-                }`}>
-                  {isLayerCorrect ? <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" /> : <XCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
-                  <span>
-                    {isEn 
-                      ? layer.options.find(o => o.service === selectedOption)?.feedbackEn 
-                      : layer.options.find(o => o.service === selectedOption)?.feedback}
-                  </span>
-                </div>
-              )}
+              {isArchVerified && selectedOption && (() => {
+                const selectedOptObj = layer.options.find(o => o.service === selectedOption);
+                const feedbackText = (isEn && selectedOptObj?.feedbackEn) ? selectedOptObj.feedbackEn : selectedOptObj?.feedback;
+                return (
+                  <div className={`text-xs p-3 rounded-xl flex items-start gap-2 ${
+                    isLayerCorrect ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' :
+                    'bg-red-500/10 text-red-300 border border-red-500/30'
+                  }`}>
+                    {isLayerCorrect ? (
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <XCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    )}
+                    <span>{feedbackText}</span>
+                  </div>
+                );
+              })()}
             </div>
           );
         })}
@@ -156,7 +188,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
       {/* Action Bar */}
       <div className="flex items-center justify-between pt-4 border-t border-slate-800">
         <span className="text-xs text-slate-400">
-          {isEn ? 'Selected:' : 'Đã chọn:'} {Object.keys(selectedLayerOptions).length}/{activeArchChallenge.layers.length} {isEn ? 'Layers' : 'Tầng'}
+          {isEn ? 'Selected:' : 'Đã chọn:'} {Object.keys(selectedLayerOptions).length}/{activeArchChallenge.layers.length} {isEn ? 'Tiers' : 'Tầng'}
         </span>
 
         {!isArchVerified ? (
@@ -170,9 +202,10 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         ) : (
           <button
             onClick={handleResetArch}
-            className="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all"
+            className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-lg"
           >
-            {isEn ? 'Retry This Architecture' : 'Làm Lại Kiến Trúc Này'}
+            <Shuffle className="w-4 h-4" />
+            <span>{isEn ? 'Retry & Shuffle Options' : 'Làm Lại & Xáo Lại Đáp Án'}</span>
           </button>
         )}
       </div>
@@ -195,8 +228,8 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
             </strong>
             <span>
               {isEn 
-                ? 'One or more tiers have incorrect components that will cause outages under peak load. Check the red feedback boxes above and click "Retry This Architecture" to fix!'
-                : 'Hệ thống còn tầng thành phần chưa tối ưu (hộp viền đỏ phía trên) khiến cổng đăng ký có nguy cơ bị gián đoạn. Hãy xem kỹ giải thích và bấm "Làm Lại Kiến Trúc Này" để cấu hình lại nhé!'}
+                ? 'One or more tiers have incorrect components that will cause outages under peak load. Check the red feedback boxes above and click "Retry & Shuffle Options" to fix!'
+                : 'Hệ thống còn tầng thành phần chưa tối ưu (hộp viền đỏ phía trên) khiến cổng đăng ký có nguy cơ bị gián đoạn. Hãy xem kỹ giải thích và bấm "Làm Lại & Xáo Lại Đáp Án" để cấu hình lại nhé!'}
             </span>
           </div>
         </div>

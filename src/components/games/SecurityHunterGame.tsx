@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SECURITY_VULNERABILITIES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { ShieldCheck, ShieldAlert, Award, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Award, RotateCcw, CheckCircle2, XCircle, Shuffle } from 'lucide-react';
 
 interface Props {
   isEn: boolean;
@@ -10,6 +10,26 @@ interface Props {
 
 export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [selectedRemediations, setSelectedRemediations] = useState<Record<string, string>>({});
+  
+  // Shuffled choices per vulnerability: { [vulnId]: choices[] }
+  const [shuffledVulnChoices, setShuffledVulnChoices] = useState<Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']>>({});
+
+  const shuffleSecurityChoices = () => {
+    const map: Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']> = {};
+    SECURITY_VULNERABILITIES.forEach(vuln => {
+      const opts = [...vuln.remediationChoices];
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      map[vuln.id] = opts;
+    });
+    setShuffledVulnChoices(map);
+  };
+
+  useEffect(() => {
+    shuffleSecurityChoices();
+  }, []);
 
   const handleSelectRemediation = (vulnId: string, choiceId: string) => {
     const vuln = SECURITY_VULNERABILITIES.find(v => v.id === vulnId);
@@ -48,6 +68,7 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
 
   const handleReset = () => {
     setSelectedRemediations({});
+    shuffleSecurityChoices();
   };
 
   // Calculate Security Posture Score
@@ -99,9 +120,10 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
 
       {/* Vulnerabilities Checklist & Interactive Choices */}
       <div className="space-y-4">
-        {SECURITY_VULNERABILITIES.map((vuln, idx) => {
+        {SECURITY_VULNERABILITIES.map((vuln) => {
           const selectedChoiceId = selectedRemediations[vuln.id];
           const selectedChoice = vuln.remediationChoices.find(c => c.id === selectedChoiceId);
+          const choicesToRender = shuffledVulnChoices[vuln.id] || vuln.remediationChoices;
 
           return (
             <div
@@ -138,14 +160,15 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                 {isEn ? vuln.descriptionEn : vuln.description}
               </p>
 
-              {/* Remediation Choices */}
+              {/* Remediation Choices (Dynamically Shuffled) */}
               <div className="pt-2 border-t border-slate-850 space-y-2">
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                   {isEn ? 'Choose Remediation Action:' : 'Chọn Biện Pháp Vá Lỗ Hổng:'}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {vuln.remediationChoices.map((choice) => {
+                  {choicesToRender.map((choice, optIdx) => {
                     const isSelected = selectedChoiceId === choice.id;
+                    const letterLabel = ['A', 'B', 'C', 'D'][optIdx] || choice.id;
 
                     let btnStyle = 'bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-300';
                     if (isSelected) {
@@ -161,7 +184,7 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                         className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-start gap-2.5 ${btnStyle}`}
                       >
                         <span className="w-5 h-5 rounded-md bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
-                          {choice.id}
+                          {letterLabel}
                         </span>
                         <div className="space-y-1">
                           <p className="leading-snug">{isEn ? choice.textEn : choice.text}</p>
@@ -188,10 +211,10 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         </span>
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold transition-all shadow-md"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>{isEn ? 'Reset Security Audit' : 'Đặt Lại Kiểm Thử'}</span>
+          <Shuffle className="w-3.5 h-3.5" />
+          <span>{isEn ? 'Reset & Shuffle Options' : 'Làm Lại & Xáo Lại Đáp Án'}</span>
         </button>
       </div>
 

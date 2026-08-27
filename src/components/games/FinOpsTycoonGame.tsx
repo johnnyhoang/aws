@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FINOPS_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { DollarSign, TrendingDown, Award, RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { DollarSign, TrendingDown, Award, RotateCcw, CheckCircle2, AlertCircle, Shuffle } from 'lucide-react';
 
 interface Props {
   isEn: boolean;
@@ -12,6 +12,26 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const challenge = FINOPS_CHALLENGES[0];
   const [selectedChoices, setSelectedChoices] = useState<Record<string, string>>({});
   const [isFinOpsEvaluated, setIsFinOpsEvaluated] = useState<boolean>(false);
+  
+  // Shuffled options map per item: { [itemId]: options[] }
+  const [shuffledItemOptions, setShuffledItemOptions] = useState<Record<string, typeof FINOPS_CHALLENGES[0]['items'][0]['options']>>({});
+
+  const shuffleFinOpsOptions = () => {
+    const map: Record<string, typeof challenge.items[0]['options']> = {};
+    challenge.items.forEach(item => {
+      const opts = [...item.options];
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      map[item.id] = opts;
+    });
+    setShuffledItemOptions(map);
+  };
+
+  useEffect(() => {
+    shuffleFinOpsOptions();
+  }, []);
 
   const handleSelectChoice = (itemId: string, optionId: string) => {
     if (isFinOpsEvaluated) return;
@@ -52,6 +72,7 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const handleReset = () => {
     setSelectedChoices({});
     setIsFinOpsEvaluated(false);
+    shuffleFinOpsOptions();
   };
 
   const isTargetAchieved = currentCalculatedCost <= challenge.targetCost;
@@ -101,6 +122,7 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         {challenge.items.map((item, idx) => {
           const selectedOptId = selectedChoices[item.id];
           const selectedOpt = item.options.find(o => o.id === selectedOptId);
+          const optionsToRender = shuffledItemOptions[item.id] || item.options;
 
           return (
             <div key={item.id} className="bg-slate-950 p-4 md:p-5 rounded-2xl border border-slate-800 space-y-3">
@@ -113,9 +135,9 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                 </span>
               </div>
 
-              {/* Action Choices */}
+              {/* Action Choices (Dynamically Shuffled) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
-                {item.options.map(opt => {
+                {optionsToRender.map(opt => {
                   const isSelected = selectedOptId === opt.id;
 
                   return (
@@ -137,7 +159,7 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                           {isEn ? 'New Cost:' : 'Giá mới:'} <strong className="text-white">${opt.newCost}/mo</strong>
                         </span>
                         <span className={opt.savings >= 0 ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}>
-                          {opt.savings >= 0 ? `+Tiết kiệm $${opt.savings}` : `Tăng $${Math.abs(opt.savings)}`}
+                          {opt.savings >= 0 ? `+Tiết kiệm $${opt.savings}` : `Phạt $${Math.abs(opt.savings)}`}
                         </span>
                       </div>
                     </div>
@@ -176,10 +198,10 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         ) : (
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all shadow-md"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Try Different FinOps Strategy' : 'Thử Lại Chiến Lược Khác'}</span>
+            <Shuffle className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Retry & Shuffle Options' : 'Làm Lại & Xáo Lại Đáp Án'}</span>
           </button>
         )}
       </div>
@@ -211,7 +233,7 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
           <p className="text-xs text-red-200">
             {isEn 
               ? `Current monthly bill is $${currentCalculatedCost.toLocaleString()}/mo (Target is < $${challenge.targetCost.toLocaleString()}/mo). Review suboptimal choices and try again!`
-              : `Chi phí hiện tại là $${currentCalculatedCost.toLocaleString()}/tháng (Mục tiêu là < $${challenge.targetCost.toLocaleString()}/tháng). Hãy bấm 'Thử Lại Chiến Lược Khác' để chọn các giải pháp tối ưu hơn nhé!`}
+              : `Chi phí hiện tại là $${currentCalculatedCost.toLocaleString()}/tháng (Mục tiêu là < $${challenge.targetCost.toLocaleString()}/tháng). Hãy bấm 'Làm Lại & Xáo Lại Đáp Án' để chọn các giải pháp tối ưu hơn nhé!`}
           </p>
         </div>
       )}

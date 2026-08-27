@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { INCIDENT_SCENARIOS } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { ShieldAlert, Heart, ChevronRight, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, Heart, ChevronRight, ShieldCheck, RotateCcw, Shuffle, AlertTriangle } from 'lucide-react';
 
 interface Props {
   isEn: boolean;
@@ -14,8 +14,25 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [selectedIncChoice, setSelectedIncChoice] = useState<string | null>(null);
   const [isIncAnswered, setIsIncAnswered] = useState<boolean>(false);
   const [isIncidentGameOver, setIsIncidentGameOver] = useState<boolean>(false);
+  
+  // Shuffled choices for each scenario
+  const [shuffledChoices, setShuffledChoices] = useState<typeof INCIDENT_SCENARIOS[0]['choices']>([]);
 
   const activeIncident = INCIDENT_SCENARIOS[currentIncIdx] || INCIDENT_SCENARIOS[0];
+
+  // Shuffle choices when activeIncident changes
+  const shuffleIncidentChoices = (incident = activeIncident) => {
+    const opts = [...incident.choices];
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+    }
+    setShuffledChoices(opts);
+  };
+
+  useEffect(() => {
+    shuffleIncidentChoices(activeIncident);
+  }, [currentIncIdx]);
 
   const handleChooseIncidentAction = (choiceId: string) => {
     if (isIncAnswered) return;
@@ -56,10 +73,12 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
     setSelectedIncChoice(null);
     setIsIncAnswered(false);
     setIsIncidentGameOver(false);
+    shuffleIncidentChoices(INCIDENT_SCENARIOS[0]);
   };
 
   const incTitle = (isEn && activeIncident.titleEn) ? activeIncident.titleEn : activeIncident.title;
   const incDescription = (isEn && activeIncident.descriptionEn) ? activeIncident.descriptionEn : activeIncident.description;
+  const choicesToRender = shuffledChoices.length > 0 ? shuffledChoices : activeIncident.choices;
 
   return (
     <div className="bg-slate-900 rounded-3xl border border-slate-700 p-5 md:p-8 space-y-6 shadow-2xl animate-fadeIn">
@@ -108,99 +127,110 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
                 {activeIncident.alertType}
               </span>
             </div>
-            <h3 className="font-black text-white text-base md:text-lg">
+            <h3 className="text-base md:text-lg font-bold text-white leading-snug">
               {incTitle}
             </h3>
-            <p className="text-xs md:text-sm text-slate-300 leading-relaxed pt-1">
+            <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
               {incDescription}
             </p>
           </div>
 
-          {/* Action Choices */}
+          {/* Action Decisions (Dynamically Shuffled) */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              {isEn ? 'Select Your Incident Response Action:' : 'Chọn Phương Án Xử Lý Của Bạn:'}
+              {isEn ? 'Command Decision Options:' : 'Phương Án Xử Lý Khẩn Cấp:'}
             </div>
-            <div className="space-y-2.5">
-              {activeIncident.choices.map((choice) => {
-                const isSelected = selectedIncChoice === choice.id;
-                const actionText = (isEn && choice.actionEn) ? choice.actionEn : choice.action;
-                const explanationText = (isEn && choice.explanationEn) ? choice.explanationEn : choice.explanation;
 
-                let btnStyle = 'bg-slate-800/80 border-slate-700 hover:bg-slate-800 text-slate-200';
+            <div className="space-y-2.5">
+              {choicesToRender.map((choice) => {
+                const isSelected = selectedIncChoice === choice.id;
+                const choiceText = (isEn && choice.actionEn) ? choice.actionEn : choice.action;
+                const feedbackText = (isEn && choice.explanationEn) ? choice.explanationEn : choice.explanation;
+
+                let cardStyle = 'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-200';
                 if (isIncAnswered) {
                   if (choice.isCorrect) {
-                    btnStyle = 'bg-emerald-950/40 border-emerald-500 text-emerald-200 font-bold';
+                    cardStyle = 'bg-emerald-950/30 border-emerald-500/50 text-emerald-200';
                   } else if (isSelected && !choice.isCorrect) {
-                    btnStyle = 'bg-red-950/40 border-red-500 text-red-200';
+                    cardStyle = 'bg-red-950/30 border-red-500/50 text-red-200';
                   } else {
-                    btnStyle = 'bg-slate-950/40 border-slate-800 text-slate-600 opacity-50';
+                    cardStyle = 'bg-slate-950/40 border-slate-850 text-slate-500 opacity-50';
                   }
-                } else if (isSelected) {
-                  btnStyle = 'bg-rose-500/20 border-rose-500 text-rose-200';
                 }
 
                 return (
                   <div
                     key={choice.id}
                     onClick={() => handleChooseIncidentAction(choice.id)}
-                    className={`p-4 rounded-xl border cursor-pointer transition-all flex items-start gap-3.5 ${btnStyle}`}
+                    className={`p-4 rounded-2xl border text-xs md:text-sm cursor-pointer transition-all space-y-2 ${cardStyle}`}
                   >
-                    <span className="w-6 h-6 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                      {choice.id}
-                    </span>
-                    <div className="space-y-1">
-                      <p className="text-xs md:text-sm leading-relaxed">{actionText}</p>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="leading-relaxed font-medium">{choiceText}</p>
                       {isIncAnswered && (
-                        <p className="text-xs pt-1 border-t border-slate-800/60">{explanationText}</p>
+                        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded flex-shrink-0 ${
+                          choice.uptimeImpact >= 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'
+                        }`}>
+                          {choice.uptimeImpact >= 0 ? `+${choice.uptimeImpact}%` : `${choice.uptimeImpact}%`}
+                        </span>
                       )}
                     </div>
+
+                    {isIncAnswered && isSelected && (
+                      <div className="pt-2 border-t border-slate-800/80 text-xs text-slate-300">
+                        {feedbackText}
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Next Incident Action */}
+          {/* Next Button */}
           {isIncAnswered && (
             <div className="flex justify-end pt-2">
               <button
                 onClick={handleNextIncident}
-                className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-900/30 transition-all flex items-center gap-1.5"
+                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 transition-all animate-fadeIn"
               >
-                <span>{currentIncIdx < INCIDENT_SCENARIOS.length - 1 ? (isEn ? 'Handle Next Incident' : 'Xử Lý Sự Cố Tiếp Theo') : (isEn ? 'View Incident Report' : 'Xem Báo Cáo Ca Trực')}</span>
+                <span>{currentIncIdx < INCIDENT_SCENARIOS.length - 1 ? (isEn ? 'Next Incident' : 'Sự Cố Tiếp Theo') : (isEn ? 'View Shift Summary' : 'Tổng Kết Ca Trực')}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}
         </div>
       ) : (
-        /* Victory / Game Over */
-        <div className="p-8 text-center space-y-5">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
-            uptimeScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+        /* Summary Screen */
+        <div className="bg-slate-950 p-6 md:p-8 rounded-2xl border border-slate-800 text-center space-y-5">
+          <div className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
+            uptimeScore >= 70 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
           }`}>
             {uptimeScore >= 70 ? <ShieldCheck className="w-8 h-8" /> : <ShieldAlert className="w-8 h-8" />}
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-2xl font-black text-white">
+            <h3 className="text-xl font-black text-white">
               {uptimeScore >= 70 
-                ? (isEn ? '🎉 On-Call Shift Succeeded Flawlessly!' : '🎉 Ca Trực Thành Công Xuất Sắc!') 
-                : (isEn ? '💥 Critical Campus Outage!' : '💥 Hệ Thống Bị Gián Đoạn Nghiêm Trọng!')}
+                ? (isEn ? 'Shift Completed Successfully!' : 'Ca Trực Hoàn Thành Xuất Sắc!')
+                : (isEn ? 'System Outage - SLA Breached!' : 'Hệ Thống Bị Sập - Vi Phạm Cam Kết SLA!')}
             </h3>
             <p className="text-xs md:text-sm text-slate-400">
-              {uptimeScore >= 70 
-                ? (isEn ? `You defended the system with ${uptimeScore}% Uptime. Senior Cloud Architect tier!` : `Bạn đã bảo vệ thành công hệ thống với tỷ lệ Uptime đạt ${uptimeScore}%. Bạn xứng đáng là Kỹ Sư Trưởng IT!`) 
-                : (isEn ? `Uptime dropped to ${uptimeScore}%. Review Deep Dive architectures to react faster next time!` : `Tỷ lệ Uptime tụt xuống ${uptimeScore}%. Hãy ôn lại kiến thức để phản ứng nhanh hơn trong ca trực tới!`)}
+              {isEn ? 'Final System Uptime Score:' : 'Điểm khả dụng toàn hệ thống đạt:'} <strong className="text-white font-mono text-base">{uptimeScore}%</strong>
             </p>
           </div>
 
+          <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+            {uptimeScore >= 70 
+              ? (isEn ? 'You successfully protected the campus LMS and student registration infrastructure through critical outages.' : 'Bạn đã bảo vệ thành công cổng đăng ký tín chỉ của trường đại học không bị gián đoạn giờ cao điểm!')
+              : (isEn ? 'Too many suboptimal decisions caused major outages. Review the AWS incident post-mortem tips and try again.' : 'Các quyết định chưa tối ưu đã khiến hệ thống trường học bị sập quá thời gian cho phép. Hãy làm lại ca trực nhé!')}
+          </p>
+
           <button
             onClick={handleResetIncident}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-lg transition-all"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all"
           >
-            {isEn ? 'Start New On-Call Shift' : 'Nhận Ca Trực Mới'}
+            <RotateCcw className="w-4 h-4" />
+            <span>{isEn ? 'Take Another On-Call Shift' : 'Nhận Ca Trực Mới'}</span>
           </button>
         </div>
       )}
