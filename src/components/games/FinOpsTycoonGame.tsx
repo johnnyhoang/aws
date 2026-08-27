@@ -199,6 +199,23 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         </div>
       )}
 
+      {/* Target Not Met banner */}
+      {isFinOpsEvaluated && !isTargetAchieved && (
+        <div className="p-5 rounded-2xl bg-red-950/30 border border-red-500/40 text-center space-y-2 shadow-xl">
+          <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mx-auto text-red-400">
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-black text-white">
+            {isEn ? '⚠️ Target Not Met Yet!' : '⚠️ Chưa Đạt Mục Tiêu Ngân Sách!'}
+          </h3>
+          <p className="text-xs text-red-200">
+            {isEn 
+              ? `Current monthly bill is $${currentCalculatedCost.toLocaleString()}/mo (Target is < $${challenge.targetCost.toLocaleString()}/mo). Review suboptimal choices and try again!`
+              : `Chi phí hiện tại là $${currentCalculatedCost.toLocaleString()}/tháng (Mục tiêu là < $${challenge.targetCost.toLocaleString()}/tháng). Hãy bấm 'Thử Lại Chiến Lược Khác' để chọn các giải pháp tối ưu hơn nhé!`}
+          </p>
+        </div>
+      )}
+
     </div>
   );
 };

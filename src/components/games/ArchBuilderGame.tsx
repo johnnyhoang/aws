@@ -49,6 +49,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const archTitle = (isEn && activeArchChallenge.titleEn) ? activeArchChallenge.titleEn : activeArchChallenge.title;
   const archScenario = (isEn && activeArchChallenge.scenarioEn) ? activeArchChallenge.scenarioEn : activeArchChallenge.scenario;
   const archSuccess = (isEn && activeArchChallenge.successStoryEn) ? activeArchChallenge.successStoryEn : activeArchChallenge.successStory;
+  const isAllLayersCorrect = activeArchChallenge.layers.every((layer, idx) => selectedLayerOptions[idx] === layer.correctService);
 
   return (
     <div className="bg-slate-900 rounded-3xl border border-slate-700 p-5 md:p-8 space-y-6 shadow-2xl animate-fadeIn">
@@ -176,11 +177,28 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
         )}
       </div>
 
-      {/* Success Story Alert */}
-      {isArchVerified && Object.keys(selectedLayerOptions).length === activeArchChallenge.layers.length && (
+      {/* Success Story Alert (Only when ALL layers are correct) */}
+      {isArchVerified && isAllLayersCorrect && (
         <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 to-sky-950/40 border border-emerald-500/40 text-xs md:text-sm text-emerald-200 leading-relaxed font-medium flex items-center gap-3">
           <Award className="w-6 h-6 text-amber-400 flex-shrink-0" />
           <span>{archSuccess}</span>
+        </div>
+      )}
+
+      {/* Failure Alert (When one or more layers are wrong) */}
+      {isArchVerified && !isAllLayersCorrect && (
+        <div className="p-4 rounded-2xl bg-red-950/30 border border-red-500/40 text-xs md:text-sm text-red-200 leading-relaxed font-medium flex items-start gap-3">
+          <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <strong className="block text-red-300 font-bold mb-0.5">
+              {isEn ? '⚠️ Architecture Validation Failed!' : '⚠️ Kiến Trúc Chưa Đạt Chuẩn Well-Architected!'}
+            </strong>
+            <span>
+              {isEn 
+                ? 'One or more tiers have incorrect components that will cause outages under peak load. Check the red feedback boxes above and click "Retry This Architecture" to fix!'
+                : 'Hệ thống còn tầng thành phần chưa tối ưu (hộp viền đỏ phía trên) khiến cổng đăng ký có nguy cơ bị gián đoạn. Hãy xem kỹ giải thích và bấm "Làm Lại Kiến Trúc Này" để cấu hình lại nhé!'}
+            </span>
+          </div>
         </div>
       )}
 
