@@ -29,9 +29,12 @@ export const ExamSimulatorView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mode, setMode] = useState<'study' | 'exam'>('study'); // Study (Instant feedback) vs Exam (Timed)
   
-  // Language settings: 'vi' (Vietnamese) | 'en' (English) | 'random' (Random mix per question)
+  // Language settings: 'vi' | 'en' | 'random'
   const [languageMode, setLanguageMode] = useState<'vi' | 'en' | 'random'>('random');
   const [individualQuestionLang, setIndividualQuestionLang] = useState<Record<string, 'vi' | 'en'>>({});
+
+  // Dynamic option shuffling map per question: { [questionId]: [permuted_indices] }
+  const [optionPermutations, setOptionPermutations] = useState<Record<string, number[]>>({});
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -57,6 +60,27 @@ export const ExamSimulatorView: React.FC = () => {
     { id: 'Chuyên gia', label: 'Chuyên gia' },
   ];
 
+  // Helper function to generate randomized option order for all questions
+  const generateRandomPermutations = (questions: QuizQuestion[]) => {
+    const map: Record<string, number[]> = {};
+    questions.forEach(q => {
+      const len = q.options.length;
+      const indices = Array.from({ length: len }, (_, i) => i);
+      // Fisher-Yates shuffle
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      map[q.id] = indices;
+    });
+    return map;
+  };
+
+  // Initialize random option order on component mount
+  useEffect(() => {
+    setOptionPermutations(generateRandomPermutations(QUIZ_QUESTIONS));
+  }, []);
+
   const filteredQuestions: QuizQuestion[] = QUIZ_QUESTIONS.filter(q => {
     const matchCert = selectedCert === 'all' || q.certCode === selectedCert;
     const matchDiff = selectedDifficulty === 'all' || q.difficulty === selectedDifficulty;
@@ -75,7 +99,6 @@ export const ExamSimulatorView: React.FC = () => {
     }
     if (languageMode === 'en') return 'en';
     if (languageMode === 'vi') return 'vi';
-    // Random mix: alternate between VI and EN based on index
     return index % 2 === 1 ? 'en' : 'vi';
   };
 
@@ -101,15 +124,15 @@ export const ExamSimulatorView: React.FC = () => {
     return () => clearInterval(interval);
   }, [mode, isExamCompleted]);
 
-  const handleSelectOption = (optionId: string) => {
+  const handleSelectOption = (originalId: string) => {
     if (isAnswerSubmitted && mode === 'study') return;
-    setSelectedOptionId(optionId);
+    setSelectedOptionId(originalId);
     
     // In exam mode, save answer immediately
     if (mode === 'exam') {
       setUserAnswers(prev => ({
         ...prev,
-        [activeQuestion.id]: optionId
+        [activeQuestion.id]: originalId
       }));
     }
   };
@@ -177,6 +200,8 @@ export const ExamSimulatorView: React.FC = () => {
   };
 
   const handleRestartQuiz = () => {
+    // Freshly reshuffle all options and reset state
+    setOptionPermutations(generateRandomPermutations(QUIZ_QUESTIONS));
     setCurrentIndex(0);
     setSelectedOptionId(null);
     setIsAnswerSubmitted(false);
@@ -200,18 +225,38 @@ export const ExamSimulatorView: React.FC = () => {
     }
   });
 
-  // Display scenario and options based on currentLang
+  // Display scenario and raw options based on language
   const displayedScenario = (currentLang === 'en' && activeQuestion?.scenarioEn) 
     ? activeQuestion.scenarioEn 
     : activeQuestion?.scenario;
 
-  const displayedOptions = (currentLang === 'en' && activeQuestion?.optionsEn)
+  const rawOptions = (currentLang === 'en' && activeQuestion?.optionsEn)
     ? activeQuestion.optionsEn
     : activeQuestion?.options || [];
 
   const displayedExplanation = (currentLang === 'en' && activeQuestion?.explanationEn)
     ? activeQuestion.explanationEn
     : activeQuestion?.explanation;
+
+  // Build the shuffled option list with new clean labels A, B, C, D
+  const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+  const currentPermutation = (activeQuestion && optionPermutations[activeQuestion.id]) 
+    ? optionPermutations[activeQuestion.id]
+    : rawOptions.map((_, i) => i);
+
+  const displayedShuffledOptions = currentPermutation.slice(0, rawOptions.length).map((originalIdx, displayIdx) => {
+    const orig = rawOptions[originalIdx] || rawOptions[displayIdx];
+    return {
+      newLetter: optionLabels[displayIdx], // Clean A, B, C, D
+      originalId: orig.id,                 // Original dataset ID
+      text: orig.text
+    };
+  });
+
+  // Find the new letter for the correct answer
+  const correctDisplayedLetter = displayedShuffledOptions.find(
+    opt => opt.originalId === activeQuestion?.correctOptionId
+  )?.newLetter || activeQuestion?.correctOptionId;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6 md:space-y-8 text-slate-100">
@@ -221,36 +266,47 @@ export const ExamSimulatorView: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            Ngân Hàng Đề Thi Song Ngữ Chuẩn AWS & Tutorials Dojo
+            Ngân Hàng Đề Thi Song Ngữ (Tự Động Xáo Đáp Án Ngẫu Nhiên)
           </div>
           <h1 className="text-xl md:text-3xl font-extrabold text-white">
-            Trình Luyện Thi & Giải Tình Huống Song Ngữ
+            Trình Luyện Thi & Giải Tình Huống AWS
           </h1>
           <p className="text-xs md:text-sm text-slate-400 mt-1">
-            Luyện tập câu hỏi bằng Tiếng Việt hoặc Tiếng Anh chuẩn format phòng thi AWS chính thức.
+            Đáp án A, B, C, D được xáo trộn ngẫu nhiên 100% mỗi lượt làm bài để rèn luyện phản xạ thực tế.
           </p>
         </div>
 
-        {/* Mode Switcher */}
-        <div className="bg-slate-900 p-1 rounded-xl border border-slate-700 flex items-center gap-1">
+        {/* Mode & Reshuffle Controls */}
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => { setMode('study'); handleRestartQuiz(); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-              mode === 'study' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            onClick={handleRestartQuiz}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-500/30 text-xs font-bold transition-all shadow-sm"
+            title="Xáo trộn lại toàn bộ thứ tự câu hỏi và đáp án A, B, C, D"
           >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Ôn Luyện (Giải Tức Thì)</span>
+            <Shuffle className="w-3.5 h-3.5 animate-spin-slow" />
+            <span>Xáo Lại Đáp Án</span>
           </button>
-          <button
-            onClick={() => { setMode('exam'); handleRestartQuiz(); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-              mode === 'exam' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Thi Thử (Bấm Giờ)</span>
-          </button>
+
+          <div className="bg-slate-900 p-1 rounded-xl border border-slate-700 flex items-center gap-1">
+            <button
+              onClick={() => { setMode('study'); handleRestartQuiz(); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                mode === 'study' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Ôn Luyện</span>
+            </button>
+            <button
+              onClick={() => { setMode('exam'); handleRestartQuiz(); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                mode === 'exam' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>Thi Thử</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -324,7 +380,7 @@ export const ExamSimulatorView: React.FC = () => {
         </div>
       </div>
 
-      {/* Difficulty & Quick Nav */}
+      {/* Difficulty & Timer Info */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
         <div className="flex items-center gap-1.5">
           <span className="font-semibold text-slate-500 flex items-center gap-1">
@@ -429,11 +485,11 @@ export const ExamSimulatorView: React.FC = () => {
             </h3>
           </div>
 
-          {/* Options */}
+          {/* Shuffled Options (A, B, C, D) */}
           <div className="space-y-3 pt-2">
-            {displayedOptions.map((opt) => {
-              const isSelected = selectedOptionId === opt.id || userAnswers[activeQuestion.id] === opt.id;
-              const isCorrect = opt.id === activeQuestion.correctOptionId;
+            {displayedShuffledOptions.map((opt) => {
+              const isSelected = selectedOptionId === opt.originalId || userAnswers[activeQuestion.id] === opt.originalId;
+              const isCorrect = opt.originalId === activeQuestion.correctOptionId;
               
               let optionStyle = 'bg-slate-800/80 border-slate-700 hover:bg-slate-800 hover:border-slate-600 text-slate-200';
               
@@ -451,8 +507,8 @@ export const ExamSimulatorView: React.FC = () => {
 
               return (
                 <div
-                  key={opt.id}
-                  onClick={() => handleSelectOption(opt.id)}
+                  key={opt.newLetter}
+                  onClick={() => handleSelectOption(opt.originalId)}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3.5 ${optionStyle}`}
                 >
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 ${
@@ -462,7 +518,7 @@ export const ExamSimulatorView: React.FC = () => {
                   }`}>
                     {isAnswerSubmitted && mode === 'study' && isCorrect ? <Check className="w-4 h-4" /> :
                      isAnswerSubmitted && mode === 'study' && isSelected && !isCorrect ? <XCircle className="w-4 h-4" /> :
-                     opt.id}
+                     opt.newLetter}
                   </div>
                   <span className="text-xs md:text-sm leading-relaxed">{opt.text}</span>
                 </div>
@@ -500,7 +556,7 @@ export const ExamSimulatorView: React.FC = () => {
             )}
           </div>
 
-          {/* Detailed Explanation */}
+          {/* Detailed Explanation with mapped correct letter */}
           {mode === 'study' && isAnswerSubmitted && displayedExplanation && (
             <div className="space-y-4 pt-4 border-t border-slate-800 animate-fadeIn">
               
@@ -514,14 +570,14 @@ export const ExamSimulatorView: React.FC = () => {
                   <>
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                     <span className="text-xs md:text-sm font-bold">
-                      {currentLang === 'vi' ? `Chính xác! Đáp án đúng là ${activeQuestion.correctOptionId}.` : `Correct! The correct option is ${activeQuestion.correctOptionId}.`}
+                      {currentLang === 'vi' ? `Chính xác! Đáp án đúng là ${correctDisplayedLetter}.` : `Correct! The correct option is ${correctDisplayedLetter}.`}
                     </span>
                   </>
                 ) : (
                   <>
                     <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
                     <span className="text-xs md:text-sm font-bold">
-                      {currentLang === 'vi' ? `Chưa chính xác! Đáp án đúng là ${activeQuestion.correctOptionId}.` : `Incorrect! The correct option is ${activeQuestion.correctOptionId}.`}
+                      {currentLang === 'vi' ? `Chưa chính xác! Đáp án đúng là ${correctDisplayedLetter}.` : `Incorrect! The correct option is ${correctDisplayedLetter}.`}
                     </span>
                   </>
                 )}
@@ -538,20 +594,23 @@ export const ExamSimulatorView: React.FC = () => {
                 </p>
               </div>
 
-              {/* Why Others Incorrect */}
+              {/* Why Others Incorrect with re-mapped letters */}
               <div className="bg-slate-800/50 p-5 rounded-2xl border border-slate-700/80 space-y-3">
                 <div className="text-xs font-bold text-red-400 uppercase tracking-wider">
                   {currentLang === 'vi' ? 'Tại Sao Các Phương Án Khác Sai:' : 'Why Other Options Are Incorrect:'}
                 </div>
                 <div className="space-y-2">
-                  {displayedExplanation.whyOthersIncorrect.map((item, idx) => (
-                    <div key={idx} className="text-xs text-slate-400 flex items-start gap-2">
-                      <strong className="text-red-400 font-mono">
-                        {currentLang === 'vi' ? `Phương án ${item.optionId}:` : `Option ${item.optionId}:`}
-                      </strong>
-                      <span>{item.reason}</span>
-                    </div>
-                  ))}
+                  {displayedExplanation.whyOthersIncorrect.map((item, idx) => {
+                    const currentLetter = displayedShuffledOptions.find(o => o.originalId === item.optionId)?.newLetter || item.optionId;
+                    return (
+                      <div key={idx} className="text-xs text-slate-400 flex items-start gap-2">
+                        <strong className="text-red-400 font-mono">
+                          {currentLang === 'vi' ? `Phương án ${currentLetter}:` : `Option ${currentLetter}:`}
+                        </strong>
+                        <span>{item.reason}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
