@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SECURITY_VULNERABILITIES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { ShieldCheck, ShieldAlert, Award, RotateCcw, CheckCircle2, XCircle, Shuffle } from 'lucide-react';
+import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
   isEn: boolean;
@@ -17,12 +18,7 @@ export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const shuffleSecurityChoices = () => {
     const map: Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']> = {};
     SECURITY_VULNERABILITIES.forEach(vuln => {
-      const opts = [...vuln.remediationChoices];
-      for (let i = opts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [opts[i], opts[j]] = [opts[j], opts[i]];
-      }
-      map[vuln.id] = opts;
+      map[vuln.id] = fisherYatesShuffle(vuln.remediationChoices);
     });
     setShuffledVulnChoices(map);
   };

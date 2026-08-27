@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FINOPS_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { DollarSign, TrendingDown, Award, RotateCcw, CheckCircle2, AlertCircle, Shuffle } from 'lucide-react';
+import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
   isEn: boolean;
@@ -19,12 +20,7 @@ export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const shuffleFinOpsOptions = () => {
     const map: Record<string, typeof challenge.items[0]['options']> = {};
     challenge.items.forEach(item => {
-      const opts = [...item.options];
-      for (let i = opts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [opts[i], opts[j]] = [opts[j], opts[i]];
-      }
-      map[item.id] = opts;
+      map[item.id] = fisherYatesShuffle(item.options);
     });
     setShuffledItemOptions(map);
   };

@@ -17,12 +17,14 @@ import {
   Languages
 } from 'lucide-react';
 
+import { fisherYatesShuffle } from '../utils/shuffle';
+
 export const FlashcardsView: React.FC = () => {
   const { flashcardsMastered, toggleFlashcardMastered } = useLearning();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
-  const [cardsList, setCardsList] = useState(FLASHCARDS);
+  const [cardsList, setCardsList] = useState(() => fisherYatesShuffle(FLASHCARDS));
   
   // Language mode: 'vi' | 'en' | 'random'
   const [languageMode, setLanguageMode] = useState<'vi' | 'en' | 'random'>('random');
@@ -82,8 +84,7 @@ export const FlashcardsView: React.FC = () => {
 
   const handleShuffle = () => {
     setIsFlipped(false);
-    const shuffled = [...cardsList].sort(() => Math.random() - 0.5);
-    setCardsList(shuffled);
+    setCardsList(fisherYatesShuffle(cardsList));
     setCurrentIndex(0);
   };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { INCIDENT_SCENARIOS } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { ShieldAlert, Heart, ChevronRight, ShieldCheck, RotateCcw, Shuffle, AlertTriangle } from 'lucide-react';
+import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
   isEn: boolean;
@@ -20,14 +21,9 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
 
   const activeIncident = INCIDENT_SCENARIOS[currentIncIdx] || INCIDENT_SCENARIOS[0];
 
-  // Shuffle choices when activeIncident changes
+  // Shuffle choices when activeIncident changes using Fisher-Yates
   const shuffleIncidentChoices = (incident = activeIncident) => {
-    const opts = [...incident.choices];
-    for (let i = opts.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [opts[i], opts[j]] = [opts[j], opts[i]];
-    }
-    setShuffledChoices(opts);
+    setShuffledChoices(fisherYatesShuffle(incident.choices));
   };
 
   useEffect(() => {

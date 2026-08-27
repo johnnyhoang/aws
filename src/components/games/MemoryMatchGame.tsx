@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MEMORY_CARD_PAIRS } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { RotateCcw, Award, BrainCircuit, CheckCircle2 } from 'lucide-react';
+import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
   isEn: boolean;
@@ -27,8 +28,8 @@ export const MemoryMatchGame: React.FC<Props> = ({ isEn, gameLangMode, onGameWin
 
   const initMemoryGame = (pairs = pairCount) => {
     const cards: MemoryCard[] = [];
-    // Randomly pick unique pairs from the pool of 16 AWS services
-    const randomizedPairs = [...MEMORY_CARD_PAIRS].sort(() => Math.random() - 0.5).slice(0, pairs);
+    // Randomly pick unique pairs from the pool of 16 AWS services using Fisher-Yates
+    const randomizedPairs = fisherYatesShuffle(MEMORY_CARD_PAIRS).slice(0, pairs);
 
     randomizedPairs.forEach((pair, idx) => {
       const roleText = (isEn || (gameLangMode === 'random' && idx % 2 === 1)) && pair.roleEn 
@@ -53,7 +54,7 @@ export const MemoryMatchGame: React.FC<Props> = ({ isEn, gameLangMode, onGameWin
       });
     });
 
-    const shuffled = cards.sort(() => Math.random() - 0.5);
+    const shuffled = fisherYatesShuffle(cards);
     setMemoryCards(shuffled);
     setFlippedIndices([]);
     setMovesCount(0);

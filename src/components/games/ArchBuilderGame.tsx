@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ARCHITECTURE_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { CheckCircle2, XCircle, RotateCcw, Award, Check, Shuffle, Layers } from 'lucide-react';
+import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
   isEn: boolean;
@@ -23,12 +24,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const shuffleChallengeOptions = (challenge = activeArchChallenge) => {
     const result: Record<number, typeof challenge.layers[0]['options']> = {};
     challenge.layers.forEach((layer, idx) => {
-      const opts = [...layer.options];
-      for (let i = opts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [opts[i], opts[j]] = [opts[j], opts[i]];
-      }
-      result[idx] = opts;
+      result[idx] = fisherYatesShuffle(layer.options);
     });
     setShuffledLayers(result);
   };

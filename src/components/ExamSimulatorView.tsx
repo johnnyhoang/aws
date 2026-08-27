@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLearning, QuizAnswerFeedback } from '../context/LearningContext';
 import { QUIZ_QUESTIONS } from '../data/quizQuestions';
 import { QuizQuestion } from '../types';
+import { getShuffledIndices } from '../utils/shuffle';
 import confetti from 'canvas-confetti';
 import { 
   CheckCircle2, 
@@ -64,18 +65,11 @@ export const ExamSimulatorView: React.FC = () => {
     { id: 'Chuyên gia', label: 'Chuyên gia' },
   ];
 
-  // Helper function to generate randomized option order for all questions
+  // Helper function to generate randomized option order for all questions using Fisher-Yates
   const generateRandomPermutations = (questions: QuizQuestion[]) => {
     const map: Record<string, number[]> = {};
     questions.forEach(q => {
-      const len = q.options.length;
-      const indices = Array.from({ length: len }, (_, i) => i);
-      // Fisher-Yates shuffle
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
-      map[q.id] = indices;
+      map[q.id] = getShuffledIndices(q.options.length);
     });
     return map;
   };
