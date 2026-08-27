@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ARCHITECTURE_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, XCircle, RotateCcw, Award, Check, Shuffle } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw, Award, Check, Shuffle, Layers } from 'lucide-react';
 
 interface Props {
   isEn: boolean;
@@ -12,6 +12,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [currentArchIdx, setCurrentArchIdx] = useState<number>(0);
   const [selectedLayerOptions, setSelectedLayerOptions] = useState<Record<number, string>>({});
   const [isArchVerified, setIsArchVerified] = useState<boolean>(false);
+  const [completedChallenges, setCompletedChallenges] = useState<number[]>([]);
   
   // Shuffled options per layer: { [layerIndex]: options[] }
   const [shuffledLayers, setShuffledLayers] = useState<Record<number, typeof ARCHITECTURE_CHALLENGES[0]['layers'][0]['options']>>({});
@@ -55,6 +56,9 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
     });
 
     if (allCorrect) {
+      if (!completedChallenges.includes(currentArchIdx)) {
+        setCompletedChallenges(prev => [...prev, currentArchIdx]);
+      }
       onGameWin();
       confetti({
         particleCount: 80,
@@ -70,6 +74,12 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
     shuffleChallengeOptions(activeArchChallenge);
   };
 
+  const handleSwitchChallenge = (index: number) => {
+    setCurrentArchIdx(index);
+    setSelectedLayerOptions({});
+    setIsArchVerified(false);
+  };
+
   const archTitle = (isEn && activeArchChallenge.titleEn) ? activeArchChallenge.titleEn : activeArchChallenge.title;
   const archScenario = (isEn && activeArchChallenge.scenarioEn) ? activeArchChallenge.scenarioEn : activeArchChallenge.scenario;
   const archSuccess = (isEn && activeArchChallenge.successStoryEn) ? activeArchChallenge.successStoryEn : activeArchChallenge.successStory;
@@ -81,9 +91,14 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
       {/* Header & Challenge Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div className="space-y-1">
-          <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-            Target: {activeArchChallenge.targetUptime} Uptime • {activeArchChallenge.budgetGoal}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+              Target: {activeArchChallenge.targetUptime} Uptime • {activeArchChallenge.budgetGoal}
+            </span>
+            <span className="text-[11px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full border border-slate-700">
+              {isEn ? 'Challenge' : 'Thử Thách'} {currentArchIdx + 1} / {ARCHITECTURE_CHALLENGES.length}
+            </span>
+          </div>
           <h2 className="text-xl md:text-2xl font-black text-white">
             {archTitle}
           </h2>
@@ -91,15 +106,10 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              const nextIdx = (currentArchIdx + 1) % ARCHITECTURE_CHALLENGES.length;
-              setCurrentArchIdx(nextIdx);
-              setSelectedLayerOptions({});
-              setIsArchVerified(false);
-            }}
+            onClick={() => handleSwitchChallenge((currentArchIdx + 1) % ARCHITECTURE_CHALLENGES.length)}
             className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
           >
-            {isEn ? 'Switch Challenge' : 'Đổi Thử Thách'} ({currentArchIdx + 1}/{ARCHITECTURE_CHALLENGES.length})
+            {isEn ? 'Next Challenge' : 'Bài Tiếp Theo'} ({currentArchIdx + 1}/{ARCHITECTURE_CHALLENGES.length})
           </button>
           <button
             onClick={handleResetArch}
@@ -107,8 +117,48 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
             title="Xáo trộn lại vị trí các đáp án và làm lại"
           >
             <Shuffle className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Shuffle Options' : 'Xáo Đáp Án'}</span>
+            <span className="hidden sm:inline">{isEn ? 'Shuffle' : 'Xáo Đáp Án'}</span>
           </button>
+        </div>
+      </div>
+
+      {/* 8 Challenges Quick Selector Bar */}
+      <div className="bg-slate-950 p-2.5 rounded-2xl border border-slate-800 space-y-2">
+        <div className="flex items-center justify-between text-xs text-slate-400 font-semibold px-1">
+          <span className="flex items-center gap-1.5 text-sky-400">
+            <Layers className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Select Architecture Challenge (8 Total):' : 'Chọn Thử Thách Kiến Trúc (Tổng cộng 8 bài):'}</span>
+          </span>
+          <span className="text-amber-400 font-mono">
+            {isEn ? 'Completed:' : 'Đã vượt qua:'} {completedChallenges.length}/{ARCHITECTURE_CHALLENGES.length}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5">
+          {ARCHITECTURE_CHALLENGES.map((ch, idx) => {
+            const isCurrent = currentArchIdx === idx;
+            const isCompleted = completedChallenges.includes(idx);
+
+            let btnStyle = 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700';
+            if (isCurrent) {
+              btnStyle = 'bg-amber-500 text-slate-950 font-black border-amber-400 shadow-md ring-2 ring-amber-400/40';
+            } else if (isCompleted) {
+              btnStyle = 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300 font-bold';
+            }
+
+            return (
+              <button
+                key={ch.id}
+                onClick={() => handleSwitchChallenge(idx)}
+                className={`py-2 px-2 rounded-xl text-xs border text-center transition-all flex flex-col items-center justify-center gap-0.5 ${btnStyle}`}
+              >
+                <div className="flex items-center gap-1">
+                  <span>Bài {idx + 1}</span>
+                  {isCompleted && !isCurrent && <Check className="w-3 h-3 text-emerald-400" />}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

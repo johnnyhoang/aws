@@ -34,8 +34,8 @@ export const GamesHubView: React.FC = () => {
       num: 1,
       name: 'Kiến Trúc Sư AWS',
       nameEn: 'Arch Builder',
-      desc: 'Lắp ráp kiến trúc chuẩn Well-Architected cho 30k sinh viên',
-      descEn: 'Design Multi-Tier AWS architectures for campus loads',
+      desc: 'Lắp ráp 8 kịch bản kiến trúc chuẩn Well-Architected',
+      descEn: 'Design 8 Multi-Tier AWS architectures for enterprise loads',
       icon: Layers,
       color: 'amber'
     },
