@@ -1,5 +1,5 @@
 // Server-side storage adapter for AWS Cloud Mastery
-// Supports: Cloud KV / Serverless storage with resilient in-memory fallback
+// Multi-user ready schema for persistence across devices
 
 export interface UserProfile {
   email: string;
@@ -20,6 +20,15 @@ export interface UserProgressData {
   flashcardsMastered: string[];
   quizScores: Record<string, { score: number; total: number; date: string }>;
   studyHoursLogged: number;
+  
+  // Gamification & Maturity Level metrics
+  userXP: number;
+  userPoints: number;
+  currentStreak: number;
+  highestStreak: number;
+  totalCorrectAnswers: number;
+  totalIncorrectAnswers: number;
+  
   lastSyncedAt: string;
 }
 
@@ -27,8 +36,8 @@ export interface UserProgressData {
 const memoryUsers = new Map<string, UserProfile>();
 const memoryProgress = new Map<string, UserProgressData>();
 
-// Demo default seed if needed
-const defaultProgress = (email: string, name: string = 'Học viên AWS'): UserProgressData => ({
+// Default seed
+const defaultProgress = (email: string): UserProgressData => ({
   email,
   currentTrack: 'cloud_engineer',
   completedStages: [],
@@ -39,6 +48,12 @@ const defaultProgress = (email: string, name: string = 'Học viên AWS'): UserP
   flashcardsMastered: ['fc-1'],
   quizScores: {},
   studyHoursLogged: 8,
+  userXP: 450,
+  userPoints: 320,
+  currentStreak: 2,
+  highestStreak: 5,
+  totalCorrectAnswers: 12,
+  totalIncorrectAnswers: 3,
   lastSyncedAt: new Date().toISOString()
 });
 
@@ -101,6 +116,12 @@ export async function mergeUserProgress(
       ...(incomingData.quizScores || {})
     },
     studyHoursLogged: Math.max(current.studyHoursLogged, incomingData.studyHoursLogged || 0),
+    userXP: Math.max(current.userXP, incomingData.userXP || 0),
+    userPoints: Math.max(current.userPoints, incomingData.userPoints || 0),
+    currentStreak: incomingData.currentStreak ?? current.currentStreak,
+    highestStreak: Math.max(current.highestStreak, incomingData.highestStreak || 0),
+    totalCorrectAnswers: Math.max(current.totalCorrectAnswers, incomingData.totalCorrectAnswers || 0),
+    totalIncorrectAnswers: Math.max(current.totalIncorrectAnswers, incomingData.totalIncorrectAnswers || 0),
     lastSyncedAt: new Date().toISOString()
   };
 

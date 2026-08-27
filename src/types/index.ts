@@ -182,3 +182,31 @@ export interface StudyPlanWeek {
     duration: string;
   }[];
 }
+
+// AWS Cloud Maturity Level & Gamification System
+export interface AWSMaturityLevel {
+  level: number;
+  title: string;
+  titleEn: string;
+  badge: string;
+  color: string;
+  minXP: number;
+  maxXP: number;
+  maturityDescription: string;
+  maturityDescriptionEn: string;
+}
+
+export interface UserLevelInfo {
+  level: number;
+  title: string;
+  titleEn: string;
+  badge: string;
+  color: string;
+  currentXP: number;
+  currentLevelMinXP: number;
+  nextLevelXP: number;
+  progressPercent: number; // 0 - 100%
+  xpToNextLevel: number;
+  maturityDescription: string;
+  maturityDescriptionEn: string;
+}

@@ -4,6 +4,7 @@ import { CERT_STAGES } from '../data/roadmapData';
 import { DEEP_DIVE_LESSONS } from '../data/deepDiveLessons';
 import { PORTFOLIO_PROJECTS } from '../data/portfolioProjects';
 import { CloudSyncModal } from './CloudSyncModal';
+import { UserLevelModal } from './UserLevelModal';
 import { 
   Cloud, 
   Layers, 
@@ -13,14 +14,15 @@ import {
   BrainCircuit, 
   GraduationCap, 
   CalendarDays, 
-  Library,
-  Sparkles,
-  Server,
-  Code2,
-  Smartphone,
-  UserCheck,
-  Tv,
-  Gamepad2
+  Library, 
+  Server, 
+  Code2, 
+  Smartphone, 
+  UserCheck, 
+  Tv, 
+  Gamepad2,
+  Flame,
+  Coins
 } from 'lucide-react';
 
 export type NavTab = 
@@ -48,10 +50,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     completedLessons, 
     completedProjects,
     studyHoursLogged,
-    userProfile
+    userProfile,
+    levelInfo,
+    userPoints,
+    currentStreak
   } = useLearning();
 
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
 
   const totalItems = CERT_STAGES.length + DEEP_DIVE_LESSONS.length + PORTFOLIO_PROJECTS.length;
   const completedCount = completedStages.length + completedLessons.length + completedProjects.length;
@@ -74,19 +80,54 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     <>
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-xl">
         
-        {/* Top Banner: Target info & Quick Cloud Sync */}
-        <div className="bg-gradient-to-r from-amber-600/20 via-sky-600/20 to-emerald-600/20 border-b border-slate-800/80 px-3 sm:px-4 py-1 text-xs text-slate-300 flex items-center justify-between gap-2 overflow-hidden">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="inline-flex items-center gap-1 font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20 text-[11px] whitespace-nowrap">
-              <Sparkles className="w-3 h-3 flex-shrink-0" />
-              <span>Phòng IT Đại Học Mỹ</span>
+        {/* Top Banner: User Maturity Level & Gamification HUD */}
+        <div className="bg-gradient-to-r from-amber-600/20 via-purple-600/20 to-sky-600/20 border-b border-slate-800/80 px-3 sm:px-4 py-1.5 text-xs text-slate-300 flex items-center justify-between gap-2 overflow-hidden">
+          
+          {/* Level Badge Button */}
+          <button 
+            onClick={() => setIsLevelModalOpen(true)}
+            className="flex items-center gap-1.5 min-w-0 bg-slate-950/80 hover:bg-slate-900 px-2.5 py-0.5 rounded-full border border-amber-500/30 transition-all cursor-pointer group"
+            title="Xem chi tiết Cấp độ Trưởng thành Đám mây AWS & Thống kê"
+          >
+            <span className="text-xs">{levelInfo.badge}</span>
+            <span className="font-bold text-amber-300 text-[11px] truncate group-hover:text-amber-200">
+              Lv.{levelInfo.level} {levelInfo.titleEn}
             </span>
-            <span className="hidden md:inline text-slate-400 text-xs truncate">
-              (Kent State, Ohio State, Big Ten...)
-            </span>
-          </div>
+            <div className="hidden sm:flex items-center gap-1 text-[10px] text-slate-400 font-mono">
+              <span className="w-12 bg-slate-800 rounded-full h-1.5 overflow-hidden inline-block ml-1">
+                <span 
+                  className="bg-amber-400 h-full block rounded-full" 
+                  style={{ width: `${levelInfo.progressPercent}%` }}
+                />
+              </span>
+              <span>{levelInfo.progressPercent}%</span>
+            </div>
+          </button>
 
+          {/* Quick Stats & Cloud Sync */}
           <div className="flex items-center gap-2 text-slate-300 font-medium flex-shrink-0">
+            
+            {/* Streak flame */}
+            <div 
+              onClick={() => setIsLevelModalOpen(true)}
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300 text-[11px] font-bold cursor-pointer"
+              title="Chuỗi trả lời đúng liên tiếp"
+            >
+              <Flame className="w-3 h-3 text-orange-400 animate-bounce" />
+              <span>{currentStreak}x</span>
+            </div>
+
+            {/* Points */}
+            <div 
+              onClick={() => setIsLevelModalOpen(true)}
+              className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold cursor-pointer"
+              title="Điểm xếp hạng học tập"
+            >
+              <Coins className="w-3 h-3 text-amber-400" />
+              <span>{userPoints} pts</span>
+            </div>
+
+            {/* Sync Button */}
             <button
               onClick={() => setIsSyncModalOpen(true)}
               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-all ${
@@ -98,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               {userProfile ? (
                 <>
                   <UserCheck className="w-3 h-3 text-emerald-400" />
-                  <span className="truncate max-w-[100px] sm:max-w-none">{userProfile.name}</span>
+                  <span className="truncate max-w-[80px] sm:max-w-none">{userProfile.name}</span>
                 </>
               ) : (
                 <>
@@ -108,12 +149,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               )}
             </button>
 
-            <span className="hidden sm:flex items-center gap-1 text-[11px] text-slate-300">
+            <span className="hidden md:flex items-center gap-1 text-[11px] text-slate-300">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <strong>{studyHoursLogged}h</strong>
             </span>
 
-            <span className="text-[11px]">
+            <span className="text-[11px] hidden sm:inline">
               Tiến độ: <strong className="text-amber-300">{progressPercent}%</strong>
             </span>
           </div>
@@ -178,14 +219,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
+
               return (
                 <button
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
                     isActive
-                      ? 'bg-slate-800 text-amber-400 border border-amber-500/30 shadow-inner'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                      ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm shadow-amber-500/10'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
@@ -195,47 +237,43 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             })}
           </nav>
         </div>
-
-        {/* Progress Bar Line */}
-        <div className="w-full bg-slate-800 h-1">
-          <div 
-            className="bg-gradient-to-r from-amber-500 via-sky-500 to-emerald-500 h-1 transition-all duration-500 ease-out"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
       </header>
 
-      {/* Mobile Sticky Bottom Navigation Bar (Thumb Friendly & Clean 1-Row Labels) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-1 py-1 flex items-center justify-around text-[9.5px] font-medium text-slate-400 shadow-2xl safe-bottom">
-        {navItems.slice(0, 6).map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onTabChange(item.id)}
-              className={`flex flex-col items-center py-1 px-1 rounded-lg transition-colors flex-1 ${
-                isActive ? 'text-amber-400 font-bold' : 'hover:text-slate-200'
-              }`}
-            >
-              <Icon className="w-4 h-4 mb-0.5 flex-shrink-0" />
-              <span className="truncate max-w-[50px]">{item.mobileLabel}</span>
-            </button>
-          );
-        })}
-        <button
-          onClick={() => setIsSyncModalOpen(true)}
-          className="flex flex-col items-center py-1 px-1 rounded-lg text-sky-400 hover:text-sky-300 font-bold flex-1"
-        >
-          <Cloud className="w-4 h-4 mb-0.5 flex-shrink-0" />
-          <span>Đồng Bộ</span>
-        </button>
+      {/* Mobile Bottom Navigation Bar (Fixed 1-row) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/98 backdrop-blur-lg border-t border-slate-800 px-1 py-1 shadow-2xl safe-area-pb">
+        <div className="flex items-center justify-around">
+          {navItems.slice(0, 7).map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                className={`flex flex-col items-center justify-center py-1 px-1 rounded-lg transition-colors flex-1 min-w-0 ${
+                  isActive ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-full">
+                  {item.mobileLabel}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
-      {/* Cloud Sync Modal Dialog */}
-      <CloudSyncModal 
+      {/* Cloud Sync Modal */}
+      <CloudSyncModal
         isOpen={isSyncModalOpen}
         onClose={() => setIsSyncModalOpen(false)}
+      />
+
+      {/* User Maturity Level & Stats Modal */}
+      <UserLevelModal
+        isOpen={isLevelModalOpen}
+        onClose={() => setIsLevelModalOpen(false)}
       />
     </>
   );
