@@ -10,6 +10,7 @@ import { calculateFundamentalLevel } from '../data/fundamentals/maturityLevelsDa
 import { CloudSyncModal } from './CloudSyncModal';
 import { UserLevelModal } from './UserLevelModal';
 import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevelModal';
+import { ReadingModeModal } from './ReadingModeModal';
 import { 
   Cloud, 
   Layers, 
@@ -29,7 +30,8 @@ import {
   Flame,
   Coins,
   Sparkles,
-  Terminal
+  Terminal,
+  Glasses
 } from 'lucide-react';
 
 export type NavTab = 
@@ -62,11 +64,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     userProfile,
     levelInfo,
     userPoints,
-    currentStreak
+    currentStreak,
+    fontSizeScale,
+    isReadingMode
   } = useLearning();
 
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
+  const [isReadingModalOpen, setIsReadingModalOpen] = useState(false);
 
   // Dynamic calculations based on active portal mode
   const isFundamentals = portalMode === 'fundamentals';
@@ -168,6 +173,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               <Coins className="w-3 h-3 text-amber-400" />
               <span>{userPoints} pts</span>
             </div>
+
+            {/* Reading Mode / Font Size Button */}
+            <button
+              onClick={() => setIsReadingModalOpen(true)}
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+                (fontSizeScale && fontSizeScale > 100) || isReadingMode
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
+                  : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white'
+              }`}
+              title="Tùy chỉnh cỡ chữ & Chế độ đọc chữ lớn"
+              aria-label="Tùy chỉnh cỡ chữ & Chế độ đọc chữ lớn"
+            >
+              <Glasses className="w-3 h-3" />
+              <span>Aa {(fontSizeScale && fontSizeScale > 100) ? `${fontSizeScale}%` : 'Chữ Lớn'}</span>
+            </button>
 
             {/* Sync Button */}
             <button
@@ -320,6 +340,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
       <CloudSyncModal
         isOpen={isSyncModalOpen}
         onClose={() => setIsSyncModalOpen(false)}
+      />
+
+      {/* Reading Mode & Font Size Modal */}
+      <ReadingModeModal
+        isOpen={isReadingModalOpen}
+        onClose={() => setIsReadingModalOpen(false)}
       />
 
       {/* User Maturity Level & Stats Modal */}

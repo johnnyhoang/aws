@@ -34,6 +34,10 @@ interface LearningState {
   userProfile: UserProfile | null;
   syncStatus: 'synced' | 'syncing' | 'offline' | 'unsaved';
   lastSyncedAt: string | null;
+
+  // Accessibility & Reading Mode State
+  fontSizeScale: number; // 100% to 220%
+  isReadingMode: boolean;
 }
 
 export interface QuizAnswerFeedback {
@@ -67,6 +71,13 @@ interface LearningContextType extends LearningState {
   logoutUser: () => void;
   forceSyncNow: () => Promise<void>;
   resetAllProgress: () => void;
+
+  // Accessibility actions
+  setFontSizeScale: (scale: number) => void;
+  toggleReadingMode: () => void;
+  increaseFontSize: () => void;
+  decreaseFontSize: () => void;
+  resetFontSize: () => void;
 }
 
 const STORAGE_KEY = 'aws_cloud_mastery_learning_state_v3';
@@ -90,7 +101,9 @@ const defaultState: LearningState = {
   totalIncorrectAnswers: 3,
   userProfile: null,
   syncStatus: 'synced',
-  lastSyncedAt: null
+  lastSyncedAt: null,
+  fontSizeScale: 100,
+  isReadingMode: false
 };
 
 const LearningContext = createContext<LearningContextType | undefined>(undefined);
@@ -124,6 +137,25 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Ignore storage errors
     }
   }, [state]);
+
+  // Apply font size scale and reading mode class to document
+  useEffect(() => {
+    try {
+      const root = document.documentElement;
+      const basePx = 16;
+      const scale = state.fontSizeScale || 100;
+      const scaledPx = (scale / 100) * basePx;
+      root.style.fontSize = `${scaledPx}px`;
+
+      if (state.isReadingMode) {
+        document.body.classList.add('reading-mode-active');
+      } else {
+        document.body.classList.remove('reading-mode-active');
+      }
+    } catch {
+      // Ignore DOM errors
+    }
+  }, [state.fontSizeScale, state.isReadingMode]);
 
   // Server Synchronization function
   const syncWithCloud = useCallback(async (currentState: LearningState) => {
@@ -495,6 +527,44 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setState((prev) => ({ ...prev, portalMode: mode }));
   };
 
+  const setFontSizeScale = (scale: number) => {
+    const clamped = Math.max(100, Math.min(220, Math.round(scale)));
+    setState((prev) => ({ ...prev, fontSizeScale: clamped }));
+  };
+
+  const toggleReadingMode = () => {
+    setState((prev) => {
+      const nextMode = !prev.isReadingMode;
+      return {
+        ...prev,
+        isReadingMode: nextMode,
+        fontSizeScale: nextMode && (prev.fontSizeScale === 100 || !prev.fontSizeScale) ? 135 : prev.fontSizeScale
+      };
+    });
+  };
+
+  const increaseFontSize = () => {
+    setState((prev) => ({
+      ...prev,
+      fontSizeScale: Math.min(220, (prev.fontSizeScale || 100) + 15)
+    }));
+  };
+
+  const decreaseFontSize = () => {
+    setState((prev) => ({
+      ...prev,
+      fontSizeScale: Math.max(100, (prev.fontSizeScale || 100) - 15)
+    }));
+  };
+
+  const resetFontSize = () => {
+    setState((prev) => ({
+      ...prev,
+      fontSizeScale: 100,
+      isReadingMode: false
+    }));
+  };
+
   const resetAllProgress = () => {
     setState(defaultState);
   };
@@ -523,7 +593,12 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         loginUser,
         logoutUser,
         forceSyncNow,
-        resetAllProgress
+        resetAllProgress,
+        setFontSizeScale,
+        toggleReadingMode,
+        increaseFontSize,
+        decreaseFontSize,
+        resetFontSize
       }}
     >
       {children}

@@ -1,6 +1,8 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { LearningProvider, useLearning } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
+import { ReadingModeFab } from './components/ReadingModeFab';
+import { ReadingModeModal } from './components/ReadingModeModal';
 import { Cloud, Terminal, Loader2 } from 'lucide-react';
 
 // Lazy-loaded AWS Portal Views
@@ -37,6 +39,7 @@ const ViewFallback: React.FC = () => (
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<NavTab>('roadmap');
+  const [isReadingModalOpen, setIsReadingModalOpen] = useState<boolean>(false);
   const { portalMode } = useLearning();
 
   const isFundamentals = portalMode === 'fundamentals';
@@ -160,6 +163,15 @@ function AppContent() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Action Button for Quick Large Text & Reading Mode */}
+      <ReadingModeFab onOpenModal={() => setIsReadingModalOpen(true)} />
+
+      {/* Global Reading Mode & Custom Font Size Modal */}
+      <ReadingModeModal
+        isOpen={isReadingModalOpen}
+        onClose={() => setIsReadingModalOpen(false)}
+      />
     </div>
   );
 }

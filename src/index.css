@@ -25,3 +25,38 @@
   background: #475569;
 }
 
+/* Enhanced Elderly & High-Readability Reading Mode Styles */
+body.reading-mode-active {
+  line-height: 1.85 !important;
+  letter-spacing: 0.025em !important;
+}
+
+body.reading-mode-active p,
+body.reading-mode-active li,
+body.reading-mode-active .text-xs,
+body.reading-mode-active .text-sm,
+body.reading-mode-active .text-base {
+  line-height: 1.85 !important;
+}
+
+body.reading-mode-active .text-slate-400,
+body.reading-mode-active .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+body.reading-mode-active .text-slate-300 {
+  color: #f8fafc !important;
+}
+
+body.reading-mode-active .bg-slate-900\/90,
+body.reading-mode-active .bg-slate-900\/95,
+body.reading-mode-active .bg-slate-900 {
+  background-color: #0b1120 !important;
+  border-color: #334155 !important;
+}
+
+body.reading-mode-active button {
+  min-height: 40px;
+}
+
+
