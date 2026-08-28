@@ -17,6 +17,8 @@ export function fisherYatesShuffle<T>(items: readonly T[] | T[]): T[] {
   return result;
 }
 
+export const shuffleArray = fisherYatesShuffle;
+
 /**
  * Shuffles indices and returns mapping to track original positions.
  */
@@ -24,3 +26,4 @@ export function getShuffledIndices(length: number): number[] {
   const indices = Array.from({ length }, (_, i) => i);
   return fisherYatesShuffle(indices);
 }
+

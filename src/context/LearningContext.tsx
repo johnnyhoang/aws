@@ -8,7 +8,10 @@ export interface UserProfile {
   careerTrack: CareerTrack;
 }
 
+export type PortalMode = 'fundamentals' | 'aws';
+
 interface LearningState {
+  portalMode: PortalMode;
   currentTrack: CareerTrack;
   completedStages: string[];
   completedLessons: string[];
@@ -44,15 +47,20 @@ export interface QuizAnswerFeedback {
 
 interface LearningContextType extends LearningState {
   levelInfo: UserLevelInfo;
+  setPortalMode: (mode: PortalMode) => void;
   setTrack: (track: CareerTrack) => void;
   toggleStageCompleted: (stageId: string) => void;
+  toggleStageCompletion: (stageId: string) => void;
   toggleLessonCompleted: (lessonId: string) => void;
+  toggleLessonCompletion: (lessonId: string) => void;
   toggleProjectCompleted: (projectId: string) => void;
+  toggleProjectCompletion: (projectId: string) => void;
   toggleTaskCompleted: (taskId: string) => void;
   toggleLessonBookmark: (lessonId: string) => void;
   toggleFlashcardMastered: (cardId: string) => void;
   saveQuizResult: (quizKey: string, score: number, total: number) => void;
   logStudyHours: (hours: number) => void;
+  addStudyHours: (hours: number) => void;
   recordQuizAnswer: (isCorrect: boolean, difficulty: string) => QuizAnswerFeedback;
   addBonusXP: (xp: number, points?: number) => void;
   loginUser: (email: string, name?: string) => Promise<boolean>;
@@ -64,6 +72,7 @@ interface LearningContextType extends LearningState {
 const STORAGE_KEY = 'aws_cloud_mastery_learning_state_v3';
 
 const defaultState: LearningState = {
+  portalMode: 'fundamentals',
   currentTrack: 'cloud_engineer',
   completedStages: [],
   completedLessons: ['networking-security-core'],
@@ -496,6 +505,10 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }));
   };
 
+  const setPortalMode = (mode: PortalMode) => {
+    setState((prev) => ({ ...prev, portalMode: mode }));
+  };
+
   const resetAllProgress = () => {
     setState(defaultState);
   };
@@ -505,15 +518,20 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         ...state,
         levelInfo,
+        setPortalMode,
         setTrack,
         toggleStageCompleted,
+        toggleStageCompletion: toggleStageCompleted,
         toggleLessonCompleted,
+        toggleLessonCompletion: toggleLessonCompleted,
         toggleProjectCompleted,
+        toggleProjectCompletion: toggleProjectCompleted,
         toggleTaskCompleted,
         toggleLessonBookmark,
         toggleFlashcardMastered,
         saveQuizResult,
         logStudyHours,
+        addStudyHours: logStudyHours,
         recordQuizAnswer,
         addBonusXP,
         loginUser,

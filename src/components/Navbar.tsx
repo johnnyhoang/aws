@@ -3,8 +3,13 @@ import { useLearning } from '../context/LearningContext';
 import { CERT_STAGES } from '../data/roadmapData';
 import { DEEP_DIVE_LESSONS } from '../data/deepDiveLessons';
 import { PORTFOLIO_PROJECTS } from '../data/portfolioProjects';
+import { FUNDAMENTAL_DOMAINS } from '../data/fundamentals/domainsData';
+import { FUNDAMENTAL_DEEP_DIVE_LESSONS } from '../data/fundamentals/deepDiveLessonsData';
+import { FUNDAMENTAL_PROJECTS } from '../data/fundamentals/portfolioProjectsData';
+import { calculateFundamentalLevel } from '../data/fundamentals/maturityLevelsData';
 import { CloudSyncModal } from './CloudSyncModal';
 import { UserLevelModal } from './UserLevelModal';
+import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevelModal';
 import { 
   Cloud, 
   Layers, 
@@ -22,7 +27,9 @@ import {
   Tv, 
   Gamepad2,
   Flame,
-  Coins
+  Coins,
+  Sparkles,
+  Terminal
 } from 'lucide-react';
 
 export type NavTab = 
@@ -44,6 +51,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const { 
+    portalMode,
+    setPortalMode,
     currentTrack, 
     setTrack, 
     completedStages, 
@@ -59,12 +68,19 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
 
-  const totalItems = CERT_STAGES.length + DEEP_DIVE_LESSONS.length + PORTFOLIO_PROJECTS.length;
+  // Dynamic calculations based on active portal mode
+  const isFundamentals = portalMode === 'fundamentals';
+  const fundamentalLevelInfo = calculateFundamentalLevel(userPoints);
+
+  const totalItems = isFundamentals
+    ? FUNDAMENTAL_DOMAINS.length + FUNDAMENTAL_DEEP_DIVE_LESSONS.length + FUNDAMENTAL_PROJECTS.length
+    : CERT_STAGES.length + DEEP_DIVE_LESSONS.length + PORTFOLIO_PROJECTS.length;
+
   const completedCount = completedStages.length + completedLessons.length + completedProjects.length;
   const progressPercent = Math.min(100, Math.round((completedCount / totalItems) * 100));
 
   const navItems: { id: NavTab; label: string; mobileLabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: 'roadmap', label: 'Lộ Trình', mobileLabel: 'Lộ Trình', icon: Layers },
+    { id: 'roadmap', label: isFundamentals ? '8 Lĩnh Vực' : 'Lộ Trình', mobileLabel: 'Lộ Trình', icon: Layers },
     { id: 'video', label: 'Học Qua Video', mobileLabel: 'Video', icon: Tv },
     { id: 'games', label: 'Game Học Tập', mobileLabel: 'Games', icon: Gamepad2 },
     { id: 'deepdive', label: 'Chuyên Đề Kỹ Năng', mobileLabel: 'Chuyên Đề', icon: BookOpen },
@@ -80,27 +96,53 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     <>
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-xl">
         
-        {/* Top Banner: User Maturity Level & Gamification HUD */}
-        <div className="bg-gradient-to-r from-amber-600/20 via-purple-600/20 to-sky-600/20 border-b border-slate-800/80 px-3 sm:px-4 py-1.5 text-xs text-slate-300 flex items-center justify-between gap-2 overflow-hidden">
+        {/* Top Banner: Portal Switcher & Gamification HUD */}
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 px-3 sm:px-4 py-1.5 text-xs text-slate-300 flex items-center justify-between gap-2 overflow-hidden">
           
-          {/* Level Badge Button */}
+          {/* Dual Portal Switcher Pill */}
+          <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-full border border-slate-700/80">
+            <button
+              onClick={() => setPortalMode('fundamentals')}
+              className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+                isFundamentals
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>IT Fundamentals</span>
+            </button>
+            <button
+              onClick={() => setPortalMode('aws')}
+              className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+                !isFundamentals
+                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Cloud className="w-3 h-3" />
+              <span>AWS Cloud</span>
+            </button>
+          </div>
+
+          {/* User Maturity Level Badge Button */}
           <button 
             onClick={() => setIsLevelModalOpen(true)}
             className="flex items-center gap-1.5 min-w-0 bg-slate-950/80 hover:bg-slate-900 px-2.5 py-0.5 rounded-full border border-amber-500/30 transition-all cursor-pointer group"
-            title="Xem chi tiết Cấp độ Trưởng thành Đám mây AWS & Thống kê"
+            title="Xem chi tiết Cấp độ Trưởng thành & Thống kê"
           >
-            <span className="text-xs">{levelInfo.badge}</span>
+            <span className="text-xs">{isFundamentals ? fundamentalLevelInfo.badge : levelInfo.badge}</span>
             <span className="font-bold text-amber-300 text-[11px] truncate group-hover:text-amber-200">
-              Lv.{levelInfo.level} {levelInfo.titleEn}
+              Lv.{isFundamentals ? fundamentalLevelInfo.level : levelInfo.level} {isFundamentals ? fundamentalLevelInfo.titleEn : levelInfo.titleEn}
             </span>
             <div className="hidden sm:flex items-center gap-1 text-[10px] text-slate-400 font-mono">
               <span className="w-12 bg-slate-800 rounded-full h-1.5 overflow-hidden inline-block ml-1">
                 <span 
                   className="bg-amber-400 h-full block rounded-full" 
-                  style={{ width: `${levelInfo.progressPercent}%` }}
+                  style={{ width: `${isFundamentals ? fundamentalLevelInfo.progressPercent : levelInfo.progressPercent}%` }}
                 />
               </span>
-              <span>{levelInfo.progressPercent}%</span>
+              <span>{isFundamentals ? fundamentalLevelInfo.progressPercent : levelInfo.progressPercent}%</span>
             </div>
           </button>
 
@@ -169,19 +211,29 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               className="flex items-center gap-2.5 cursor-pointer min-w-0" 
               onClick={() => onTabChange('roadmap')}
             >
-              <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-amber-500 via-orange-600 to-sky-600 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0">
-                <Cloud className="w-4 h-4 md:w-5 md:h-5 text-white" />
+              <div className={`w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br ${
+                isFundamentals 
+                  ? 'from-amber-500 via-orange-600 to-purple-600' 
+                  : 'from-amber-500 via-orange-600 to-sky-600'
+              } flex items-center justify-center shadow-lg flex-shrink-0`}>
+                {isFundamentals ? <Terminal className="w-4 h-4 md:w-5 md:h-5 text-white" /> : <Cloud className="w-4 h-4 md:w-5 md:h-5 text-white" />}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-sm md:text-lg text-white tracking-tight truncate">
-                    AWS Mastery
+                    {isFundamentals ? 'IT Fundamentals' : 'AWS Mastery'}
                   </span>
-                  <span className="text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded flex-shrink-0">
-                    Higher-Ed
+                  <span className={`text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 rounded flex-shrink-0 ${
+                    isFundamentals 
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
+                      : 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
+                  }`}>
+                    {isFundamentals ? 'Pre-AWS' : 'Higher-Ed'}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 hidden sm:block truncate">Lộ trình chinh phục Đám mây & Chứng chỉ AWS</p>
+                <p className="text-[11px] text-slate-400 hidden sm:block truncate">
+                  {isFundamentals ? 'Master toàn diện 8 lĩnh vực IT sẵn sàng cho Cloud' : 'Lộ trình chinh phục Đám mây & Chứng chỉ AWS'}
+                </p>
               </div>
             </div>
 
@@ -196,7 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
                 }`}
               >
                 <Server className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Systems / Cloud</span>
+                <span className="hidden sm:inline">Systems / Infra</span>
                 <span className="sm:hidden">Systems</span>
               </button>
               <button
@@ -208,7 +260,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
                 }`}
               >
                 <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Software Dev</span>
+                <span className="hidden sm:inline">Developer / Web</span>
                 <span className="sm:hidden">Developer</span>
               </button>
             </div>
@@ -271,10 +323,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
       />
 
       {/* User Maturity Level & Stats Modal */}
-      <UserLevelModal
-        isOpen={isLevelModalOpen}
-        onClose={() => setIsLevelModalOpen(false)}
-      />
+      {isFundamentals ? (
+        <FundamentalsUserLevelModal
+          isOpen={isLevelModalOpen}
+          onClose={() => setIsLevelModalOpen(false)}
+        />
+      ) : (
+        <UserLevelModal
+          isOpen={isLevelModalOpen}
+          onClose={() => setIsLevelModalOpen(false)}
+        />
+      )}
     </>
   );
 };
