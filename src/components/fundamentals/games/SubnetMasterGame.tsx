@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLearning } from '../../../context/LearningContext';
 import { shuffleArray } from '../../../utils/shuffle';
 import { Network, CheckCircle2, XCircle, RefreshCw, Trophy, Zap, HelpCircle } from 'lucide-react';
@@ -78,7 +78,6 @@ export const SubnetMasterGame: React.FC = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [showHint, setShowHint] = useState(false);
@@ -86,14 +85,9 @@ export const SubnetMasterGame: React.FC = () => {
 
   const challenge = CHALLENGES[currentIdx];
 
-  useEffect(() => {
-    if (challenge) {
-      setShuffledOptions(shuffleArray(challenge.options));
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setShowHint(false);
-    }
-  }, [currentIdx]);
+  const shuffledOptions = useMemo(() => {
+    return challenge ? shuffleArray(challenge.options) : [];
+  }, [challenge]);
 
   const handleOptionSelect = (option: string) => {
     if (isAnswered) return;
@@ -112,6 +106,9 @@ export const SubnetMasterGame: React.FC = () => {
   const handleNext = () => {
     if (currentIdx < CHALLENGES.length - 1) {
       setCurrentIdx(prev => prev + 1);
+      setSelectedOption(null);
+      setIsAnswered(false);
+      setShowHint(false);
     } else {
       setGameCompleted(true);
     }
@@ -119,6 +116,9 @@ export const SubnetMasterGame: React.FC = () => {
 
   const handleRestart = () => {
     setCurrentIdx(0);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setShowHint(false);
     setScore(0);
     setStreak(0);
     setGameCompleted(false);

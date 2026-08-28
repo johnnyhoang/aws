@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FUNDAMENTAL_QUIZ_QUESTIONS } from '../../data/fundamentals/quizQuestionsData';
-import { FundamentalQuizQuestion } from '../../types/fundamentals';
 import { FUNDAMENTAL_DOMAINS } from '../../data/fundamentals/domainsData';
 import { useLearning } from '../../context/LearningContext';
 import { shuffleArray } from '../../utils/shuffle';
@@ -19,7 +18,7 @@ import {
 export const FundamentalsExamSimulatorView: React.FC = () => {
   const { addStudyHours } = useLearning();
   const [selectedDomain, setSelectedDomain] = useState<string>('all');
-  const [quizQuestions, setQuizQuestions] = useState<FundamentalQuizQuestion[]>([]);
+  const [quizSeed, setQuizSeed] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [isAnswerRevealed, setIsAnswerRevealed] = useState<Record<number, boolean>>({});
@@ -27,29 +26,30 @@ export const FundamentalsExamSimulatorView: React.FC = () => {
   const [streak, setStreak] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Initialize and shuffle questions based on filter
-  useEffect(() => {
+  // Derived and randomized quiz questions via useMemo
+  const quizQuestions = useMemo(() => {
+    void quizSeed;
     let filtered = FUNDAMENTAL_QUIZ_QUESTIONS;
     if (selectedDomain !== 'all') {
       filtered = FUNDAMENTAL_QUIZ_QUESTIONS.filter(q => q.domainId === selectedDomain);
     }
-    
-    // Deep shuffle questions and their options using Fisher-Yates
-    const randomized = shuffleArray(filtered).map(q => ({
+    return shuffleArray(filtered).map(q => ({
       ...q,
       options: shuffleArray(q.options)
     }));
+  }, [selectedDomain, quizSeed]);
 
-    setQuizQuestions(randomized);
+  const currentQ = quizQuestions[currentIdx];
+
+  const handleDomainChange = (domain: string) => {
+    setSelectedDomain(domain);
     setCurrentIdx(0);
     setUserAnswers({});
     setIsAnswerRevealed({});
     setScore(0);
     setStreak(0);
     setIsSubmitted(false);
-  }, [selectedDomain]);
-
-  const currentQ = quizQuestions[currentIdx];
+  };
 
   const handleSelectOption = (optionId: string) => {
     if (isAnswerRevealed[currentIdx] || isSubmitted) return;
@@ -68,15 +68,7 @@ export const FundamentalsExamSimulatorView: React.FC = () => {
   };
 
   const handleRestart = () => {
-    let filtered = FUNDAMENTAL_QUIZ_QUESTIONS;
-    if (selectedDomain !== 'all') {
-      filtered = FUNDAMENTAL_QUIZ_QUESTIONS.filter(q => q.domainId === selectedDomain);
-    }
-    const randomized = shuffleArray(filtered).map(q => ({
-      ...q,
-      options: shuffleArray(q.options)
-    }));
-    setQuizQuestions(randomized);
+    setQuizSeed(s => s + 1);
     setCurrentIdx(0);
     setUserAnswers({});
     setIsAnswerRevealed({});
@@ -140,7 +132,7 @@ export const FundamentalsExamSimulatorView: React.FC = () => {
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
         <Filter className="w-4 h-4 text-slate-500 flex-shrink-0" />
         <button
-          onClick={() => setSelectedDomain('all')}
+          onClick={() => handleDomainChange('all')}
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedDomain === 'all'
               ? 'bg-emerald-600 text-white shadow-md'
@@ -152,7 +144,7 @@ export const FundamentalsExamSimulatorView: React.FC = () => {
         {FUNDAMENTAL_DOMAINS.map(d => (
           <button
             key={d.id}
-            onClick={() => setSelectedDomain(d.id)}
+            onClick={() => handleDomainChange(d.id)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               selectedDomain === d.id
                 ? 'bg-emerald-600 text-white shadow-md'

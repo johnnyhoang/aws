@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLearning } from '../../../context/LearningContext';
 import { shuffleArray } from '../../../utils/shuffle';
 import { ShieldCheck, CheckCircle2, XCircle, RefreshCw, Trophy, Zap } from 'lucide-react';
@@ -66,20 +66,15 @@ export const PortHunterGame: React.FC = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedPort, setSelectedPort] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [shuffledOptions, setShuffledOptions] = useState<number[]>([]);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
 
   const item = PORT_QUESTIONS[currentIdx];
 
-  useEffect(() => {
-    if (item) {
-      setShuffledOptions(shuffleArray(item.options));
-      setSelectedPort(null);
-      setIsAnswered(false);
-    }
-  }, [currentIdx]);
+  const shuffledOptions = useMemo(() => {
+    return item ? shuffleArray(item.options) : [];
+  }, [item]);
 
   const handleSelect = (port: number) => {
     if (isAnswered) return;
@@ -89,7 +84,7 @@ export const PortHunterGame: React.FC = () => {
     if (port === item.correctPort) {
       setScore(prev => prev + 100 + streak * 20);
       setStreak(prev => prev + 1);
-      addStudyHours(0.05);
+      addStudyHours(0.1);
     } else {
       setStreak(0);
     }
@@ -98,6 +93,8 @@ export const PortHunterGame: React.FC = () => {
   const handleNext = () => {
     if (currentIdx < PORT_QUESTIONS.length - 1) {
       setCurrentIdx(prev => prev + 1);
+      setSelectedPort(null);
+      setIsAnswered(false);
     } else {
       setGameCompleted(true);
     }
@@ -105,6 +102,8 @@ export const PortHunterGame: React.FC = () => {
 
   const handleRestart = () => {
     setCurrentIdx(0);
+    setSelectedPort(null);
+    setIsAnswered(false);
     setScore(0);
     setStreak(0);
     setGameCompleted(false);

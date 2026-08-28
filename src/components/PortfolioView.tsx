@@ -4,7 +4,6 @@ import { PORTFOLIO_PROJECTS } from '../data/portfolioProjects';
 import { PortfolioProject } from '../types';
 import confetti from 'canvas-confetti';
 import { 
-  FolderGit2, 
   CheckCircle2, 
   Circle, 
   Terminal, 
@@ -12,10 +11,8 @@ import {
   Sparkles, 
   Copy, 
   Check, 
-  ExternalLink, 
-  MessageSquareQuote, 
-  ShieldCheck, 
-  Zap, 
+  MessageSquareQuote,
+  Zap,
   GitBranch
 } from 'lucide-react';
 

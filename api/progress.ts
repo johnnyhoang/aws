@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getUserProgress, saveUserProgress, UserProgressData } from './_db';
+import { getUserProgress, saveUserProgress } from './_db';
 import { URL } from 'url';
 
 export default async function handler(req: IncomingMessage & { body?: any }, res: ServerResponse) {
@@ -60,7 +60,7 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
 
     res.statusCode = 405;
     res.end(JSON.stringify({ error: 'Phương thức không được hỗ trợ.' }));
-  } catch (err) {
+  } catch {
     res.statusCode = 500;
     res.end(JSON.stringify({ error: 'Lỗi máy chủ khi truy xuất tiến độ.' }));
   }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SECURITY_VULNERABILITIES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { ShieldCheck, ShieldAlert, Award, RotateCcw, CheckCircle2, XCircle, Shuffle } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Award, Shuffle } from 'lucide-react';
 import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
@@ -9,23 +9,25 @@ interface Props {
   onGameWin: () => void;
 }
 
+const generateShuffledSecurityChoices = () => {
+  const map: Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']> = {};
+  SECURITY_VULNERABILITIES.forEach(vuln => {
+    map[vuln.id] = fisherYatesShuffle(vuln.remediationChoices);
+  });
+  return map;
+};
+
 export const SecurityHunterGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [selectedRemediations, setSelectedRemediations] = useState<Record<string, string>>({});
   
   // Shuffled choices per vulnerability: { [vulnId]: choices[] }
-  const [shuffledVulnChoices, setShuffledVulnChoices] = useState<Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']>>({});
+  const [shuffledVulnChoices, setShuffledVulnChoices] = useState<Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']>>(() => 
+    generateShuffledSecurityChoices()
+  );
 
   const shuffleSecurityChoices = () => {
-    const map: Record<string, typeof SECURITY_VULNERABILITIES[0]['remediationChoices']> = {};
-    SECURITY_VULNERABILITIES.forEach(vuln => {
-      map[vuln.id] = fisherYatesShuffle(vuln.remediationChoices);
-    });
-    setShuffledVulnChoices(map);
+    setShuffledVulnChoices(generateShuffledSecurityChoices());
   };
-
-  useEffect(() => {
-    shuffleSecurityChoices();
-  }, []);
 
   const handleSelectRemediation = (vulnId: string, choiceId: string) => {
     const vuln = SECURITY_VULNERABILITIES.find(v => v.id === vulnId);

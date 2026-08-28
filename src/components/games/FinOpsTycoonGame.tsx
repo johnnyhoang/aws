@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FINOPS_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { DollarSign, TrendingDown, Award, RotateCcw, CheckCircle2, AlertCircle, Shuffle } from 'lucide-react';
+import { DollarSign, TrendingDown, Award, CheckCircle2, AlertCircle, Shuffle } from 'lucide-react';
 import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
@@ -9,25 +9,27 @@ interface Props {
   onGameWin: () => void;
 }
 
+const generateShuffledFinOpsOptions = (challenge = FINOPS_CHALLENGES[0]) => {
+  const map: Record<string, typeof challenge.items[0]['options']> = {};
+  challenge.items.forEach(item => {
+    map[item.id] = fisherYatesShuffle(item.options);
+  });
+  return map;
+};
+
 export const FinOpsTycoonGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const challenge = FINOPS_CHALLENGES[0];
   const [selectedChoices, setSelectedChoices] = useState<Record<string, string>>({});
   const [isFinOpsEvaluated, setIsFinOpsEvaluated] = useState<boolean>(false);
   
   // Shuffled options map per item: { [itemId]: options[] }
-  const [shuffledItemOptions, setShuffledItemOptions] = useState<Record<string, typeof FINOPS_CHALLENGES[0]['items'][0]['options']>>({});
+  const [shuffledItemOptions, setShuffledItemOptions] = useState<Record<string, typeof FINOPS_CHALLENGES[0]['items'][0]['options']>>(() => 
+    generateShuffledFinOpsOptions()
+  );
 
   const shuffleFinOpsOptions = () => {
-    const map: Record<string, typeof challenge.items[0]['options']> = {};
-    challenge.items.forEach(item => {
-      map[item.id] = fisherYatesShuffle(item.options);
-    });
-    setShuffledItemOptions(map);
+    setShuffledItemOptions(generateShuffledFinOpsOptions(challenge));
   };
-
-  useEffect(() => {
-    shuffleFinOpsOptions();
-  }, []);
 
   const handleSelectChoice = (itemId: string, optionId: string) => {
     if (isFinOpsEvaluated) return;

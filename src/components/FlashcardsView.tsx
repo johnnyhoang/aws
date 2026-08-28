@@ -10,10 +10,8 @@ import {
   Shuffle, 
   CheckCircle2, 
   Circle, 
-  Sparkles,
   ShieldCheck,
   Zap,
-  GraduationCap,
   Languages
 } from 'lucide-react';
 

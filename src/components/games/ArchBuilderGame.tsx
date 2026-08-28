@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ARCHITECTURE_CHALLENGES } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, XCircle, RotateCcw, Award, Check, Shuffle, Layers } from 'lucide-react';
+import { CheckCircle2, XCircle, Award, Check, Shuffle, Layers } from 'lucide-react';
 import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
@@ -14,25 +14,20 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [selectedLayerOptions, setSelectedLayerOptions] = useState<Record<number, string>>({});
   const [isArchVerified, setIsArchVerified] = useState<boolean>(false);
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([]);
-  
-  // Shuffled options per layer: { [layerIndex]: options[] }
-  const [shuffledLayers, setShuffledLayers] = useState<Record<number, typeof ARCHITECTURE_CHALLENGES[0]['layers'][0]['options']>>({});
+  const [shuffleCount, setShuffleCount] = useState<number>(0);
 
   const activeArchChallenge = ARCHITECTURE_CHALLENGES[currentArchIdx] || ARCHITECTURE_CHALLENGES[0];
 
-  // Helper function to shuffle options for all layers using Fisher-Yates
-  const shuffleChallengeOptions = (challenge = activeArchChallenge) => {
-    const result: Record<number, typeof challenge.layers[0]['options']> = {};
-    challenge.layers.forEach((layer, idx) => {
+  // Derived shuffled options per layer using Fisher-Yates and useMemo
+  const shuffledLayers = useMemo(() => {
+    void shuffleCount;
+    const result: Record<number, typeof activeArchChallenge.layers[0]['options']> = {};
+    activeArchChallenge.layers.forEach((layer, idx) => {
       result[idx] = fisherYatesShuffle(layer.options);
     });
-    setShuffledLayers(result);
-  };
+    return result;
+  }, [activeArchChallenge, shuffleCount]);
 
-  // Re-shuffle on challenge change or mount
-  useEffect(() => {
-    shuffleChallengeOptions(activeArchChallenge);
-  }, [currentArchIdx]);
 
   const handleSelectLayerOption = (layerIdx: number, serviceName: string) => {
     if (isArchVerified) return;
@@ -67,7 +62,7 @@ export const ArchBuilderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const handleResetArch = () => {
     setSelectedLayerOptions({});
     setIsArchVerified(false);
-    shuffleChallengeOptions(activeArchChallenge);
+    setShuffleCount(c => c + 1);
   };
 
   const handleSwitchChallenge = (index: number) => {

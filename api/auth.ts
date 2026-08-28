@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getUserProfile, saveUserProfile, getUserProgress, UserProfile } from './_db';
+import { getUserProfile, saveUserProfile, getUserProgress } from './_db';
 
 export default async function handler(req: IncomingMessage & { body?: any; query?: any }, res: ServerResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -64,7 +64,7 @@ export default async function handler(req: IncomingMessage & { body?: any; query
 
     res.statusCode = 405;
     res.end(JSON.stringify({ error: 'Phương thức không được hỗ trợ.' }));
-  } catch (err) {
+  } catch {
     res.statusCode = 500;
     res.end(JSON.stringify({ error: 'Không thể xử lý yêu cầu xác thực. Vui lòng thử lại sau.' }));
   }

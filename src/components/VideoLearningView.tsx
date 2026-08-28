@@ -12,12 +12,7 @@ import {
   Sparkles, 
   Search, 
   Filter, 
-  BookOpen, 
-  X, 
-  Award,
-  Video,
-  Layers,
-  GraduationCap
+  X
 } from 'lucide-react';
 
 export const VideoLearningView: React.FC = () => {

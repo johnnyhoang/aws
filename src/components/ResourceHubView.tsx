@@ -3,11 +3,7 @@ import {
   Library, 
   ExternalLink, 
   BookOpen, 
-  Sparkles, 
-  ShieldCheck, 
-  GraduationCap, 
   Calculator,
-  CheckCircle2,
   Award,
   Globe2
 } from 'lucide-react';

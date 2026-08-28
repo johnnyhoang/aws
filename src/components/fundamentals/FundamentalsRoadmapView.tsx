@@ -16,7 +16,8 @@ import {
   GitBranch, 
   Star, 
   Sparkles,
-  BookOpen
+  BookOpen,
+  FolderGit2
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -229,6 +230,15 @@ export const FundamentalsRoadmapView: React.FC<FundamentalsRoadmapViewProps> = (
               >
                 <BookOpen className="w-4 h-4" />
                 Học Chuyên Đề
+              </button>
+            )}
+            {onNavigatePortfolio && (
+              <button
+                onClick={onNavigatePortfolio}
+                className="px-4 py-2 bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <FolderGit2 className="w-4 h-4" />
+                Dự Án CV
               </button>
             )}
             {onNavigateQuiz && (

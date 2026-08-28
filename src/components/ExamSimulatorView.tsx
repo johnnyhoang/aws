@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export const ExamSimulatorView: React.FC = () => {
-  const { saveQuizResult, recordQuizAnswer, currentStreak, userPoints, userXP } = useLearning();
+  const { saveQuizResult, recordQuizAnswer, currentStreak, userPoints } = useLearning();
   const [selectedCert, setSelectedCert] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -37,8 +37,19 @@ export const ExamSimulatorView: React.FC = () => {
   const [languageMode, setLanguageMode] = useState<'vi' | 'en' | 'random'>('random');
   const [individualQuestionLang, setIndividualQuestionLang] = useState<Record<string, 'vi' | 'en'>>({});
 
+  // Helper function to generate randomized option order for all questions using Fisher-Yates
+  const generateRandomPermutations = (questions: QuizQuestion[]) => {
+    const map: Record<string, number[]> = {};
+    questions.forEach(q => {
+      map[q.id] = getShuffledIndices(q.options.length);
+    });
+    return map;
+  };
+
   // Dynamic option shuffling map per question: { [questionId]: [permuted_indices] }
-  const [optionPermutations, setOptionPermutations] = useState<Record<string, number[]>>({});
+  const [optionPermutations, setOptionPermutations] = useState<Record<string, number[]>>(() => 
+    generateRandomPermutations(QUIZ_QUESTIONS)
+  );
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -64,20 +75,6 @@ export const ExamSimulatorView: React.FC = () => {
     { id: 'Khó', label: 'Khó' },
     { id: 'Chuyên gia', label: 'Chuyên gia' },
   ];
-
-  // Helper function to generate randomized option order for all questions using Fisher-Yates
-  const generateRandomPermutations = (questions: QuizQuestion[]) => {
-    const map: Record<string, number[]> = {};
-    questions.forEach(q => {
-      map[q.id] = getShuffledIndices(q.options.length);
-    });
-    return map;
-  };
-
-  // Initialize random option order on component mount
-  useEffect(() => {
-    setOptionPermutations(generateRandomPermutations(QUIZ_QUESTIONS));
-  }, []);
 
   const filteredQuestions: QuizQuestion[] = QUIZ_QUESTIONS.filter(q => {
     const matchCert = selectedCert === 'all' || q.certCode === selectedCert;

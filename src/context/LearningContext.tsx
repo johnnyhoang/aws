@@ -199,21 +199,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [
-    state.completedStages,
-    state.completedLessons,
-    state.completedProjects,
-    state.completedTasks,
-    state.flashcardsMastered,
-    state.quizScores,
-    state.studyHoursLogged,
-    state.currentTrack,
-    state.userXP,
-    state.userPoints,
-    state.currentStreak,
-    state.userProfile?.email,
-    syncWithCloud
-  ]);
+  }, [state, syncWithCloud]);
 
   // Record Quiz Answer (Intelligent XP, Points, Streak & Penalty Engine)
   const recordQuizAnswer = (isCorrect: boolean, difficulty: string): QuizAnswerFeedback => {

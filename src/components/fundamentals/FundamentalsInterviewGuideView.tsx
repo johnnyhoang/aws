@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { FUNDAMENTAL_INTERVIEW_QA } from '../../data/fundamentals/interviewGuideData';
-import { FundamentalInterviewQA } from '../../types/fundamentals';
 import { 
   GraduationCap, 
-  HelpCircle, 
   CheckCircle2, 
   AlertTriangle, 
   Sparkles, 
   Filter, 
   ChevronDown, 
-  ChevronUp,
-  Briefcase
+  ChevronUp
 } from 'lucide-react';
 
 export const FundamentalsInterviewGuideView: React.FC = () => {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { INCIDENT_SCENARIOS } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
-import { ShieldAlert, Heart, ChevronRight, ShieldCheck, RotateCcw, Shuffle, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, Heart, ChevronRight, ShieldCheck, RotateCcw } from 'lucide-react';
 import { fisherYatesShuffle } from '../../utils/shuffle';
 
 interface Props {
@@ -15,20 +15,15 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
   const [selectedIncChoice, setSelectedIncChoice] = useState<string | null>(null);
   const [isIncAnswered, setIsIncAnswered] = useState<boolean>(false);
   const [isIncidentGameOver, setIsIncidentGameOver] = useState<boolean>(false);
-  
-  // Shuffled choices for each scenario
-  const [shuffledChoices, setShuffledChoices] = useState<typeof INCIDENT_SCENARIOS[0]['choices']>([]);
+  const [shuffleSeed, setShuffleSeed] = useState<number>(0);
 
   const activeIncident = INCIDENT_SCENARIOS[currentIncIdx] || INCIDENT_SCENARIOS[0];
 
-  // Shuffle choices when activeIncident changes using Fisher-Yates
-  const shuffleIncidentChoices = (incident = activeIncident) => {
-    setShuffledChoices(fisherYatesShuffle(incident.choices));
-  };
-
-  useEffect(() => {
-    shuffleIncidentChoices(activeIncident);
-  }, [currentIncIdx]);
+  // Derived shuffled choices using Fisher-Yates and useMemo
+  const shuffledChoices = useMemo(() => {
+    void shuffleSeed;
+    return fisherYatesShuffle(activeIncident.choices);
+  }, [activeIncident, shuffleSeed]);
 
   const handleChooseIncidentAction = (choiceId: string) => {
     if (isIncAnswered) return;
@@ -69,7 +64,7 @@ export const IncidentCommanderGame: React.FC<Props> = ({ isEn, onGameWin }) => {
     setSelectedIncChoice(null);
     setIsIncAnswered(false);
     setIsIncidentGameOver(false);
-    shuffleIncidentChoices(INCIDENT_SCENARIOS[0]);
+    setShuffleSeed(s => s + 1);
   };
 
   const incTitle = (isEn && activeIncident.titleEn) ? activeIncident.titleEn : activeIncident.title;

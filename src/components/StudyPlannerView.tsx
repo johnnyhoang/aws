@@ -3,14 +3,10 @@ import { useLearning } from '../context/LearningContext';
 import { STUDY_PLANS } from '../data/studyPlanData';
 import confetti from 'canvas-confetti';
 import { 
-  CalendarDays, 
   CheckCircle2, 
   Circle, 
   Clock, 
   Plus, 
-  Sparkles, 
-  Award, 
-  BookOpen, 
   RotateCcw,
   Target,
   Flame

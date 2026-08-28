@@ -2,12 +2,10 @@ import React from 'react';
 import { useLearning } from '../context/LearningContext';
 import { AWS_MATURITY_LEVELS } from '../data/maturityLevels';
 import { 
-  Award, 
   X, 
   Flame, 
   Zap, 
   ShieldCheck, 
-  CheckCircle2, 
   HelpCircle, 
   TrendingUp,
   Coins

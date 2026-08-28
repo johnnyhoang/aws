@@ -12,7 +12,6 @@ import {
   LogOut,
   Mail,
   User,
-  ShieldCheck,
   Zap
 } from 'lucide-react';
 

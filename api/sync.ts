@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { mergeUserProgress, UserProgressData } from './_db';
+import { mergeUserProgress } from './_db';
 
 export default async function handler(req: IncomingMessage & { body?: any }, res: ServerResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -41,7 +41,7 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
 
     res.statusCode = 405;
     res.end(JSON.stringify({ error: 'Phương thức không được hỗ trợ.' }));
-  } catch (err) {
+  } catch {
     res.statusCode = 500;
     res.end(JSON.stringify({ error: 'Không thể đồng bộ hợp nhất dữ liệu.' }));
   }

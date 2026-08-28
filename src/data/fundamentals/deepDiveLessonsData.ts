@@ -68,7 +68,7 @@ export const FUNDAMENTAL_DEEP_DIVE_LESSONS: FundamentalDeepDiveLesson[] = [
         tool: 'Terminal',
         title: 'Kiểm tra thông số phần cứng CPU, Bộ nhớ & Swap',
         code: `# Kiểm tra thông tin CPU
-lscpu | grep -E "Model name|Socket|Thread|NUMA|CPU\(s\)"
+lscpu | grep -E "Model name|Socket|Thread|NUMA|CPU(s)"
 
 # Kiểm tra dung lượng RAM & Swap còn trống
 free -m -h

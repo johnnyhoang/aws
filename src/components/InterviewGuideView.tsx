@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { UNIVERSITY_IT_GUIDE, INTERVIEW_QUESTIONS } from '../data/interviewGuideData';
-import { InterviewQA } from '../types';
 import { 
   GraduationCap, 
-  Sparkles, 
-  ShieldCheck, 
   MessageSquareQuote, 
   AlertTriangle, 
   CheckCircle2, 
-  FileText, 
   Globe2, 
   Briefcase,
   ChevronDown,

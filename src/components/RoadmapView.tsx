@@ -16,8 +16,7 @@ import {
   ExternalLink,
   ArrowRight,
   HelpCircle,
-  X,
-  Check
+  X
 } from 'lucide-react';
 
 interface RoadmapViewProps {

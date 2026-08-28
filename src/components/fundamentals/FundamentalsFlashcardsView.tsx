@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FUNDAMENTAL_FLASHCARDS } from '../../data/fundamentals/flashcardsData';
-import { FundamentalFlashcard, FundamentalDomainId } from '../../types/fundamentals';
+import { FundamentalFlashcard } from '../../types/fundamentals';
 import { shuffleArray } from '../../utils/shuffle';
 import { 
   BrainCircuit, 
@@ -11,8 +11,7 @@ import {
   Filter, 
   Shuffle, 
   ChevronLeft, 
-  ChevronRight,
-  Eye
+  ChevronRight
 } from 'lucide-react';
 
 export const FundamentalsFlashcardsView: React.FC = () => {

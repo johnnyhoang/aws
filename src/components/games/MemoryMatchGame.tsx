@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MEMORY_CARD_PAIRS } from '../../data/gamesData';
 import confetti from 'canvas-confetti';
 import { RotateCcw, Award, BrainCircuit, CheckCircle2 } from 'lucide-react';
@@ -19,60 +19,57 @@ interface MemoryCard {
   isMatched: boolean;
 }
 
+const createMemoryCards = (pairs: number, isEn: boolean, gameLangMode: string): MemoryCard[] => {
+  const cards: MemoryCard[] = [];
+  const randomizedPairs = fisherYatesShuffle(MEMORY_CARD_PAIRS).slice(0, pairs);
+
+  randomizedPairs.forEach((pair, idx) => {
+    const roleText = (isEn || (gameLangMode === 'random' && idx % 2 === 1)) && pair.roleEn 
+      ? pair.roleEn 
+      : pair.role;
+
+    cards.push({
+      uid: `card-s-${idx}`,
+      pairId: pair.id,
+      text: pair.service,
+      type: 'service',
+      isFlipped: false,
+      isMatched: false
+    });
+    cards.push({
+      uid: `card-r-${idx}`,
+      pairId: pair.id,
+      text: roleText,
+      type: 'role',
+      isFlipped: false,
+      isMatched: false
+    });
+  });
+
+  return fisherYatesShuffle(cards);
+};
+
 export const MemoryMatchGame: React.FC<Props> = ({ isEn, gameLangMode, onGameWin }) => {
-  const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
+  const [pairCount, setPairCount] = useState<number>(6); // 6 or 8 pairs
+  const [memoryCards, setMemoryCards] = useState<MemoryCard[]>(() => createMemoryCards(6, isEn, gameLangMode));
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [movesCount, setMovesCount] = useState<number>(0);
   const [isMemoryWon, setIsMemoryWon] = useState<boolean>(false);
-  const [pairCount, setPairCount] = useState<number>(6); // 6 or 8 pairs
 
   const initMemoryGame = (pairs = pairCount) => {
-    const cards: MemoryCard[] = [];
-    // Randomly pick unique pairs from the pool of 16 AWS services using Fisher-Yates
-    const randomizedPairs = fisherYatesShuffle(MEMORY_CARD_PAIRS).slice(0, pairs);
-
-    randomizedPairs.forEach((pair, idx) => {
-      const roleText = (isEn || (gameLangMode === 'random' && idx % 2 === 1)) && pair.roleEn 
-        ? pair.roleEn 
-        : pair.role;
-
-      cards.push({
-        uid: `card-s-${idx}`,
-        pairId: pair.id,
-        text: pair.service,
-        type: 'service',
-        isFlipped: false,
-        isMatched: false
-      });
-      cards.push({
-        uid: `card-r-${idx}`,
-        pairId: pair.id,
-        text: roleText,
-        type: 'role',
-        isFlipped: false,
-        isMatched: false
-      });
-    });
-
-    const shuffled = fisherYatesShuffle(cards);
-    setMemoryCards(shuffled);
+    setMemoryCards(createMemoryCards(pairs, isEn, gameLangMode));
     setFlippedIndices([]);
     setMovesCount(0);
     setIsMemoryWon(false);
   };
-
-  useEffect(() => {
-    initMemoryGame();
-  }, [isEn, gameLangMode, pairCount]);
 
   const handleFlipCard = (index: number) => {
     if (flippedIndices.length >= 2 || memoryCards[index].isFlipped || memoryCards[index].isMatched) {
       return;
     }
 
-    const newCards = [...memoryCards];
-    newCards[index].isFlipped = true;
-    setMemoryCards(newCards);
+    const updatedCards = memoryCards.map((c, i) => i === index ? { ...c, isFlipped: true } : c);
+    setMemoryCards(updatedCards);
 
     const newFlipped = [...flippedIndices, index];
     setFlippedIndices(newFlipped);
@@ -80,31 +77,29 @@ export const MemoryMatchGame: React.FC<Props> = ({ isEn, gameLangMode, onGameWin
     if (newFlipped.length === 2) {
       setMovesCount(prev => prev + 1);
       const [firstIdx, secondIdx] = newFlipped;
-      const card1 = newCards[firstIdx];
-      const card2 = newCards[secondIdx];
+      const card1 = updatedCards[firstIdx];
+      const card2 = updatedCards[secondIdx];
 
       if (card1.pairId === card2.pairId) {
         setTimeout(() => {
-          newCards[firstIdx].isMatched = true;
-          newCards[secondIdx].isMatched = true;
-          setMemoryCards([...newCards]);
+          setMemoryCards(prev => {
+            const matched = prev.map((c, i) => (i === firstIdx || i === secondIdx) ? { ...c, isMatched: true } : c);
+            if (matched.every(c => c.isMatched)) {
+              setIsMemoryWon(true);
+              onGameWin();
+              confetti({
+                particleCount: 100,
+                spread: 75,
+                origin: { y: 0.6 }
+              });
+            }
+            return matched;
+          });
           setFlippedIndices([]);
-
-          if (newCards.every(c => c.isMatched)) {
-            setIsMemoryWon(true);
-            onGameWin();
-            confetti({
-              particleCount: 100,
-              spread: 75,
-              origin: { y: 0.6 }
-            });
-          }
         }, 500);
       } else {
         setTimeout(() => {
-          newCards[firstIdx].isFlipped = false;
-          newCards[secondIdx].isFlipped = false;
-          setMemoryCards([...newCards]);
+          setMemoryCards(prev => prev.map((c, i) => (i === firstIdx || i === secondIdx) ? { ...c, isFlipped: false } : c));
           setFlippedIndices([]);
         }, 1200);
       }
