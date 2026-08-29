@@ -138,7 +138,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [state]);
 
-  // Apply font size scale and reading mode class to document
+  // Apply font size scale, inverse space compression, and reading mode class to document
   useEffect(() => {
     try {
       const root = document.documentElement;
@@ -146,6 +146,48 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const scale = state.fontSizeScale || 100;
       const scaledPx = (scale / 100) * basePx;
       root.style.fontSize = `${scaledPx}px`;
+
+      // Dynamic Inverse Spacing Calculation:
+      // When font size increases, we compress base spacing so padding/margins shrink in pixels,
+      // allocating maximum horizontal and vertical space for large text.
+      // scale 100: compressionFactor = 1.00 -> spacing = 4.0px
+      // scale 120: compressionFactor = 0.85 -> spacing = 3.4px
+      // scale 140: compressionFactor = 0.70 -> spacing = 2.8px
+      // scale 165: compressionFactor = 0.55 -> spacing = 2.2px
+      // scale 190: compressionFactor = 0.42 -> spacing = 1.7px
+      // scale 220: compressionFactor = 0.32 -> spacing = 1.3px
+      const scaleRatio = scale / 100;
+      const compressionFactor = Math.max(0.32, Math.min(1.0, 1 - (scale - 100) * 0.0057));
+      const targetSpacingPx = 4 * compressionFactor;
+
+      root.style.setProperty('--font-scale', `${scaleRatio}`);
+      root.style.setProperty('--spacing', `${targetSpacingPx.toFixed(2)}px`);
+      root.style.setProperty('--spacing-compression', `${compressionFactor.toFixed(3)}`);
+
+      // Add zoom state classes to body for responsive layout compression
+      if (scale > 115) {
+        document.body.classList.add('font-zoomed-active');
+      } else {
+        document.body.classList.remove('font-zoomed-active');
+      }
+
+      if (scale >= 140) {
+        document.body.classList.add('font-zoomed-medium');
+      } else {
+        document.body.classList.remove('font-zoomed-medium');
+      }
+
+      if (scale >= 165) {
+        document.body.classList.add('font-zoomed-large');
+      } else {
+        document.body.classList.remove('font-zoomed-large');
+      }
+
+      if (scale >= 190) {
+        document.body.classList.add('font-zoomed-huge');
+      } else {
+        document.body.classList.remove('font-zoomed-huge');
+      }
 
       if (state.isReadingMode) {
         document.body.classList.add('reading-mode-active');

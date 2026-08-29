@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --font-scale: 1;
+    --spacing-compression: 1;
+  }
+
   body {
     @apply bg-slate-950 text-slate-100 antialiased font-sans selection:bg-amber-500/30 selection:text-amber-200 min-h-screen;
   }
@@ -23,6 +28,67 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+
+/* ==========================================================================
+   DYNAMIC SPACE COMPRESSION & TEXT PRIORITY ENGINE
+   When font size is zoomed up, margins, paddings, gaps, and box borders
+   shrink proportionally to allocate maximum screen estate to text readability.
+   ========================================================================== */
+
+/* Universal text wrapping safeguard */
+body.font-zoomed-active * {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Compress outer page gutters and modal containers */
+body.font-zoomed-active .max-w-7xl,
+body.font-zoomed-active .max-w-6xl,
+body.font-zoomed-active .max-w-5xl,
+body.font-zoomed-active .max-w-4xl,
+body.font-zoomed-active .max-w-2xl {
+  padding-left: clamp(6px, 1.5vw, 16px) !important;
+  padding-right: clamp(6px, 1.5vw, 16px) !important;
+}
+
+/* Medium Zoom (140% - 164%) */
+body.font-zoomed-medium .rounded-3xl {
+  border-radius: 1rem !important;
+}
+
+body.font-zoomed-medium .rounded-2xl {
+  border-radius: 0.75rem !important;
+}
+
+/* Large Zoom (165% - 189%) */
+body.font-zoomed-large .rounded-3xl {
+  border-radius: 0.875rem !important;
+}
+
+body.font-zoomed-large .rounded-2xl {
+  border-radius: 0.625rem !important;
+}
+
+body.font-zoomed-large button {
+  min-height: 38px;
+}
+
+/* Huge Zoom (190% - 220%) - Maximum Text Priority */
+body.font-zoomed-huge .rounded-3xl {
+  border-radius: 0.75rem !important;
+}
+
+body.font-zoomed-huge .rounded-2xl {
+  border-radius: 0.5rem !important;
+}
+
+body.font-zoomed-huge .space-y-6 > * + * {
+  margin-top: 0.75rem !important;
+}
+
+body.font-zoomed-huge .space-y-4 > * + * {
+  margin-top: 0.5rem !important;
 }
 
 /* Enhanced Elderly & High-Readability Reading Mode Styles */
@@ -58,5 +124,3 @@ body.reading-mode-active .bg-slate-900 {
 body.reading-mode-active button {
   min-height: 40px;
 }
-
-
