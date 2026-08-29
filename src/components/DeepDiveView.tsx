@@ -21,7 +21,11 @@ import {
   Check
 } from 'lucide-react';
 
-export const DeepDiveView: React.FC = () => {
+interface DeepDiveViewProps {
+  initialTopicId?: string;
+}
+
+export const DeepDiveView: React.FC<DeepDiveViewProps> = ({ initialTopicId }) => {
   const { 
     completedLessons, 
     toggleLessonCompleted, 
@@ -29,7 +33,13 @@ export const DeepDiveView: React.FC = () => {
     toggleLessonBookmark 
   } = useLearning();
 
-  const [selectedTopic, setSelectedTopic] = useState<DeepDiveTopic>(DEEP_DIVE_LESSONS[0]);
+  const [selectedTopic, setSelectedTopic] = useState<DeepDiveTopic>(() => {
+    if (initialTopicId) {
+      const match = DEEP_DIVE_LESSONS.find(t => t.id === initialTopicId || t.category === initialTopicId);
+      if (match) return match;
+    }
+    return DEEP_DIVE_LESSONS[0];
+  });
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -42,6 +52,18 @@ export const DeepDiveView: React.FC = () => {
     { id: 'containers_serverless', label: 'Container & Serverless' },
     { id: 'university_lms_sso', label: 'Xác Thực SSO & LMS' },
   ];
+
+  const handleSelectTopic = (topic: DeepDiveTopic) => {
+    setSelectedTopic(topic);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setTimeout(() => {
+        const readerElem = document.getElementById('deepdive-reader');
+        if (readerElem) {
+          readerElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
+  };
 
   const filteredTopics = DEEP_DIVE_LESSONS.filter(topic => {
     const matchesCategory = activeCategory === 'all' || topic.category === activeCategory;
@@ -136,7 +158,7 @@ export const DeepDiveView: React.FC = () => {
               return (
                 <div
                   key={topic.id}
-                  onClick={() => setSelectedTopic(topic)}
+                  onClick={() => handleSelectTopic(topic)}
                   className={`cursor-pointer rounded-xl p-4 border transition-all ${
                     isSelected
                       ? 'bg-slate-800 border-amber-500 ring-1 ring-amber-500/30 shadow-lg'
@@ -183,8 +205,30 @@ export const DeepDiveView: React.FC = () => {
         </div>
 
         {/* Right Column: Selected Topic In-depth Reader */}
-        <div className="lg:col-span-8 bg-slate-900 rounded-2xl border border-slate-700/80 p-6 md:p-8 space-y-8 shadow-2xl">
+        <div id="deepdive-reader" className="lg:col-span-8 bg-slate-900 rounded-2xl border border-slate-700/80 p-5 sm:p-8 space-y-6 md:space-y-8 shadow-2xl scroll-mt-20">
           
+          {/* Mobile Quick Topic Switcher Selector (Visible on mobile/tablet) */}
+          <div className="lg:hidden bg-slate-950/80 border border-slate-800 p-3 rounded-xl space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+              <span>Đang đọc chuyên đề:</span>
+              <span className="text-amber-400 font-mono">{selectedTopic.categoryLabel}</span>
+            </div>
+            <select
+              value={selectedTopic.id}
+              onChange={(e) => {
+                const found = DEEP_DIVE_LESSONS.find(t => t.id === e.target.value);
+                if (found) handleSelectTopic(found);
+              }}
+              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-medium focus:border-amber-500 focus:outline-none"
+            >
+              {DEEP_DIVE_LESSONS.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Reader Top Controls */}
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
             <div className="flex items-center gap-2">

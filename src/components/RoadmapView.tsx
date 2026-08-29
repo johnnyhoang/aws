@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 interface RoadmapViewProps {
-  onNavigateDeepDive: () => void;
+  onNavigateDeepDive: (topicId?: string) => void;
   onNavigatePortfolio: () => void;
   onNavigateQuiz: () => void;
 }
@@ -300,7 +300,16 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={onNavigateDeepDive}
+                  onClick={() => {
+                    const stageTopicMap: Record<string, string> = {
+                      'clf-c02': 'networking-security-core',
+                      'saa-c03': 'hybrid-cloud-migration',
+                      'soa-c02': 'terraform-iac-enterprise',
+                      'dva-c02': 'containers-ecs-serverless',
+                      'sap-c02': 'hybrid-cloud-migration'
+                    };
+                    onNavigateDeepDive(stageTopicMap[selectedStage.id] || 'networking-security-core');
+                  }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-semibold border border-slate-700 transition-colors"
                 >
                   <span>Học Chuyên Đề Kỹ Năng</span>
@@ -463,7 +472,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
       {/* 4 Pillars of Knowledge Banner */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4">
         <div 
-          onClick={onNavigateDeepDive}
+          onClick={() => onNavigateDeepDive('networking-security-core')}
           className="bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-all space-y-2"
         >
           <div className="text-emerald-400 font-bold text-xs uppercase tracking-wider">Trụ Cột 1</div>
@@ -472,7 +481,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
         </div>
 
         <div 
-          onClick={onNavigateDeepDive}
+          onClick={() => onNavigateDeepDive('terraform-iac-enterprise')}
           className="bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-all space-y-2"
         >
           <div className="text-sky-400 font-bold text-xs uppercase tracking-wider">Trụ Cột 2</div>
@@ -481,7 +490,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
         </div>
 
         <div 
-          onClick={onNavigateDeepDive}
+          onClick={() => onNavigateDeepDive('hybrid-cloud-migration')}
           className="bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-all space-y-2"
         >
           <div className="text-purple-400 font-bold text-xs uppercase tracking-wider">Trụ Cột 3</div>

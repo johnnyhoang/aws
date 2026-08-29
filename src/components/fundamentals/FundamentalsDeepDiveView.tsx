@@ -48,6 +48,18 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
     }
   };
 
+  const handleSelectLesson = (lessonId: string) => {
+    setSelectedLessonId(lessonId);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setTimeout(() => {
+        const readerElem = document.getElementById('fundamental-reader');
+        if (readerElem) {
+          readerElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6">
       
@@ -92,7 +104,7 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
               return (
                 <button
                   key={lesson.id}
-                  onClick={() => setSelectedLessonId(lesson.id)}
+                  onClick={() => handleSelectLesson(lesson.id)}
                   className={`w-full p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
                     isSelected
                       ? 'bg-slate-800 border-amber-500/60 shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/30'
@@ -128,7 +140,27 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
         </div>
 
         {/* Right Main Content: Lesson Reader */}
-        <div className="lg:col-span-8 space-y-6">
+        <div id="fundamental-reader" className="lg:col-span-8 space-y-6 scroll-mt-20">
+          
+          {/* Mobile Quick Topic Switcher Selector (Visible on mobile/tablet) */}
+          <div className="lg:hidden bg-slate-900 border border-slate-800 p-3 rounded-2xl space-y-2 shadow-lg">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+              <span>Đang đọc chuyên đề:</span>
+              <span className="text-amber-400 font-mono">#{FUNDAMENTAL_DEEP_DIVE_LESSONS.findIndex(l => l.id === currentLesson.id) + 1} {currentLesson.tag}</span>
+            </div>
+            <select
+              value={selectedLessonId}
+              onChange={(e) => handleSelectLesson(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-medium focus:border-amber-500 focus:outline-none"
+            >
+              {FUNDAMENTAL_DEEP_DIVE_LESSONS.map((l, idx) => (
+                <option key={l.id} value={l.id}>
+                  #{idx + 1} - {l.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-8 space-y-6 shadow-xl">
             
             {/* Header Title & Actions */}

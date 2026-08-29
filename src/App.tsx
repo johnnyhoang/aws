@@ -39,13 +39,17 @@ const ViewFallback: React.FC = () => (
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<NavTab>('roadmap');
+  const [selectedDeepDiveId, setSelectedDeepDiveId] = useState<string | undefined>(undefined);
   const [isReadingModalOpen, setIsReadingModalOpen] = useState<boolean>(false);
   const { portalMode } = useLearning();
 
   const isFundamentals = portalMode === 'fundamentals';
 
   const navigateProps = {
-    onNavigateDeepDive: () => setActiveTab('deepdive'),
+    onNavigateDeepDive: (targetId?: string) => {
+      setSelectedDeepDiveId(targetId);
+      setActiveTab('deepdive');
+    },
     onNavigatePortfolio: () => setActiveTab('portfolio'),
     onNavigateQuiz: () => setActiveTab('quiz')
   };
@@ -60,7 +64,12 @@ function AppContent() {
         case 'games':
           return <FundamentalsGamesHubView />;
         case 'deepdive':
-          return <FundamentalsDeepDiveView />;
+          return (
+            <FundamentalsDeepDiveView 
+              key={`fund-dd-${selectedDeepDiveId || 'default'}`}
+              initialDomainId={selectedDeepDiveId as any} 
+            />
+          );
         case 'portfolio':
           return <FundamentalsPortfolioView />;
         case 'quiz':
@@ -86,7 +95,12 @@ function AppContent() {
       case 'games':
         return <GamesHubView />;
       case 'deepdive':
-        return <DeepDiveView />;
+        return (
+          <DeepDiveView 
+            key={`aws-dd-${selectedDeepDiveId || 'default'}`}
+            initialTopicId={selectedDeepDiveId} 
+          />
+        );
       case 'portfolio':
         return <PortfolioView />;
       case 'quiz':
