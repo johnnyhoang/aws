@@ -3,33 +3,19 @@ import { LearningProvider, useLearning } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { ReadingModeFab } from './components/ReadingModeFab';
 import { ReadingModeModal } from './components/ReadingModeModal';
-import { Cloud, Terminal, Loader2 } from 'lucide-react';
+import { Cloud, Terminal, Loader2, BookOpen, CheckCircle2, Gamepad2 } from 'lucide-react';
 
-// Lazy-loaded AWS Portal Views
-const RoadmapView = lazy(() => import('./components/RoadmapView').then(m => ({ default: m.RoadmapView })));
-const VideoLearningView = lazy(() => import('./components/VideoLearningView').then(m => ({ default: m.VideoLearningView })));
-const GamesHubView = lazy(() => import('./components/GamesHubView').then(m => ({ default: m.GamesHubView })));
-const DeepDiveView = lazy(() => import('./components/DeepDiveView').then(m => ({ default: m.DeepDiveView })));
-const PortfolioView = lazy(() => import('./components/PortfolioView').then(m => ({ default: m.PortfolioView })));
-const ExamSimulatorView = lazy(() => import('./components/ExamSimulatorView').then(m => ({ default: m.ExamSimulatorView })));
-const FlashcardsView = lazy(() => import('./components/FlashcardsView').then(m => ({ default: m.FlashcardsView })));
-const InterviewGuideView = lazy(() => import('./components/InterviewGuideView').then(m => ({ default: m.InterviewGuideView })));
-const StudyPlannerView = lazy(() => import('./components/StudyPlannerView').then(m => ({ default: m.StudyPlannerView })));
-const ResourceHubView = lazy(() => import('./components/ResourceHubView').then(m => ({ default: m.ResourceHubView })));
+// Lazy-loaded AWS Unified Views
+const AwsLearnView = lazy(() => import('./components/unified/AwsLearnView').then(m => ({ default: m.AwsLearnView })));
+const AwsTestView = lazy(() => import('./components/unified/AwsTestView').then(m => ({ default: m.AwsTestView })));
+const AwsPlayView = lazy(() => import('./components/unified/AwsPlayView').then(m => ({ default: m.AwsPlayView })));
 
-// Lazy-loaded Fundamentals Portal Views
-const FundamentalsRoadmapView = lazy(() => import('./components/fundamentals/FundamentalsRoadmapView').then(m => ({ default: m.FundamentalsRoadmapView })));
-const FundamentalsVideoView = lazy(() => import('./components/fundamentals/FundamentalsVideoView').then(m => ({ default: m.FundamentalsVideoView })));
-const FundamentalsGamesHubView = lazy(() => import('./components/fundamentals/FundamentalsGamesHubView').then(m => ({ default: m.FundamentalsGamesHubView })));
-const FundamentalsDeepDiveView = lazy(() => import('./components/fundamentals/FundamentalsDeepDiveView').then(m => ({ default: m.FundamentalsDeepDiveView })));
-const FundamentalsPortfolioView = lazy(() => import('./components/fundamentals/FundamentalsPortfolioView').then(m => ({ default: m.FundamentalsPortfolioView })));
-const FundamentalsExamSimulatorView = lazy(() => import('./components/fundamentals/FundamentalsExamSimulatorView').then(m => ({ default: m.FundamentalsExamSimulatorView })));
-const FundamentalsFlashcardsView = lazy(() => import('./components/fundamentals/FundamentalsFlashcardsView').then(m => ({ default: m.FundamentalsFlashcardsView })));
-const FundamentalsInterviewGuideView = lazy(() => import('./components/fundamentals/FundamentalsInterviewGuideView').then(m => ({ default: m.FundamentalsInterviewGuideView })));
-const FundamentalsStudyPlannerView = lazy(() => import('./components/fundamentals/FundamentalsStudyPlannerView').then(m => ({ default: m.FundamentalsStudyPlannerView })));
-const FundamentalsResourceHubView = lazy(() => import('./components/fundamentals/FundamentalsResourceHubView').then(m => ({ default: m.FundamentalsResourceHubView })));
+// Lazy-loaded Fundamentals Unified Views
+const FundLearnView = lazy(() => import('./components/fundamentals/unified/FundLearnView').then(m => ({ default: m.FundLearnView })));
+const FundTestView = lazy(() => import('./components/fundamentals/unified/FundTestView').then(m => ({ default: m.FundTestView })));
+const FundPlayView = lazy(() => import('./components/fundamentals/unified/FundPlayView').then(m => ({ default: m.FundPlayView })));
 
-// Smooth view loading skeleton
+// Smooth view loading fallback
 const ViewFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[50vh] text-slate-400 space-y-3 animate-fadeIn">
     <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
@@ -38,92 +24,44 @@ const ViewFallback: React.FC = () => (
 );
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<NavTab>('roadmap');
-  const [selectedDeepDiveId, setSelectedDeepDiveId] = useState<string | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState<NavTab>('learn');
   const [isReadingModalOpen, setIsReadingModalOpen] = useState<boolean>(false);
   const { portalMode } = useLearning();
 
   const isFundamentals = portalMode === 'fundamentals';
 
-  const navigateProps = {
-    onNavigateDeepDive: (targetId?: string) => {
-      setSelectedDeepDiveId(targetId);
-      setActiveTab('deepdive');
-    },
-    onNavigatePortfolio: () => setActiveTab('portfolio'),
-    onNavigateQuiz: () => setActiveTab('quiz')
-  };
-
   const renderActiveView = () => {
     if (isFundamentals) {
       switch (activeTab) {
-        case 'roadmap':
-          return <FundamentalsRoadmapView {...navigateProps} />;
-        case 'video':
-          return <FundamentalsVideoView />;
-        case 'games':
-          return <FundamentalsGamesHubView />;
-        case 'deepdive':
-          return (
-            <FundamentalsDeepDiveView 
-              key={`fund-dd-${selectedDeepDiveId || 'default'}`}
-              initialDomainId={selectedDeepDiveId as any} 
-            />
-          );
-        case 'portfolio':
-          return <FundamentalsPortfolioView />;
-        case 'quiz':
-          return <FundamentalsExamSimulatorView />;
-        case 'flashcards':
-          return <FundamentalsFlashcardsView />;
-        case 'interview':
-          return <FundamentalsInterviewGuideView />;
-        case 'studyplan':
-          return <FundamentalsStudyPlannerView />;
-        case 'resources':
-          return <FundamentalsResourceHubView />;
+        case 'learn':
+          return <FundLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <FundTestView />;
+        case 'play':
+          return <FundPlayView />;
         default:
-          return <FundamentalsRoadmapView {...navigateProps} />;
+          return <FundLearnView onNavigateTab={setActiveTab} />;
       }
     }
 
     switch (activeTab) {
-      case 'roadmap':
-        return <RoadmapView {...navigateProps} />;
-      case 'video':
-        return <VideoLearningView />;
-      case 'games':
-        return <GamesHubView />;
-      case 'deepdive':
-        return (
-          <DeepDiveView 
-            key={`aws-dd-${selectedDeepDiveId || 'default'}`}
-            initialTopicId={selectedDeepDiveId} 
-          />
-        );
-      case 'portfolio':
-        return <PortfolioView />;
-      case 'quiz':
-        return <ExamSimulatorView />;
-      case 'flashcards':
-        return <FlashcardsView />;
-      case 'interview':
-        return <InterviewGuideView />;
-      case 'studyplan':
-        return <StudyPlannerView />;
-      case 'resources':
-        return <ResourceHubView />;
+      case 'learn':
+        return <AwsLearnView onNavigateTab={setActiveTab} />;
+      case 'test':
+        return <AwsTestView />;
+      case 'play':
+        return <AwsPlayView />;
       default:
-        return <RoadmapView {...navigateProps} />;
+        return <AwsLearnView onNavigateTab={setActiveTab} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200 pb-16 md:pb-0">
-      {/* Top Sticky Navigation Bar */}
+      {/* Top Sticky Navigation Bar with 3 Streamlined Pillars */}
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Main Content View Switcher with Suspense */}
+      {/* Main Content Area */}
       <main className="flex-1">
         <Suspense fallback={<ViewFallback />}>
           {renderActiveView()}
@@ -138,37 +76,34 @@ function AppContent() {
               {isFundamentals ? <Terminal className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
             </div>
             <span className="font-bold text-slate-200">
-              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals Mastery' : 'AWS Cloud Mastery'}
+              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : 'AWS Cloud Mastery'}
             </span>
             <span className="text-slate-500">
-              {isFundamentals ? '— Sẵn sàng 100% cho Đám mây' : '— Higher-Ed & Enterprise Edition'}
+              {isFundamentals ? '— Nền tảng IT vững chắc' : '— Học, Test & Chơi thực chiến'}
             </span>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-400">
+          <div className="flex items-center gap-6 text-slate-400 font-semibold">
             <button 
-              onClick={() => setActiveTab('roadmap')} 
-              className="hover:text-amber-400 transition-colors cursor-pointer"
+              onClick={() => setActiveTab('learn')} 
+              className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1"
             >
-              Lộ Trình
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Học Tập</span>
             </button>
             <button 
-              onClick={() => setActiveTab('portfolio')} 
-              className="hover:text-amber-400 transition-colors cursor-pointer"
+              onClick={() => setActiveTab('test')} 
+              className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1"
             >
-              Dự Án CV
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Luyện Thi</span>
             </button>
             <button 
-              onClick={() => setActiveTab('interview')} 
-              className="hover:text-amber-400 transition-colors cursor-pointer"
+              onClick={() => setActiveTab('play')} 
+              className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1"
             >
-              Phỏng Vấn STAR
-            </button>
-            <button 
-              onClick={() => setActiveTab('resources')} 
-              className="hover:text-amber-400 transition-colors cursor-pointer"
-            >
-              Tài Liệu
+              <Gamepad2 className="w-3.5 h-3.5" />
+              <span>Game & Lab</span>
             </button>
           </div>
 
@@ -197,4 +132,3 @@ export default function App() {
     </LearningProvider>
   );
 }
-

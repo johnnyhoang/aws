@@ -13,38 +13,21 @@ import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevel
 import { ReadingModeModal } from './ReadingModeModal';
 import { 
   Cloud, 
-  Layers, 
   BookOpen, 
-  FolderGit2, 
   CheckCircle2, 
-  BrainCircuit, 
-  GraduationCap, 
-  CalendarDays, 
-  Library, 
+  Gamepad2,
   Server, 
   Code2, 
   Smartphone, 
   UserCheck, 
-  Tv, 
-  Gamepad2,
-  Flame,
-  Coins,
-  Sparkles,
-  Terminal,
+  Flame, 
+  Coins, 
+  Sparkles, 
+  Terminal, 
   Glasses
 } from 'lucide-react';
 
-export type NavTab = 
-  | 'roadmap' 
-  | 'video'
-  | 'games'
-  | 'deepdive' 
-  | 'portfolio' 
-  | 'quiz' 
-  | 'flashcards' 
-  | 'interview' 
-  | 'studyplan' 
-  | 'resources';
+export type NavTab = 'learn' | 'test' | 'play';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -84,17 +67,30 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const completedCount = completedStages.length + completedLessons.length + completedProjects.length;
   const progressPercent = Math.min(100, Math.round((completedCount / totalItems) * 100));
 
-  const navItems: { id: NavTab; label: string; mobileLabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: 'roadmap', label: isFundamentals ? '8 Lĩnh Vực' : 'Lộ Trình', mobileLabel: 'Lộ Trình', icon: Layers },
-    { id: 'video', label: 'Học Qua Video', mobileLabel: 'Video', icon: Tv },
-    { id: 'games', label: 'Game Học Tập', mobileLabel: 'Games', icon: Gamepad2 },
-    { id: 'deepdive', label: 'Chuyên Đề Kỹ Năng', mobileLabel: 'Chuyên Đề', icon: BookOpen },
-    { id: 'portfolio', label: 'Dự Án CV', mobileLabel: 'Dự Án', icon: FolderGit2 },
-    { id: 'quiz', label: 'Luyện Đề', mobileLabel: 'Đề Thi', icon: CheckCircle2 },
-    { id: 'flashcards', label: 'Flashcards', mobileLabel: 'Cards', icon: BrainCircuit },
-    { id: 'interview', label: 'Cẩm Nang Phỏng Vấn', mobileLabel: 'Phỏng Vấn', icon: GraduationCap },
-    { id: 'studyplan', label: 'Kế Hoạch', mobileLabel: 'Kế Hoạch', icon: CalendarDays },
-    { id: 'resources', label: 'Tài Liệu', mobileLabel: 'Tài Liệu', icon: Library },
+  const navItems: { 
+    id: NavTab; 
+    label: string; 
+    mobileLabel: string; 
+    icon: React.ComponentType<{ className?: string }> 
+  }[] = [
+    { 
+      id: 'learn', 
+      label: isFundamentals ? '📖 1. Học Nền Tảng IT' : '📖 1. Học AWS Cloud', 
+      mobileLabel: 'Học Tập', 
+      icon: BookOpen 
+    },
+    { 
+      id: 'test', 
+      label: '📝 2. Luyện Thi & Test', 
+      mobileLabel: 'Luyện Thi', 
+      icon: CheckCircle2 
+    },
+    { 
+      id: 'play', 
+      label: '🎮 3. Game & Thực Chiến', 
+      mobileLabel: 'Chơi & Lab', 
+      icon: Gamepad2 
+    },
   ];
 
   return (
@@ -192,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             {/* Sync Button */}
             <button
               onClick={() => setIsSyncModalOpen(true)}
-              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-all ${
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
                 userProfile
                   ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
                   : 'bg-sky-500/15 text-sky-300 border-sky-500/30 hover:bg-sky-500/25'
@@ -229,7 +225,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             {/* Logo & App Title */}
             <div 
               className="flex items-center gap-2.5 cursor-pointer min-w-0" 
-              onClick={() => onTabChange('roadmap')}
+              onClick={() => onTabChange('learn')}
             >
               <div className={`w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br ${
                 isFundamentals 
@@ -261,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             <div className="bg-slate-800/90 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex items-center gap-0.5 flex-shrink-0">
               <button
                 onClick={() => setTrack('cloud_engineer')}
-                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 ${
+                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   currentTrack === 'cloud_engineer'
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
@@ -273,7 +269,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               </button>
               <button
                 onClick={() => setTrack('software_developer')}
-                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 ${
+                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   currentTrack === 'software_developer'
                     ? 'bg-sky-600 text-white shadow-md shadow-sky-900/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
@@ -286,8 +282,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             </div>
           </div>
 
-          {/* Navigation Tabs (Desktop & Tablet) */}
-          <nav className="hidden md:flex items-center gap-1 overflow-x-auto no-scrollbar py-2 -mb-px border-t border-slate-800/60">
+          {/* Navigation Tabs (Desktop & Tablet: 3 Core Pillars) */}
+          <nav className="hidden md:flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mb-px border-t border-slate-800/60">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -296,13 +292,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
                 <button
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm shadow-amber-500/10'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                      ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40 shadow-md shadow-amber-500/10'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -311,10 +307,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation Bar (Fixed 1-row) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/98 backdrop-blur-lg border-t border-slate-800 px-1 py-1 shadow-2xl safe-area-pb">
-        <div className="flex items-center justify-around">
-          {navItems.slice(0, 7).map((item) => {
+      {/* Mobile Bottom Navigation Bar (Fixed 3-tabs) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/98 backdrop-blur-lg border-t border-slate-800 px-3 py-1.5 shadow-2xl safe-area-pb">
+        <div className="flex items-center justify-around gap-2">
+          {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 
@@ -322,12 +318,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-lg transition-colors flex-1 min-w-0 ${
-                  isActive ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all flex-1 min-w-0 ${
+                  isActive 
+                    ? 'bg-amber-500/15 text-amber-400 font-bold border border-amber-500/30' 
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
-                <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-full">
+                <Icon className={`w-5 h-5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                <span className="text-[11px] mt-0.5 tracking-tight truncate font-bold">
                   {item.mobileLabel}
                 </span>
               </button>
