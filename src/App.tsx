@@ -20,6 +20,9 @@ const WebDomainLearnView = lazy(() => import('./components/webDomain/WebDomainLe
 const WebDomainTestView = lazy(() => import('./components/webDomain/WebDomainTestView').then(m => ({ default: m.WebDomainTestView })));
 const WebDomainPlayView = lazy(() => import('./components/webDomain/WebDomainPlayView').then(m => ({ default: m.WebDomainPlayView })));
 
+import { AudioReaderProvider } from './context/AudioReaderContext';
+import { AudioReaderBar } from './components/AudioReaderBar';
+
 // Smooth view loading fallback
 const ViewFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[50vh] text-slate-400 space-y-3 animate-fadeIn">
@@ -132,6 +135,9 @@ function AppContent() {
         </div>
       </footer>
 
+      {/* Minimal Floating Audio Player Toolbar */}
+      <AudioReaderBar />
+
       {/* Floating Action Button for Quick Large Text & Reading Mode */}
       <ReadingModeFab onOpenModal={() => setIsReadingModalOpen(true)} />
 
@@ -147,7 +153,9 @@ function AppContent() {
 export default function App() {
   return (
     <LearningProvider>
-      <AppContent />
+      <AudioReaderProvider>
+        <AppContent />
+      </AudioReaderProvider>
     </LearningProvider>
   );
 }

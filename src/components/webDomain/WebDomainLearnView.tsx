@@ -13,9 +13,11 @@ import {
   AlertTriangle,
   Terminal,
   Bookmark,
-  Sparkles
+  Sparkles,
+  Volume2
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
+import { useAudioReader } from '../../context/AudioReaderContext';
 
 interface WebDomainLearnViewProps {
   onNavigateTab?: (tab: 'learn' | 'test' | 'play') => void;
@@ -23,6 +25,7 @@ interface WebDomainLearnViewProps {
 
 export const WebDomainLearnView: React.FC<WebDomainLearnViewProps> = ({ onNavigateTab }) => {
   const { completedLessons, toggleLessonCompleted, bookmarkedLessons, toggleLessonBookmark } = useLearning();
+  const { startReadingArticle, isPlaying, articleTitle } = useAudioReader();
   const [selectedChapterId, setSelectedChapterId] = useState<string>(DOMAIN_CHAPTERS[0].id);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<string | null>(null);
 
@@ -147,6 +150,20 @@ export const WebDomainLearnView: React.FC<WebDomainLearnViewProps> = ({ onNaviga
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => startReadingArticle(currentChapter.title, currentChapter.sections)}
+                  className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    isPlaying && articleTitle === currentChapter.title
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm animate-pulse'
+                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-amber-300 hover:border-slate-700'
+                  }`}
+                  title="Nghe giọng đọc toàn bộ chương này"
+                  aria-label="Nghe bài đọc"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span className="text-[11px] font-medium hidden sm:inline">Nghe bài</span>
+                </button>
+
                 <button
                   onClick={() => toggleLessonBookmark(currentChapter.id)}
                   className={`p-2 rounded-md border transition-colors cursor-pointer ${

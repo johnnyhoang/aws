@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FUNDAMENTAL_DEEP_DIVE_LESSONS } from '../../data/fundamentals/deepDiveLessonsData';
 import { FundamentalDomainId } from '../../types/fundamentals';
 import { useLearning } from '../../context/LearningContext';
+import { useAudioReader } from '../../context/AudioReaderContext';
 import { 
   Clock, 
   CheckCircle2, 
@@ -9,7 +10,8 @@ import {
   Copy, 
   Check, 
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Volume2
 } from 'lucide-react';
 
 interface FundamentalsDeepDiveViewProps {
@@ -18,6 +20,7 @@ interface FundamentalsDeepDiveViewProps {
 
 export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> = ({ initialDomainId }) => {
   const { completedLessons, toggleLessonCompletion, addStudyHours } = useLearning();
+  const { startReadingArticle, isPlaying, articleTitle } = useAudioReader();
   const [selectedLessonId, setSelectedLessonId] = useState<string>(() => {
     if (initialDomainId) {
       const match = FUNDAMENTAL_DEEP_DIVE_LESSONS.find(l => l.domainId === initialDomainId);
@@ -122,18 +125,34 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
                 </span>
               </div>
 
-              <button
-                onClick={handleToggleComplete}
-                className={`p-2 rounded-md border transition-colors cursor-pointer ${
-                  isLessonCompleted
-                    ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50'
-                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
-                }`}
-                title={isLessonCompleted ? 'Đã hoàn thành (nhấp để bỏ)' : 'Đánh dấu đã đọc'}
-                aria-label="Đánh dấu đã đọc"
-              >
-                {isLessonCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => startReadingArticle(currentLesson.title, currentLesson.coreConcepts)}
+                  className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    isPlaying && articleTitle === currentLesson.title
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm animate-pulse'
+                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-amber-300 hover:border-slate-700'
+                  }`}
+                  title="Nghe bài đọc"
+                  aria-label="Nghe bài đọc"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span className="text-[11px] font-medium hidden sm:inline">Nghe bài</span>
+                </button>
+
+                <button
+                  onClick={handleToggleComplete}
+                  className={`p-2 rounded-md border transition-colors cursor-pointer ${
+                    isLessonCompleted
+                      ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50'
+                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                  }`}
+                  title={isLessonCompleted ? 'Đã hoàn thành (nhấp để bỏ)' : 'Đánh dấu đã đọc'}
+                  aria-label="Đánh dấu đã đọc"
+                >
+                  {isLessonCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <h1 className="text-2xl font-bold text-slate-100 tracking-tight leading-snug">

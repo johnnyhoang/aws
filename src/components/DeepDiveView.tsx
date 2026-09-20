@@ -12,8 +12,10 @@ import {
   Check, 
   ChevronLeft, 
   ChevronRight,
-  Search
+  Search,
+  Volume2
 } from 'lucide-react';
+import { useAudioReader } from '../context/AudioReaderContext';
 
 interface DeepDiveViewProps {
   initialTopicId?: string;
@@ -26,6 +28,7 @@ export const DeepDiveView: React.FC<DeepDiveViewProps> = ({ initialTopicId }) =>
     bookmarkedLessons, 
     toggleLessonBookmark 
   } = useLearning();
+  const { startReadingArticle, isPlaying, articleTitle } = useAudioReader();
 
   const [selectedTopic, setSelectedTopic] = useState<DeepDiveTopic>(() => {
     if (initialTopicId) {
@@ -181,6 +184,20 @@ export const DeepDiveView: React.FC<DeepDiveViewProps> = ({ initialTopicId }) =>
 
               {/* Minimal Icon Buttons */}
               <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => startReadingArticle(selectedTopic.title, selectedTopic.coreConcepts)}
+                  className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    isPlaying && articleTitle === selectedTopic.title
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm animate-pulse'
+                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-amber-300 hover:border-slate-700'
+                  }`}
+                  title="Nghe bài đọc"
+                  aria-label="Nghe bài đọc"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span className="text-[11px] font-medium hidden sm:inline">Nghe bài</span>
+                </button>
+
                 <button
                   onClick={() => toggleLessonBookmark(selectedTopic.id)}
                   className={`p-2 rounded-md border transition-colors cursor-pointer ${
