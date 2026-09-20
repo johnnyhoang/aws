@@ -60,6 +60,7 @@ export interface FundamentalDeepDiveLesson {
     content: string;
     bulletPoints?: string[];
     diagramAscii?: string;
+    diagramType?: string;
   }[];
   practicalCommands?: {
     tool: string;

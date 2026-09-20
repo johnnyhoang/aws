@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Volume2
 } from 'lucide-react';
+import { VisualDiagram } from '../diagrams/VisualDiagram';
 
 interface FundamentalsDeepDiveViewProps {
   initialDomainId?: FundamentalDomainId;
@@ -190,11 +191,19 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
                     </ul>
                   )}
 
-                  {concept.diagramAscii && (
+                  {concept.diagramType ? (
+                    <div className="pt-2">
+                      <VisualDiagram 
+                        type={concept.diagramType} 
+                        title={concept.heading}
+                        fallbackCode={concept.diagramAscii}
+                      />
+                    </div>
+                  ) : concept.diagramAscii ? (
                     <div className="bg-slate-950 p-3.5 rounded-lg border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto">
                       <pre className="leading-relaxed">{concept.diagramAscii}</pre>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               ))}
             </div>

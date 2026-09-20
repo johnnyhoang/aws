@@ -16,6 +16,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { useAudioReader } from '../context/AudioReaderContext';
+import { VisualDiagram } from './diagrams/VisualDiagram';
 
 interface DeepDiveViewProps {
   initialTopicId?: string;
@@ -261,6 +262,12 @@ export const DeepDiveView: React.FC<DeepDiveViewProps> = ({ initialTopicId }) =>
                         </li>
                       ))}
                     </ul>
+                  )}
+
+                  {concept.diagramType && (
+                    <div className="pt-2">
+                      <VisualDiagram type={concept.diagramType} title={concept.heading} />
+                    </div>
                   )}
                 </div>
               ))}

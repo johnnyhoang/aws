@@ -21,10 +21,12 @@ export interface DomainChapter {
     subheading?: string;
     content: string;
     bulletPoints?: string[];
+    diagramType?: string;
     codeBlock?: {
       language: string;
       title?: string;
       code: string;
+      diagramType?: string;
     };
     proTip?: string;
     warningNote?: string;

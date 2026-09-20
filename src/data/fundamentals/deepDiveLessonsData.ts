@@ -21,6 +21,7 @@ export const FUNDAMENTAL_DEEP_DIVE_LESSONS: FundamentalDeepDiveLesson[] = [
           '**User Space (Ring 3):** Nơi các ứng dụng thông thường (Web server, Trình duyệt, Database, Kịch bản Python) chạy với quyền hạn bị giới hạn.',
           '**System Calls (Syscalls):** Cầu nối an toàn duy nhất để chương trình ở User Space yêu cầu Kernel thực hiện thao tác phần cứng (ví dụ: `read()`, `write()`, `fork()`, `socket()`).'
         ],
+        diagramType: 'kernel-user-space',
         diagramAscii: `
 +-------------------------------------------------------------+
 |                     USER SPACE (Ring 3)                     |
@@ -157,23 +158,7 @@ cat /var/log/nginx/access.log | awk '{print $9}' | sort | uniq -c | sort -nr`,
           '**Bước 4 - TLD Name Server:** Quản lý phần mở rộng tên miền (`.com`, `.net`, `.vn`), trả về máy chủ có thẩm quyền (Authoritative Name Server).',
           '**Bước 5 - Authoritative Name Server (vd: Route 53):** Nắm giữ bản ghi DNS gốc và trả về địa chỉ IP chính xác của máy chủ đích kèm thời gian sống (TTL - Time To Live).'
         ],
-        diagramAscii: `
-[User Browser]
-      |  1. Truy vấn "app.example.com"
-      v
-[DNS Resolver (8.8.8.8)] ---- 2. Hỏi Root (".") ----> [Root Name Server]
-      |                                                |
-      |<--- 3. Trả về TLD Server (".com") ------------+
-      |
-      |---- 4. Hỏi TLD (".com") ---------------------> [TLD Name Server]
-      |                                                |
-      |<--- 5. Trả về Authoritative NS (Route 53) ----+
-      |
-      |---- 6. Hỏi Authoritative NS -----------------> [Authoritative NS]
-      |                                                | (Chứa Record A)
-      |<--- 7. Trả về IP "54.239.28.85" (TTL 300s) ---+
-      v
-[User Browser] === 8. Kết nối trực tiếp HTTP(S) tới IP ===> [AWS Web Server]`
+        diagramType: 'dns-recursive-flow',
       },
       {
         heading: '2. Các Loại Bản Ghi DNS Cốt Lõi (DNS Record Types)',
@@ -189,6 +174,7 @@ cat /var/log/nginx/access.log | awk '{print $9}' | sort | uniq -c | sort -nr`,
       },
       {
         heading: '3. Giải Phẫu Giao Thức HTTP & Mã Trạng Thái (HTTP Status Codes)',
+        diagramType: 'tls-handshake',
         content: 'Mọi kỹ sư hệ thống cần phân biệt tức thì các nhóm mã lỗi HTTP để chẩn đoán sự cố:',
         bulletPoints: [
           '**2xx (Success):** 200 OK, 201 Created (Tạo mới thành công), 204 No Content.',
@@ -277,6 +263,7 @@ curl -o /dev/null -s -w 'Lookup time: %{time_namelookup}s\nConnect: %{time_conne
     coreConcepts: [
       {
         heading: '1. Địa Chỉ IPv4 & 3 Dải Mạng Riêng Chuẩn RFC 1918',
+        diagramType: 'osi-tcp-ip',
         content: 'Địa chỉ IPv4 gồm 32-bit (chia thành 4 Octets, mỗi Octet 8-bit từ 0-255). Do sự khan hiếm IPv4, chuẩn RFC 1918 quy định 3 dải IP riêng biệt (Private IP) chỉ được dùng trong mạng nội bộ và KHÔNG ĐƯỢC định tuyến trực tiếp ra Internet công cộng:',
         bulletPoints: [
           '**Class A:** `10.0.0.0/8` (Dải IP: `10.0.0.0` -> `10.255.255.255`, tổng cộng 16,777,216 IP) -> Thường dùng làm chuẩn thiết kế Amazon VPC cho doanh nghiệp lớn.',
@@ -298,6 +285,7 @@ curl -o /dev/null -s -w 'Lookup time: %{time_namelookup}s\nConnect: %{time_conne
           '• `.3`: Dành riêng cho AWS sử dụng trong tương lai\n' +
           '• `.255`: Network Broadcast Address (AWS không hỗ trợ broadcast nhưng vẫn giữ lại)'
         ],
+        diagramType: 'cidr-matrix',
         diagramAscii: `
 BẢNG QUY ĐỔI CIDR PREFIX PHỔ BIẾN NHẤT TRONG CLOUD:
 +--------+------------------+-----------------+---------------------+
@@ -433,6 +421,7 @@ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward`,
           '• `chmod 644 config.txt` -> Owner: rw- (6), Group: r-- (4), Others: r-- (4) (Chuẩn cho tệp cấu hình).\n' +
           '• `chmod 600 id_ed25519` -> Owner: rw- (6), Group: --- (0), Others: --- (0) (BẮT BUỘC cho SSH Private Key).'
         ],
+        diagramType: 'linux-permissions',
         diagramAscii: `
 GIẢI MÃ CHUỖI QUYỀN TRÊN LINUX:
    -   r w x   r - x   r - -
@@ -558,6 +547,7 @@ sudo systemctl enable --now myapp`,
     coreConcepts: [
       {
         heading: '1. Web Server vs Reverse Proxy (Nginx Architecture)',
+        diagramType: 'nginx-reverse-proxy-flow',
         content: 'Nginx là máy chủ Web hoạt động theo kiến trúc Bất đồng bộ hướng sự kiện (Asynchronous Event-Driven), tiêu tốn cực kỳ ít RAM và có thể xử lý hàng chục nghìn kết nối đồng thời:',
         bulletPoints: [
           '**Web Server:** Trực tiếp phục vụ các tệp tĩnh (Static Assets: HTML, CSS, JS, Ảnh, Video) với hiệu năng tối đa.',
@@ -576,6 +566,7 @@ sudo systemctl enable --now myapp`,
       },
       {
         heading: '3. So Sánh Bản Chất: SQL (RDBMS) vs NoSQL (Document/Key-Value)',
+        diagramType: 'acid-vs-base',
         content: 'Chọn đúng loại cơ sở dữ liệu cho bài toán thực tế:',
         bulletPoints: [
           '**SQL (PostgreSQL, MySQL, Amazon RDS):** Dữ liệu có cấu trúc bảng biểu chặt chẽ, hỗ trợ ràng buộc khóa ngoại, tuân thủ nghiêm ngặt tính chất **ACID** (Atomicity, Consistency, Isolation, Durability). Mở rộng chủ yếu theo chiều dọc (Scale-Up nâng CPU/RAM). Phù hợp cho giao dịch tài chính, thanh toán, quản lý đơn hàng.',
@@ -750,6 +741,7 @@ openssl x509 -in server.crt -text -noout`,
           '• **Namespaces:** Tạo không gian cách ly độc lập (PID namespace cô lập tiến trình, NET namespace cô lập card mạng/IP riêng, MNT namespace cô lập hệ thống tệp).\n' +
           '• **Cgroups (Control Groups):** Giới hạn định mức tài nguyên tối đa mà container được phép sử dụng (vd: tối đa 512MB RAM, 1 vCPU).'
         ],
+        diagramType: 'vm-vs-container',
         diagramAscii: `
 SO SÁNH KIẾN TRÚC MÁY ẢO VM VS DOCKER CONTAINER:
 
@@ -844,6 +836,7 @@ CMD ["node", "dist/server.js"]`,
     coreConcepts: [
       {
         heading: '1. Ba Trạng Thái Cốt Lõi Trong Git & Quy Trình Làm Việc',
+        diagramType: 'git-workflow',
         content: 'Hiểu cấu trúc dữ liệu Directed Acyclic Graph (DAG) của Git:',
         bulletPoints: [
           '**Working Directory:** Thư mục làm việc thực tế chứa các tệp bạn đang chỉnh sửa.',

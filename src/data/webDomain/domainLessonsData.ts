@@ -30,6 +30,7 @@ export const DOMAIN_CHAPTERS: DomainChapter[] = [
           'Subdomain (Tên miền phụ): Các tiền tố nhánh do chủ sở hữu tự tạo để phân chia dịch vụ (ví dụ: "mail.google.com", "api.stripe.com", "app.slack.com").',
           'Third-Level & Lower: Các cấp sâu hơn như "staging.api.v2.example.com" - hỗ trợ phân nhánh không giới hạn trong giới hạn 253 ký tự của FQDN.'
         ],
+        diagramType: 'fqdn-structure',
         codeBlock: {
           language: 'text',
           title: 'Sơ đồ bóc tách cấu trúc FQDN',
@@ -101,6 +102,7 @@ export const DOMAIN_CHAPTERS: DomainChapter[] = [
           'Bước 7: Recursive Resolver lưu kết quả vào cache theo thời gian TTL và trả kết quả về cho Hệ điều hành của bạn.',
           'Bước 8: Trình duyệt nhận IP từ OS và bắt đầu quá trình TCP Handshake / TLS Handshake để tải trang web.'
         ],
+        diagramType: 'dns-recursive-flow',
         codeBlock: {
           language: 'text',
           title: 'Sơ đồ luồng truy vấn DNS đệ quy',
@@ -195,6 +197,7 @@ api         300   IN   CNAME  lb-prod.aws-elb.com.
       },
       {
         heading: '2. Nhóm bản ghi Email & Bộ Ba Bảo Mật Chống Giả Mạo (MX, SPF, DKIM, DMARC)',
+        diagramType: 'email-security-shield',
         content: 'Hệ thống email toàn cầu hoạt động dựa trên 4 bản ghi DNS cốt lõi để đảm bảo thư gửi đi vào Inbox 100% và không bị hacker giả mạo tên miền:',
         bulletPoints: [
           'Bản ghi MX (Mail Exchanger): Chỉ định máy chủ nhận thư của domain kèm độ ưu tiên (Priority - số càng nhỏ ưu tiên càng cao). Ví dụ: 10 aspmx.l.google.com.',
@@ -286,6 +289,7 @@ _minecraft._tcp.play 3600 IN SRV 0 5 25565 mc-server.example.com.
           'Giai đoạn 4: Pending Delete (Chờ xóa - 5 ngày): Không ai có thể gia hạn hay chuộc lại nữa. Tên miền nằm trong hàng đợi của Registry để chuẩn bị giải phóng.',
           'Giai đoạn 5: Released to Public / Available (Tự do đăng ký lại): Tên miền trở về trạng thái tự do, ai nhanh tay hơn sẽ đăng ký được theo cơ chế First-Come First-Served.'
         ],
+        diagramType: 'domain-lifecycle',
         codeBlock: {
           language: 'text',
           title: 'Timeline vòng đời tên miền sau khi hết hạn',
@@ -358,6 +362,7 @@ _minecraft._tcp.play 3600 IN SRV 0 5 25565 mc-server.example.com.
           'Chuỗi tin cậy (Chain of Trust): Bắt đầu từ Root Key Signing Key (KSK) -> TLD Zone -> Bản ghi DS (Delegation Signer) tại Registrar -> Zone Signing Key (ZSK) của Domain.',
           'Khi trình duyệt truy vấn, Recursive Resolver sẽ tự động kiểm tra chữ ký số. Nếu gói tin bị hacker sửa đổi, chữ ký sẽ không khớp và Resolver sẽ chặn ngay lập tức (trả về lỗi SERVFAIL), bảo vệ người dùng 100%.'
         ],
+        diagramType: 'dnssec-records',
         codeBlock: {
           language: 'text',
           title: 'Các bản ghi mật mã học trong DNSSEC',
@@ -479,6 +484,7 @@ sudo certbot certonly --manual --preferred-challenges dns -d example.com -d *.ex
       },
       {
         heading: '3. Làm chủ Cloudflare Proxy (Đám mây Cam vs Đám mây Xám)',
+        diagramType: 'cloudflare-proxy-flow',
         content: 'Cloudflare là dịch vụ DNS, CDN và WAF phổ biến nhất thế giới. Hiểu rõ cơ chế hoạt động của Cloudflare giúp bạn tránh được hàng loạt lỗi 521, 522, 524:',
         bulletPoints: [
           'Proxy On (Đám mây màu Cam - Orange Cloud): Toàn bộ lưu lượng truy cập đi qua máy chủ Reverse Proxy của Cloudflare. IP gốc của máy chủ được ẩn hoàn toàn (chống DDoS), bật tính năng nén WebP, Auto Minify, Caching CDN và WAF.',
@@ -514,6 +520,7 @@ sudo certbot certonly --manual --preferred-challenges dns -d example.com -d *.ex
     sections: [
       {
         heading: '1. Quy trình Di Dời Website Không Gián Đoạn (Zero-Downtime Server Migration)',
+        diagramType: 'zero-downtime-migration',
         content: 'Chuyển một website có hàng trăm nghìn lượt truy cập mỗi ngày sang máy chủ mới mà không làm rớt một request nào là kỹ năng đỉnh cao của một SysAdmin / Cloud Engineer:',
         bulletPoints: [
           'Bước 1: Hạ TTL trước 24 đến 48 giờ. Đổi TTL của bản ghi A từ 86400s (24h) xuống 300s (5 phút). Đảm bảo mọi máy chủ DNS trên thế giới chỉ lưu cache tối đa 5 phút.',

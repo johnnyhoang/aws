@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 import { useAudioReader } from '../../context/AudioReaderContext';
+import { VisualDiagram } from '../diagrams/VisualDiagram';
 
 interface WebDomainLearnViewProps {
   onNavigateTab?: (tab: 'learn' | 'test' | 'play') => void;
@@ -235,8 +236,17 @@ export const WebDomainLearnView: React.FC<WebDomainLearnViewProps> = ({ onNaviga
                   </ul>
                 )}
 
-                {/* Code Block if any */}
-                {section.codeBlock && (
+                {/* Visual Diagram if any */}
+                {(section.diagramType || section.codeBlock?.diagramType) ? (
+                  <div className="pt-2">
+                    <VisualDiagram 
+                      type={section.diagramType || section.codeBlock?.diagramType || ''} 
+                      title={section.codeBlock?.title}
+                      fallbackCode={section.codeBlock?.code}
+                    />
+                  </div>
+                ) : section.codeBlock ? (
+                  /* Code Block if standard code/syntax */
                   <div className="space-y-1.5 pt-1">
                     {section.codeBlock.title && (
                       <div className="flex items-center justify-between text-xs text-slate-400">
@@ -256,7 +266,7 @@ export const WebDomainLearnView: React.FC<WebDomainLearnViewProps> = ({ onNaviga
                       </pre>
                     </div>
                   </div>
-                )}
+                ) : null}
 
                 {/* Pro Tip Alert */}
                 {section.proTip && (

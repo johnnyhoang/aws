@@ -45,6 +45,7 @@ export interface DeepDiveTopic {
     heading: string;
     content: string;
     bulletPoints?: string[];
+    diagramType?: string;
   }[];
   practicalCommands?: {
     tool: string;

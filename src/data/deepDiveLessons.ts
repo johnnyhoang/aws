@@ -14,6 +14,7 @@ export const DEEP_DIVE_LESSONS: DeepDiveTopic[] = [
     coreConcepts: [
       {
         heading: '1. Kiến trúc VPC Chuẩn 3 Lớp (Three-Tier Multi-AZ VPC)',
+        diagramType: 'aws-3tier-vpc',
         content: 'Một kiến trúc doanh nghiệp chuẩn luôn cần tối thiểu 2 Availability Zones (AZ) và 3 lớp Subnet riêng biệt trên mỗi AZ:',
         bulletPoints: [
           'Public Subnet: Chứa Application Load Balancer (ALB) và NAT Gateway. Có Route trực tiếp tới Internet Gateway (0.0.0.0/0 -> igw-xxx).',
@@ -31,6 +32,7 @@ export const DEEP_DIVE_LESSONS: DeepDiveTopic[] = [
       },
       {
         heading: '3. AWS Transit Gateway & Liên kết Mạng Trường Học',
+        diagramType: 'aws-transit-gateway',
         content: 'Khi đại học có nhiều phòng ban với các tài khoản AWS riêng biệt (AWS Accounts cho Viện Nghiên cứu, Khoa Khoa học Máy tính, Khối Quản lý Đào tạo), AWS Transit Gateway hoạt động như một Cloud Router tập trung, loại bỏ sự phức tạp của VPC Peering hình mạng nhện (Full Mesh).'
       }
     ],
@@ -249,6 +251,7 @@ aws ec2 describe-subnets \
       },
       {
         heading: '2. Các Loại AWS Storage Gateway Phục Vụ Trường Học',
+        diagramType: 'aws-s3-tiers',
         content: 'Storage Gateway là cầu nối giữa ổ đĩa on-premise và lưu trữ đám mây S3:',
         bulletPoints: [
           'S3 File Gateway: Cung cấp giao thức chia sẻ file quen thuộc (NFS / SMB) cho máy tính giảng viên, dữ liệu nền tự động lưu trên Amazon S3.',
@@ -266,19 +269,19 @@ aws ec2 describe-subnets \
         tool: 'AWS CLI',
         title: 'Khởi tạo Task đồng bộ dữ liệu nghiên cứu bằng AWS DataSync',
         code: `# Tạo tác vụ đồng bộ từ NFS Storage on-campus sang S3 Bucket
-aws datasync create-task \
-  --source-location-arn "arn:aws:datasync:us-east-1:123456789012:location/loc-0123456789abcdef0" \
-  --destination-location-arn "arn:aws:datasync:us-east-1:123456789012:location/loc-0987654321fedcba0" \
-  --name "Sync-Research-Data-To-S3" \
+aws datasync create-task \\
+  --source-location-arn "arn:aws:datasync:us-east-1:123456789012:location/loc-0123456789abcdef0" \\
+  --destination-location-arn "arn:aws:datasync:us-east-1:123456789012:location/loc-0987654321fedcba0" \\
+  --name "Sync-Research-Data-To-S3" \\
   --options VerifyMode=POINT_IN_TIME_CONSISTENT,Atime=BEST_EFFORT,Mtime=PRESERVE`,
         description: 'Lệnh cấu hình AWS DataSync đồng bộ file định kỳ bảo toàn thời gian sửa đổi và phân quyền tệp tin.'
       },
       {
         tool: 'AWS CLI',
         title: 'Kiểm tra trạng thái nhân bản DMS Replication Task',
-        code: `aws dms describe-replication-tasks \
-  --filters "Name=replication-task-id,Values=campus-db-migration" \
-  --query "ReplicationTasks[0].{Status:Status,Progress:PercentComplete,TablesLoaded:TableMappings}" \
+        code: `aws dms describe-replication-tasks \\
+  --filters "Name=replication-task-id,Values=campus-db-migration" \\
+  --query "ReplicationTasks[0].{Status:Status,Progress:PercentComplete,TablesLoaded:TableMappings}" \\
   --output json`,
         description: 'Kiểm tra tiến độ di chuyển cơ sở dữ liệu sinh viên sang AWS RDS.'
       }
@@ -297,7 +300,7 @@ aws datasync create-task \
         {
           stepNumber: 1,
           title: 'Tạo S3 Bucket lưu trữ hồ sơ trường học',
-          details: 'Tạo bucket `university-records-archive` với mã hóa SSE-KMS và bật Versioning.'
+          details: 'Tạo bucket \`university-records-archive\` với mã hóa SSE-KMS và bật Versioning.'
         },
         {
           stepNumber: 2,
@@ -340,6 +343,7 @@ aws datasync create-task \
       },
       {
         heading: '2. Kiến Trúc Hướng Sự Kiện Serverless (Event-Driven Architecture)',
+        diagramType: 'aws-serverless-flow',
         content: 'Các thành phần trụ cột:',
         bulletPoints: [
           'Amazon API Gateway: Cổng tiếp nhận HTTP/REST/WebSocket APIs với chức năng xác thực JWT, Rate Limiting chống DDOS.',
@@ -452,6 +456,7 @@ sam deploy --guided \
       },
       {
         heading: '3. Tuân thủ Quy định Bảo vệ Dữ liệu Giáo dục (FERPA Compliance)',
+        diagramType: 'aws-shared-responsibility',
         content: 'Family Educational Rights and Privacy Act (FERPA) là luật liên bang Mỹ bảo vệ thông tin học tập của sinh viên. Trên AWS, bạn phải đảm bảo: Dữ liệu PII (Personally Identifiable Information) được mã hóa ở mọi nơi (KMS), bật CloudTrail ghi log mọi hành động truy cập, và áp dụng nguyên tắc đặc quyền tối thiểu (Least Privilege).'
       }
     ],
