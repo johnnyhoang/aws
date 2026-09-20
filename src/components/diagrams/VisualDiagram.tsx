@@ -14,18 +14,22 @@ import {
   Key, 
   FileText, 
   Lock, 
-  Zap,
-  Info,
-  Database,
-  Cloud,
-  Share2,
-  GitBranch,
-  Mail,
-  RefreshCw,
-  AlertTriangle,
-  UserCheck,
-  Radio,
-  Network
+  Zap, 
+  Info, 
+  Database, 
+  Cloud, 
+  Share2, 
+  GitBranch, 
+  Mail, 
+  RefreshCw, 
+  AlertTriangle, 
+  UserCheck, 
+  Radio, 
+  Network,
+  Monitor,
+  Building2,
+  FolderTree,
+  Laptop
 } from 'lucide-react';
 
 export type DiagramType = 
@@ -120,7 +124,139 @@ export const VisualDiagram: React.FC<VisualDiagramProps> = ({ type, title, fallb
 };
 
 /* =========================================================================
-   1. DNS RECURSIVE RESOLUTION FLOW
+   1. FQDN STRUCTURE (GRAPHICAL TREE & BRACKET CANVAS)
+   ========================================================================= */
+const FqdnStructureDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-6 shadow-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <FolderTree className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Sơ Đồ Đồ Họa Cây Phân Cấp Tên Miền Chuẩn FQDN'}
+          </h4>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] font-mono text-amber-400 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-800/40">
+          <span>Quy tắc: Đọc từ Phải sang Trái (Root ➔ TLD ➔ SLD ➔ Subdomain)</span>
+        </div>
+      </div>
+
+      {/* Graphical Tree Canvas */}
+      <div className="p-5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-6">
+        
+        {/* Top Visual Domain Bar */}
+        <div className="flex flex-col items-center justify-center space-y-2">
+          <div className="text-[11px] text-slate-500 uppercase tracking-wider font-mono font-semibold">
+            Chuỗi Tên Miền Đầy Đủ (Fully Qualified Domain Name)
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-lg sm:text-2xl font-bold">
+            <div className="flex flex-col items-center">
+              <span className="px-4 py-2 rounded-xl bg-emerald-950/70 border-2 border-emerald-500/70 text-emerald-300 shadow-lg shadow-emerald-950/50">
+                api
+              </span>
+              <span className="text-[10px] text-emerald-400 font-sans mt-1">Subdomain</span>
+            </div>
+            <span className="text-slate-500 font-bold text-xl">.</span>
+            <div className="flex flex-col items-center">
+              <span className="px-4 py-2 rounded-xl bg-amber-950/70 border-2 border-amber-500/70 text-amber-300 shadow-lg shadow-amber-950/50">
+                mybrand
+              </span>
+              <span className="text-[10px] text-amber-400 font-sans mt-1">Second-Level (SLD)</span>
+            </div>
+            <span className="text-slate-500 font-bold text-xl">.</span>
+            <div className="flex flex-col items-center">
+              <span className="px-4 py-2 rounded-xl bg-indigo-950/70 border-2 border-indigo-500/70 text-indigo-300 shadow-lg shadow-indigo-950/50">
+                com
+              </span>
+              <span className="text-[10px] text-indigo-400 font-sans mt-1">Top-Level (TLD)</span>
+            </div>
+            <span className="text-slate-500 font-bold text-xl">.</span>
+            <div className="flex flex-col items-center">
+              <span className="px-3.5 py-2 rounded-xl bg-purple-950/70 border-2 border-purple-500/70 text-purple-300 shadow-lg shadow-purple-950/50" title="Dấu chấm gốc Root">
+                .
+              </span>
+              <span className="text-[10px] text-purple-400 font-sans mt-1">Root (.)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Graphical Tree SVG Connection Canvas */}
+        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-3">
+          <div className="text-xs font-semibold text-slate-300 uppercase tracking-wide flex items-center justify-between">
+            <span>Sơ Đồ Phân Nhánh Cây DNS (Tree Hierarchy Architecture)</span>
+            <span className="text-[10px] text-slate-500 font-mono">13 Root Servers ➔ Registry ➔ Registrar ➔ Web Owner</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+            {/* Level 0: Root */}
+            <div className="p-3.5 rounded-lg bg-purple-950/30 border border-purple-800/60 flex flex-col justify-between space-y-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded bg-purple-900/60 text-purple-300 font-mono text-[10px] font-bold">Cấp 0 (Gốc)</span>
+                  <Globe className="w-4 h-4 text-purple-400" />
+                </div>
+                <div className="font-bold text-slate-100 text-sm">Root Domain (.)</div>
+                <div className="text-[11px] text-purple-300 font-medium">13 Cụm Root Server Toàn Cầu</div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Đỉnh cao nhất của Internet. Điều phối và chỉ đường tới các máy chủ TLD tương ứng.
+              </p>
+            </div>
+
+            {/* Level 1: TLD */}
+            <div className="p-3.5 rounded-lg bg-indigo-950/30 border border-indigo-800/60 flex flex-col justify-between space-y-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded bg-indigo-900/60 text-indigo-300 font-mono text-[10px] font-bold">Cấp 1 (TLD)</span>
+                  <Building2 className="w-4 h-4 text-indigo-400" />
+                </div>
+                <div className="font-bold text-slate-100 text-sm">Top-Level Domain</div>
+                <div className="text-[11px] text-indigo-300 font-medium">Cơ quan Registry (.com, .vn)</div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Quản lý bởi Verisign (.com), VNNIC (.vn). Trả về Authoritative Nameserver của domain.
+              </p>
+            </div>
+
+            {/* Level 2: SLD */}
+            <div className="p-3.5 rounded-lg bg-amber-950/30 border border-amber-800/60 flex flex-col justify-between space-y-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 font-mono text-[10px] font-bold">Cấp 2 (SLD)</span>
+                  <Key className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="font-bold text-slate-100 text-sm">Second-Level Domain</div>
+                <div className="text-[11px] text-amber-300 font-medium">Định danh bạn đăng ký</div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Tên thương hiệu ("mybrand") mua qua Registrar (Cloudflare/Namecheap), trả phí theo năm.
+              </p>
+            </div>
+
+            {/* Level 3: Subdomain */}
+            <div className="p-3.5 rounded-lg bg-emerald-950/30 border border-emerald-800/60 flex flex-col justify-between space-y-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-mono text-[10px] font-bold">Cấp 3 (Subdomain)</span>
+                  <Laptop className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className="font-bold text-slate-100 text-sm">Subdomain Branch</div>
+                <div className="text-[11px] text-emerald-300 font-medium">Tự do phân nhánh (Miễn phí)</div>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Tiền tố nhánh dịch vụ (api, blog, app, staging) do chủ sở hữu tự tạo trong bảng DNS.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   2. DNS RECURSIVE RESOLUTION (GRAPHICAL NETWORK TOPOLOGY & FLOW)
    ========================================================================= */
 const DnsRecursiveFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   const [activeStep, setActiveStep] = useState<number | null>(null);
@@ -169,161 +305,72 @@ const DnsRecursiveFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg overflow-hidden">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-amber-400" />
           <h4 className="text-sm font-semibold text-slate-100">
-            {title || 'Sơ Đồ Đồ Họa: Luồng Phân Giải DNS Đệ Quy 8 Bước'}
+            {title || 'Sơ Đồ Đồ Họa: Mạng Lưới Phân Giải DNS Đệ Quy 8 Bước'}
           </h4>
         </div>
         <span className="text-[11px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-          Thời gian phân giải: ~20 - 50ms
+          Độ trễ trung bình: ~20 - 50ms
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-2.5">
-        {steps.map((s) => {
-          const isHovered = activeStep === s.num;
-          return (
-            <div
-              key={s.num}
-              onMouseEnter={() => setActiveStep(s.num)}
-              onMouseLeave={() => setActiveStep(null)}
-              className={`p-3 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ${
-                s.color
-              } ${isHovered ? 'scale-105 shadow-md shadow-amber-500/10' : 'opacity-90'}`}
-            >
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="font-bold">Bước {s.num}</span>
-                  <span className="text-[10px] opacity-75">{s.badge}</span>
+      {/* Graphical Network Layout Canvas */}
+      <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-4">
+        {/* Step Cards with Stepper Ribbon */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-2.5">
+          {steps.map((s) => {
+            const isHovered = activeStep === s.num;
+            return (
+              <div
+                key={s.num}
+                onMouseEnter={() => setActiveStep(s.num)}
+                onMouseLeave={() => setActiveStep(null)}
+                className={`p-3 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ${
+                  s.color
+                } ${isHovered ? 'scale-105 shadow-md shadow-amber-500/10' : 'opacity-90'}`}
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="font-bold">Bước {s.num}</span>
+                    <span className="text-[10px] opacity-75">{s.badge}</span>
+                  </div>
+                  <div className="font-semibold text-xs text-slate-100">{s.title}</div>
+                  <div className="text-[10px] text-slate-400 leading-tight">{s.role}</div>
                 </div>
-                <div className="font-semibold text-xs text-slate-100">{s.title}</div>
-                <div className="text-[10px] text-slate-400 leading-tight">{s.role}</div>
+                <p className="text-[11px] text-slate-300 mt-2 leading-snug">{s.desc}</p>
               </div>
-              <p className="text-[11px] text-slate-300 mt-2 leading-snug">{s.desc}</p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      <div className="bg-slate-950/80 rounded-lg p-3 border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-cyan-300">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span className="font-medium">1. Người dùng gõ "example.com"</span>
-        </div>
-        <ArrowRight className="w-4 h-4 text-slate-500 hidden sm:block" />
-        <div className="text-amber-300 font-mono text-[11px]">
-          Resolver đi hỏi Root ➔ TLD ➔ Authoritative
-        </div>
-        <ArrowRight className="w-4 h-4 text-slate-500 hidden sm:block" />
-        <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>Nhận IP: 93.184.216.34 ➔ Mở Web</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* =========================================================================
-   2. FQDN STRUCTURE
-   ========================================================================= */
-const FqdnStructureDiagram: React.FC<{ title?: string }> = ({ title }) => {
-  const parts = [
-    {
-      level: 'Root Domain (.)',
-      example: '.',
-      label: 'Gốc DNS Tối Cao',
-      desc: 'Dấu chấm vô hình ở tận cùng bên phải, do 13 cụm Root Servers toàn cầu điều phối.',
-      bg: 'bg-purple-950/30 border-purple-800/60 text-purple-300',
-      badge: 'Cấp 0 (Root)'
-    },
-    {
-      level: 'Top-Level Domain (TLD)',
-      example: 'com',
-      label: 'Đuôi tên miền cấp cao',
-      desc: 'Phần mở rộng (.com, .net, .vn, .io) do các cơ quan Registry (Verisign, VNNIC) quản lý.',
-      bg: 'bg-indigo-950/30 border-indigo-800/60 text-indigo-300',
-      badge: 'Cấp 1 (TLD)'
-    },
-    {
-      level: 'Second-Level Domain (SLD)',
-      example: 'mybrand',
-      label: 'Tên định danh thương hiệu',
-      desc: 'Phần tên chính mà bạn đăng ký qua Registrar (Cloudflare, Namecheap) và trả phí hàng năm.',
-      bg: 'bg-amber-950/30 border-amber-800/60 text-amber-300',
-      badge: 'Cấp 2 (SLD)'
-    },
-    {
-      level: 'Subdomain (Tên miền phụ)',
-      example: 'api',
-      label: 'Phân nhánh dịch vụ',
-      desc: 'Tiền tố do bạn tự do tạo trong bảng DNS (api, blog, mail, staging) mà không mất thêm phí.',
-      bg: 'bg-emerald-950/30 border-emerald-800/60 text-emerald-300',
-      badge: 'Cấp 3 (Subdomain)'
-    }
-  ];
-
-  return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-5 shadow-lg">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-amber-400" />
-          <h4 className="text-sm font-semibold text-slate-100">
-            {title || 'Sơ Đồ Bóc Tách: Cấu Trúc Phân Cấp Tên Miền Chuẩn FQDN'}
-          </h4>
-        </div>
-        <span className="text-[11px] text-slate-400">
-          Đọc từ Phải sang Trái ➔
-        </span>
-      </div>
-
-      <div className="p-4 bg-slate-950 rounded-xl border border-slate-800/80 flex flex-col items-center justify-center space-y-3">
-        <div className="text-[11px] text-slate-500 uppercase tracking-widest font-semibold">
-          Chuỗi Tên Miền Đầy Đủ (Fully Qualified Domain Name)
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-1.5 font-mono text-base sm:text-xl font-bold">
-          <span className="px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-600/60 text-emerald-300">
-            api
-          </span>
-          <span className="text-slate-500">.</span>
-          <span className="px-3 py-1.5 rounded-lg bg-amber-950/60 border border-amber-600/60 text-amber-300">
-            mybrand
-          </span>
-          <span className="text-slate-500">.</span>
-          <span className="px-3 py-1.5 rounded-lg bg-indigo-950/60 border border-indigo-600/60 text-indigo-300">
-            com
-          </span>
-          <span className="text-slate-500">.</span>
-          <span className="px-2 py-1.5 rounded-lg bg-purple-950/60 border border-purple-600/60 text-purple-300" title="Root dot">
-            .
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {parts.map((p, idx) => (
-          <div key={idx} className={`p-3.5 rounded-lg border flex flex-col justify-between space-y-2 ${p.bg}`}>
-            <div>
-              <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="font-bold">{p.badge}</span>
-                <span className="px-1.5 py-0.5 rounded bg-slate-950/60 font-mono">{p.example}</span>
-              </div>
-              <div className="text-xs font-semibold text-slate-100 mt-1">{p.level}</div>
-              <div className="text-[11px] opacity-80 font-medium">{p.label}</div>
-            </div>
-            <p className="text-[11px] text-slate-300 leading-relaxed">{p.desc}</p>
+        {/* Visual Request-Response Data Highway */}
+        <div className="bg-slate-900/80 rounded-lg p-3.5 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-cyan-300">
+            <Monitor className="w-4 h-4 text-cyan-400" />
+            <span className="font-medium">1. Trình duyệt gõ "example.com"</span>
           </div>
-        ))}
+          <ArrowRight className="w-4 h-4 text-slate-500 hidden sm:block" />
+          <div className="text-amber-300 font-mono text-[11px] flex items-center gap-1.5">
+            <Radio className="w-3.5 h-3.5 animate-pulse text-amber-400" />
+            <span>Resolver hỏi Root ➔ TLD ➔ Authoritative</span>
+          </div>
+          <ArrowRight className="w-4 h-4 text-slate-500 hidden sm:block" />
+          <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>Nhận IP: 93.184.216.34 ➔ Tải trang</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 /* =========================================================================
-   3. DOMAIN LIFECYCLE TIMELINE
+   3. DOMAIN LIFECYCLE (GRAPHICAL TRANSIT TIMELINE)
    ========================================================================= */
 const DomainLifecycleDiagram: React.FC<{ title?: string }> = ({ title }) => {
   const stages = [
@@ -370,7 +417,7 @@ const DomainLifecycleDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-amber-400" />
@@ -449,7 +496,7 @@ const DnssecRecordsDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-amber-400" />
@@ -482,11 +529,11 @@ const DnssecRecordsDiagram: React.FC<{ title?: string }> = ({ title }) => {
 };
 
 /* =========================================================================
-   5. KERNEL SPACE VS USER SPACE
+   5. KERNEL SPACE VS USER SPACE (RING ARCHITECTURE)
    ========================================================================= */
 const KernelUserSpaceDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Cpu className="w-4 h-4 text-amber-400" />
@@ -577,7 +624,7 @@ const CidrMatrixDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg overflow-hidden">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Server className="w-4 h-4 text-amber-400" />
@@ -623,7 +670,7 @@ const CidrMatrixDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const LinuxPermissionsDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-amber-400" />
@@ -686,7 +733,7 @@ const LinuxPermissionsDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const VmVsContainerDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Box className="w-4 h-4 text-amber-400" />
@@ -766,11 +813,11 @@ const VmVsContainerDiagram: React.FC<{ title?: string }> = ({ title }) => {
 };
 
 /* =========================================================================
-   9. AWS 3-TIER MULTI-AZ VPC
+   9. AWS 3-TIER MULTI-AZ VPC (ENTERPRISE BLUEPRINT)
    ========================================================================= */
 const Aws3TierVpcDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Cloud className="w-4 h-4 text-amber-400" />
@@ -784,13 +831,11 @@ const Aws3TierVpcDiagram: React.FC<{ title?: string }> = ({ title }) => {
       </div>
 
       <div className="space-y-3 text-xs">
-        {/* Internet Gateway */}
-        <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-mono">
+        <div className="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-mono">
           <Globe className="w-4 h-4 text-cyan-400" />
           <span>Internet Gateway (IGW) ➔ Route 0.0.0.0/0</span>
         </div>
 
-        {/* Public Subnet Tier */}
         <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-800/40 space-y-2">
           <div className="flex items-center justify-between text-cyan-300 font-semibold">
             <span>1. PUBLIC SUBNET TIER (Cửa ngõ tiếp nhận & NAT)</span>
@@ -808,7 +853,6 @@ const Aws3TierVpcDiagram: React.FC<{ title?: string }> = ({ title }) => {
           </div>
         </div>
 
-        {/* Private App Subnet Tier */}
         <div className="p-3.5 rounded-lg bg-amber-950/20 border border-amber-800/40 space-y-2">
           <div className="flex items-center justify-between text-amber-300 font-semibold">
             <span>2. PRIVATE APPLICATION TIER (Xử lý nghiệp vụ & Auto Scaling)</span>
@@ -826,7 +870,6 @@ const Aws3TierVpcDiagram: React.FC<{ title?: string }> = ({ title }) => {
           </div>
         </div>
 
-        {/* Isolated DB Subnet Tier */}
         <div className="p-3.5 rounded-lg bg-purple-950/20 border border-purple-800/40 space-y-2">
           <div className="flex items-center justify-between text-purple-300 font-semibold">
             <span>3. ISOLATED DATABASE TIER (Cơ sở dữ liệu cách ly tuyệt đối)</span>
@@ -861,7 +904,7 @@ const AwsS3TiersDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg overflow-hidden">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <HardDrive className="w-4 h-4 text-amber-400" />
@@ -896,7 +939,7 @@ const AwsS3TiersDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const AwsIamEvaluationDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <UserCheck className="w-4 h-4 text-amber-400" />
@@ -943,7 +986,7 @@ const AwsIamEvaluationDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const AwsSharedResponsibilityDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-amber-400" />
@@ -954,7 +997,6 @@ const AwsSharedResponsibilityDiagram: React.FC<{ title?: string }> = ({ title })
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        {/* Customer Responsibility */}
         <div className="p-4 rounded-lg bg-blue-950/20 border border-blue-800/40 space-y-2">
           <div className="flex items-center justify-between font-semibold text-blue-300">
             <span>KHÁCH HÀNG CHỊU TRÁCH NHIỆM</span>
@@ -968,7 +1010,6 @@ const AwsSharedResponsibilityDiagram: React.FC<{ title?: string }> = ({ title })
           </ul>
         </div>
 
-        {/* AWS Responsibility */}
         <div className="p-4 rounded-lg bg-amber-950/20 border border-amber-800/40 space-y-2">
           <div className="flex items-center justify-between font-semibold text-amber-300">
             <span>AWS CHỊU TRÁCH NHIỆM</span>
@@ -991,7 +1032,7 @@ const AwsSharedResponsibilityDiagram: React.FC<{ title?: string }> = ({ title })
    ========================================================================= */
 const AwsServerlessFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-amber-400" />
@@ -1035,7 +1076,7 @@ const AwsServerlessFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const AwsTransitGatewayDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Share2 className="w-4 h-4 text-amber-400" />
@@ -1066,11 +1107,11 @@ const AwsTransitGatewayDiagram: React.FC<{ title?: string }> = ({ title }) => {
 };
 
 /* =========================================================================
-   15. TCP 3-WAY HANDSHAKE
+   15. TCP 3-WAY HANDSHAKE (SEQUENCE LADDER)
    ========================================================================= */
 const TcpHandshakeDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Radio className="w-4 h-4 text-amber-400" />
@@ -1114,7 +1155,7 @@ const OsiTcpIpDiagram: React.FC<{ title?: string }> = ({ title }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg overflow-hidden">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-amber-400" />
@@ -1153,7 +1194,7 @@ const OsiTcpIpDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const TlsHandshakeDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Lock className="w-4 h-4 text-amber-400" />
@@ -1187,7 +1228,7 @@ const TlsHandshakeDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const GitWorkflowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <GitBranch className="w-4 h-4 text-amber-400" />
@@ -1231,7 +1272,7 @@ const GitWorkflowDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const AcidVsBaseDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Database className="w-4 h-4 text-amber-400" />
@@ -1270,7 +1311,7 @@ const AcidVsBaseDiagram: React.FC<{ title?: string }> = ({ title }) => {
    ========================================================================= */
 const EmailSecurityShieldDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-amber-400" />
@@ -1308,7 +1349,7 @@ const EmailSecurityShieldDiagram: React.FC<{ title?: string }> = ({ title }) => 
    ========================================================================= */
 const CloudflareProxyFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Cloud className="w-4 h-4 text-amber-400" />
@@ -1356,7 +1397,7 @@ const ZeroDowntimeMigrationDiagram: React.FC<{ title?: string }> = ({ title }) =
   ];
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <RefreshCw className="w-4 h-4 text-amber-400" />
@@ -1384,7 +1425,7 @@ const ZeroDowntimeMigrationDiagram: React.FC<{ title?: string }> = ({ title }) =
    ========================================================================= */
 const NginxReverseProxyFlowDiagram: React.FC<{ title?: string }> = ({ title }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-lg">
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Server className="w-4 h-4 text-amber-400" />
