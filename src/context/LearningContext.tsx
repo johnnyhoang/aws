@@ -8,7 +8,7 @@ export interface UserProfile {
   careerTrack: CareerTrack;
 }
 
-export type PortalMode = 'fundamentals' | 'aws';
+export type PortalMode = 'fundamentals' | 'aws' | 'web_domain';
 
 interface LearningState {
   portalMode: PortalMode;

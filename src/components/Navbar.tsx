@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
 import { useLearning } from '../context/LearningContext';
-import { CERT_STAGES } from '../data/roadmapData';
-import { DEEP_DIVE_LESSONS } from '../data/deepDiveLessons';
-import { PORTFOLIO_PROJECTS } from '../data/portfolioProjects';
-import { FUNDAMENTAL_DOMAINS } from '../data/fundamentals/domainsData';
-import { FUNDAMENTAL_DEEP_DIVE_LESSONS } from '../data/fundamentals/deepDiveLessonsData';
-import { FUNDAMENTAL_PROJECTS } from '../data/fundamentals/portfolioProjectsData';
-import { calculateFundamentalLevel } from '../data/fundamentals/maturityLevelsData';
 import { CloudSyncModal } from './CloudSyncModal';
 import { UserLevelModal } from './UserLevelModal';
 import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevelModal';
@@ -22,9 +15,9 @@ import {
   UserCheck, 
   Flame, 
   Coins, 
-  Sparkles, 
   Terminal, 
-  Glasses
+  Glasses,
+  Globe
 } from 'lucide-react';
 
 export type NavTab = 'learn' | 'test' | 'play';
@@ -40,12 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     setPortalMode,
     currentTrack, 
     setTrack, 
-    completedStages, 
-    completedLessons, 
-    completedProjects,
-    studyHoursLogged,
     userProfile,
-    levelInfo,
     userPoints,
     currentStreak,
     fontSizeScale,
@@ -56,234 +44,165 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
   const [isReadingModalOpen, setIsReadingModalOpen] = useState(false);
 
-  // Dynamic calculations based on active portal mode
   const isFundamentals = portalMode === 'fundamentals';
-  const fundamentalLevelInfo = calculateFundamentalLevel(userPoints);
-
-  const totalItems = isFundamentals
-    ? FUNDAMENTAL_DOMAINS.length + FUNDAMENTAL_DEEP_DIVE_LESSONS.length + FUNDAMENTAL_PROJECTS.length
-    : CERT_STAGES.length + DEEP_DIVE_LESSONS.length + PORTFOLIO_PROJECTS.length;
-
-  const completedCount = completedStages.length + completedLessons.length + completedProjects.length;
-  const progressPercent = Math.min(100, Math.round((completedCount / totalItems) * 100));
+  const isWebDomain = portalMode === 'web_domain';
 
   const navItems: { 
     id: NavTab; 
     label: string; 
-    mobileLabel: string; 
     icon: React.ComponentType<{ className?: string }> 
   }[] = [
     { 
       id: 'learn', 
-      label: isFundamentals ? '📖 1. Học Nền Tảng IT' : '📖 1. Học AWS Cloud', 
-      mobileLabel: 'Học Tập', 
+      label: 'Học', 
       icon: BookOpen 
     },
     { 
       id: 'test', 
-      label: '📝 2. Luyện Thi & Test', 
-      mobileLabel: 'Luyện Thi', 
+      label: 'Test', 
       icon: CheckCircle2 
     },
     { 
       id: 'play', 
-      label: '🎮 3. Game & Thực Chiến', 
-      mobileLabel: 'Chơi & Lab', 
+      label: 'Chơi', 
       icon: Gamepad2 
     },
   ];
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-xl">
+      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800/80 text-slate-200">
         
-        {/* Top Banner: Portal Switcher & Gamification HUD */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 px-3 sm:px-4 py-1.5 text-xs text-slate-300 flex items-center justify-between gap-2 overflow-hidden">
+        {/* Top Minimal Utility Bar */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between text-xs border-b border-slate-900">
           
-          {/* Dual Portal Switcher Pill */}
-          <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-full border border-slate-700/80">
+          {/* Portal Switcher: 3 Minimal text pills */}
+          <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-lg border border-slate-800 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setPortalMode('fundamentals')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                 isFundamentals
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md'
+                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
+              title="Cổng IT Fundamentals"
             >
-              <Sparkles className="w-3 h-3" />
-              <span>IT Fundamentals</span>
+              <Terminal className="w-3.5 h-3.5" />
+              <span>IT Nền Tảng</span>
+            </button>
+            <button
+              onClick={() => setPortalMode('web_domain')}
+              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                isWebDomain
+                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Cổng Web Domain & Quản Trị Hệ Thống"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>Web & Domain</span>
             </button>
             <button
               onClick={() => setPortalMode('aws')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
-                !isFundamentals
-                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md'
+              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                portalMode === 'aws'
+                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
+              title="Cổng AWS Cloud"
             >
-              <Cloud className="w-3 h-3" />
+              <Cloud className="w-3.5 h-3.5" />
               <span>AWS Cloud</span>
             </button>
           </div>
 
-          {/* User Maturity Level Badge Button */}
-          <button 
-            onClick={() => setIsLevelModalOpen(true)}
-            className="flex items-center gap-1.5 min-w-0 bg-slate-950/80 hover:bg-slate-900 px-2.5 py-0.5 rounded-full border border-amber-500/30 transition-all cursor-pointer group"
-            title="Xem chi tiết Cấp độ Trưởng thành & Thống kê"
-          >
-            <span className="text-xs">{isFundamentals ? fundamentalLevelInfo.badge : levelInfo.badge}</span>
-            <span className="font-bold text-amber-300 text-[11px] truncate group-hover:text-amber-200">
-              Lv.{isFundamentals ? fundamentalLevelInfo.level : levelInfo.level} {isFundamentals ? fundamentalLevelInfo.titleEn : levelInfo.titleEn}
-            </span>
-            <div className="hidden sm:flex items-center gap-1 text-[10px] text-slate-400 font-mono">
-              <span className="w-12 bg-slate-800 rounded-full h-1.5 overflow-hidden inline-block ml-1">
-                <span 
-                  className="bg-amber-400 h-full block rounded-full" 
-                  style={{ width: `${isFundamentals ? fundamentalLevelInfo.progressPercent : levelInfo.progressPercent}%` }}
-                />
-              </span>
-              <span>{isFundamentals ? fundamentalLevelInfo.progressPercent : levelInfo.progressPercent}%</span>
-            </div>
-          </button>
-
-          {/* Quick Stats & Cloud Sync */}
-          <div className="flex items-center gap-2 text-slate-300 font-medium flex-shrink-0">
+          {/* Utility Tools (Minimal Icon Buttons with tooltips) */}
+          <div className="flex items-center gap-2 text-slate-400">
             
-            {/* Streak flame */}
-            <div 
-              onClick={() => setIsLevelModalOpen(true)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300 text-[11px] font-bold cursor-pointer"
-              title="Chuỗi trả lời đúng liên tiếp"
-            >
-              <Flame className="w-3 h-3 text-orange-400 animate-bounce" />
-              <span>{currentStreak}x</span>
+            {/* Track Switcher Icons */}
+            <div className="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-800">
+              <button
+                onClick={() => setTrack('cloud_engineer')}
+                className={`p-1.5 rounded-md transition-colors cursor-pointer ${
+                  currentTrack === 'cloud_engineer'
+                    ? 'bg-slate-800 text-amber-300'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Định hướng: Systems / Cloud Infra"
+                aria-label="Systems / Cloud Infra"
+              >
+                <Server className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setTrack('software_developer')}
+                className={`p-1.5 rounded-md transition-colors cursor-pointer ${
+                  currentTrack === 'software_developer'
+                    ? 'bg-slate-800 text-amber-300'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Định hướng: Software Developer"
+                aria-label="Software Developer"
+              >
+                <Code2 className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            {/* Points */}
-            <div 
+            {/* Streak & Points */}
+            <button 
               onClick={() => setIsLevelModalOpen(true)}
-              className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold cursor-pointer"
-              title="Điểm xếp hạng học tập"
+              className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors cursor-pointer"
+              title="Cấp độ & Thống kê chuỗi học tập"
             >
-              <Coins className="w-3 h-3 text-amber-400" />
-              <span>{userPoints} pts</span>
-            </div>
+              <Flame className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-mono">{currentStreak}x</span>
+              <span className="text-slate-600">|</span>
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-mono">{userPoints}</span>
+            </button>
 
-            {/* Reading Mode / Font Size Button */}
+            {/* Reading Mode Button */}
             <button
               onClick={() => setIsReadingModalOpen(true)}
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+              className={`p-1.5 rounded-md border transition-colors cursor-pointer ${
                 (fontSizeScale && fontSizeScale > 100) || isReadingMode
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                  : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white'
+                  ? 'bg-slate-800 text-amber-300 border-slate-700'
+                  : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
               }`}
-              title="Tùy chỉnh cỡ chữ & Chế độ đọc chữ lớn"
-              aria-label="Tùy chỉnh cỡ chữ & Chế độ đọc chữ lớn"
+              title="Cỡ chữ & Chế độ đọc"
+              aria-label="Cỡ chữ & Chế độ đọc"
             >
-              <Glasses className="w-3 h-3" />
-              <span>Aa {(fontSizeScale && fontSizeScale > 100) ? `${fontSizeScale}%` : 'Chữ Lớn'}</span>
+              <Glasses className="w-3.5 h-3.5" />
             </button>
 
             {/* Sync Button */}
             <button
               onClick={() => setIsSyncModalOpen(true)}
-              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                userProfile
-                  ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
-                  : 'bg-sky-500/15 text-sky-300 border-sky-500/30 hover:bg-sky-500/25'
-              }`}
+              className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+              title={userProfile ? `Đã đồng bộ: ${userProfile.name}` : 'Đồng bộ đám mây'}
+              aria-label="Đồng bộ đám mây"
             >
-              {userProfile ? (
-                <>
-                  <UserCheck className="w-3 h-3 text-emerald-400" />
-                  <span className="truncate max-w-[80px] sm:max-w-none">{userProfile.name}</span>
-                </>
-              ) : (
-                <>
-                  <Smartphone className="w-3 h-3 text-sky-400" />
-                  <span>Đồng Bộ</span>
-                </>
-              )}
+              {userProfile ? <UserCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Smartphone className="w-3.5 h-3.5" />}
             </button>
-
-            <span className="hidden md:flex items-center gap-1 text-[11px] text-slate-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <strong>{studyHoursLogged}h</strong>
-            </span>
-
-            <span className="text-[11px] hidden sm:inline">
-              Tiến độ: <strong className="text-amber-300">{progressPercent}%</strong>
-            </span>
           </div>
+
         </div>
 
-        {/* Main Header Bar */}
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 md:h-16 gap-2 sm:gap-4">
-            
-            {/* Logo & App Title */}
-            <div 
-              className="flex items-center gap-2.5 cursor-pointer min-w-0" 
-              onClick={() => onTabChange('learn')}
-            >
-              <div className={`w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br ${
-                isFundamentals 
-                  ? 'from-amber-500 via-orange-600 to-purple-600' 
-                  : 'from-amber-500 via-orange-600 to-sky-600'
-              } flex items-center justify-center shadow-lg flex-shrink-0`}>
-                {isFundamentals ? <Terminal className="w-4 h-4 md:w-5 md:h-5 text-white" /> : <Cloud className="w-4 h-4 md:w-5 md:h-5 text-white" />}
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-sm md:text-lg text-white tracking-tight truncate">
-                    {isFundamentals ? 'IT Fundamentals' : 'AWS Mastery'}
-                  </span>
-                  <span className={`text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 rounded flex-shrink-0 ${
-                    isFundamentals 
-                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
-                      : 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
-                  }`}>
-                    {isFundamentals ? 'Pre-AWS' : 'Higher-Ed'}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 hidden sm:block truncate">
-                  {isFundamentals ? 'Master toàn diện 8 lĩnh vực IT sẵn sàng cho Cloud' : 'Lộ trình chinh phục Đám mây & Chứng chỉ AWS'}
-                </p>
-              </div>
-            </div>
-
-            {/* Career Track Switcher */}
-            <div className="bg-slate-800/90 p-0.5 sm:p-1 rounded-xl border border-slate-700/80 flex items-center gap-0.5 flex-shrink-0">
-              <button
-                onClick={() => setTrack('cloud_engineer')}
-                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                  currentTrack === 'cloud_engineer'
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/30'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
-                }`}
-              >
-                <Server className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Systems / Infra</span>
-                <span className="sm:hidden">Systems</span>
-              </button>
-              <button
-                onClick={() => setTrack('software_developer')}
-                className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                  currentTrack === 'software_developer'
-                    ? 'bg-sky-600 text-white shadow-md shadow-sky-900/30'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
-                }`}
-              >
-                <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Developer / Web</span>
-                <span className="sm:hidden">Developer</span>
-              </button>
-            </div>
+        {/* Main Nav Navigation Bar (3 Clean Tabs) */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-12">
+          
+          {/* Logo / Book Brand */}
+          <div 
+            onClick={() => onTabChange('learn')}
+            className="flex items-center gap-2 cursor-pointer text-slate-100 hover:text-amber-300 transition-colors"
+          >
+            <BookOpen className="w-5 h-5 text-amber-400" />
+            <span className="font-semibold text-sm tracking-tight">
+              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : 'Sách AWS Cloud'}
+            </span>
           </div>
 
-          {/* Navigation Tabs (Desktop & Tablet: 3 Core Pillars) */}
-          <nav className="hidden md:flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mb-px border-t border-slate-800/60">
+          {/* Desktop Navigation */}
+          <nav className="flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -292,10 +211,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
                 <button
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                     isActive
-                      ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40 shadow-md shadow-amber-500/10'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      ? 'bg-slate-800 text-amber-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
@@ -307,9 +226,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation Bar (Fixed 3-tabs) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/98 backdrop-blur-lg border-t border-slate-800 px-3 py-1.5 shadow-2xl safe-area-pb">
-        <div className="flex items-center justify-around gap-2">
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/98 backdrop-blur-sm border-t border-slate-800 px-4 py-2">
+        <div className="flex items-center justify-around">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -318,16 +237,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all flex-1 min-w-0 ${
+                className={`flex flex-col items-center justify-center py-1 px-4 rounded-md transition-colors cursor-pointer ${
                   isActive 
-                    ? 'bg-amber-500/15 text-amber-400 font-bold border border-amber-500/30' 
+                    ? 'text-amber-400 font-semibold' 
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
+                title={item.label}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
-                <span className="text-[11px] mt-0.5 tracking-tight truncate font-bold">
-                  {item.mobileLabel}
-                </span>
+                <Icon className="w-5 h-5" />
+                <span className="text-[11px] mt-0.5">{item.label}</span>
               </button>
             );
           })}
@@ -346,7 +264,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         onClose={() => setIsReadingModalOpen(false)}
       />
 
-      {/* User Maturity Level & Stats Modal */}
+      {/* Level Modal */}
       {isFundamentals ? (
         <FundamentalsUserLevelModal
           isOpen={isLevelModalOpen}

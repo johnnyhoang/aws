@@ -3,7 +3,7 @@ import { LearningProvider, useLearning } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { ReadingModeFab } from './components/ReadingModeFab';
 import { ReadingModeModal } from './components/ReadingModeModal';
-import { Cloud, Terminal, Loader2, BookOpen, CheckCircle2, Gamepad2 } from 'lucide-react';
+import { Cloud, Terminal, Globe, Loader2, BookOpen, CheckCircle2, Gamepad2 } from 'lucide-react';
 
 // Lazy-loaded AWS Unified Views
 const AwsLearnView = lazy(() => import('./components/unified/AwsLearnView').then(m => ({ default: m.AwsLearnView })));
@@ -14,6 +14,11 @@ const AwsPlayView = lazy(() => import('./components/unified/AwsPlayView').then(m
 const FundLearnView = lazy(() => import('./components/fundamentals/unified/FundLearnView').then(m => ({ default: m.FundLearnView })));
 const FundTestView = lazy(() => import('./components/fundamentals/unified/FundTestView').then(m => ({ default: m.FundTestView })));
 const FundPlayView = lazy(() => import('./components/fundamentals/unified/FundPlayView').then(m => ({ default: m.FundPlayView })));
+
+// Lazy-loaded Web Domain Unified Views
+const WebDomainLearnView = lazy(() => import('./components/webDomain/WebDomainLearnView').then(m => ({ default: m.WebDomainLearnView })));
+const WebDomainTestView = lazy(() => import('./components/webDomain/WebDomainTestView').then(m => ({ default: m.WebDomainTestView })));
+const WebDomainPlayView = lazy(() => import('./components/webDomain/WebDomainPlayView').then(m => ({ default: m.WebDomainPlayView })));
 
 // Smooth view loading fallback
 const ViewFallback: React.FC = () => (
@@ -29,6 +34,7 @@ function AppContent() {
   const { portalMode } = useLearning();
 
   const isFundamentals = portalMode === 'fundamentals';
+  const isWebDomain = portalMode === 'web_domain';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -41,6 +47,19 @@ function AppContent() {
           return <FundPlayView />;
         default:
           return <FundLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
+    if (isWebDomain) {
+      switch (activeTab) {
+        case 'learn':
+          return <WebDomainLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <WebDomainTestView />;
+        case 'play':
+          return <WebDomainPlayView />;
+        default:
+          return <WebDomainLearnView onNavigateTab={setActiveTab} />;
       }
     }
 
@@ -72,14 +91,14 @@ function AppContent() {
       <footer className="mt-16 bg-slate-900/90 border-t border-slate-800 text-slate-400 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
-              {isFundamentals ? <Terminal className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
+            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : isWebDomain ? 'bg-emerald-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
+              {isFundamentals ? <Terminal className="w-4 h-4" /> : isWebDomain ? <Globe className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
             </div>
             <span className="font-bold text-slate-200">
-              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : 'AWS Cloud Mastery'}
+              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : isWebDomain ? 'Web Domain & Web Administration' : 'AWS Cloud Mastery'}
             </span>
             <span className="text-slate-500">
-              {isFundamentals ? '— Nền tảng IT vững chắc' : '— Học, Test & Chơi thực chiến'}
+              {isFundamentals ? '— Nền tảng IT vững chắc' : isWebDomain ? '— Làm chủ tên miền & máy chủ' : '— Học, Test & Chơi thực chiến'}
             </span>
           </div>
 
