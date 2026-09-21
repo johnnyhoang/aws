@@ -13,17 +13,59 @@ import {
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 
-type PlayToolMode = 'dns_simulator' | 'spf_dmarc_gen' | 'migration_planner' | 'domain_evaluator';
+type PlayToolMode = 'dns_simulator' | 'spf_dmarc_gen' | 'migration_planner' | 'domain_evaluator' | 'hosting_calculator';
 
 export const WebDomainPlayView: React.FC = () => {
   const { addBonusXP } = useLearning();
-  const [activeTool, setActiveTool] = useState<PlayToolMode>('dns_simulator');
+  const [activeTool, setActiveTool] = useState<PlayToolMode>('hosting_calculator');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  // 0. Hosting ROI Calculator State
+  const [monthlyBandwidthGb, setMonthlyBandwidthGb] = useState<number>(350);
+  const [monthlyRequestsK, setMonthlyRequestsK] = useState<number>(1500); // 1.5M requests
+  const [avgExecutionTimeMs, setAvgExecutionTimeMs] = useState<number>(850);
+  const [needsWebSocket, setNeedsWebSocket] = useState<boolean>(true);
+  const [needsBackgroundWorker, setNeedsBackgroundWorker] = useState<boolean>(true);
 
   // 1. DNS Simulator State
   const [targetDomain, setTargetDomain] = useState<string>('app.mycompany.com');
   const [simStep, setSimStep] = useState<number>(0);
   const [isSimRunning, setIsSimRunning] = useState<boolean>(false);
+
+  // Calculate Hosting Costs
+  const calculateCosts = () => {
+    // Vercel Calculation:
+    // Pro base: $20. Extra bandwidth: max(0, monthlyBandwidthGb - 1000) * 0.20 (or on Hobby max(0, monthlyBandwidthGb - 100) * 0.20)
+    const vercelExtraBandwidthGb = Math.max(0, monthlyBandwidthGb - 1000);
+    const vercelExtraBandwidthCost = vercelExtraBandwidthGb * 0.20;
+    const vercelThirdPartyWsCost = needsWebSocket ? 29 : 0; // Pusher/Ably
+    const vercelTotalMonthly = 20 + vercelExtraBandwidthCost + vercelThirdPartyWsCost;
+
+    // Self-Hosted VPS (Hetzner CX22 or DigitalOcean $4-$6/mo Flat):
+    const vpsMonthlyCost = 5.0; // 2 vCPU, 4GB RAM, 20TB Bandwidth included
+    const vpsTotalMonthly = vpsMonthlyCost;
+
+    // Cloudflare Pages + Worker:
+    const cfWorkerCost = monthlyRequestsK > 100 ? 5.0 : 0;
+    const cfTotalMonthly = cfWorkerCost;
+
+    // Hybrid (Cloudflare Pages Frontend + VPS Backend):
+    const hybridTotalMonthly = vpsMonthlyCost;
+
+    const yearlySavings = (vercelTotalMonthly - vpsTotalMonthly) * 12;
+
+    return {
+      vercel: vercelTotalMonthly,
+      vps: vpsTotalMonthly,
+      cloudflare: cfTotalMonthly,
+      hybrid: hybridTotalMonthly,
+      yearlySavings: Math.max(0, yearlySavings),
+      isTimeoutRisk: avgExecutionTimeMs > 10000 || needsBackgroundWorker,
+      isWsRiskOnVercel: needsWebSocket
+    };
+  };
+
+  const hostingRoi = calculateCosts();
 
   const dnsSteps = [
     {
@@ -186,9 +228,10 @@ export const WebDomainPlayView: React.FC = () => {
       {/* Tool Navigation Bar */}
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs border-b border-slate-800">
         {[
+          { id: 'hosting_calculator', label: 'So Sánh Chi Phí VPS vs Vercel', icon: Server },
           { id: 'dns_simulator', label: 'Mô Phỏng Truy Vấn DNS', icon: Globe },
           { id: 'spf_dmarc_gen', label: 'Tạo Bản Ghi SPF & DMARC', icon: Mail },
-          { id: 'migration_planner', label: 'Checklist Zero-Downtime', icon: Server },
+          { id: 'migration_planner', label: 'Checklist Zero-Downtime', icon: Sparkles },
           { id: 'domain_evaluator', label: 'Thẩm Định Tên Miền SEO', icon: Sparkles },
         ].map((t) => {
           const Icon = t.icon;
@@ -210,6 +253,154 @@ export const WebDomainPlayView: React.FC = () => {
           );
         })}
       </div>
+
+      {/* 0. HOSTING COST & ARCHITECTURE ROI CALCULATOR */}
+      {activeTool === 'hosting_calculator' && (
+        <div className="space-y-6">
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+              <Server className="w-4 h-4 text-amber-400" />
+              <span>Máy Tính So Sánh Chi Phí & ROI: Self-Hosted VPS vs Vercel / Cloud PaaS</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-400">
+              Điều chỉnh thông số lưu lượng và yêu cầu kỹ thuật để xem dự toán chi phí thực tế hàng tháng giữa các phương án lưu trữ.
+            </p>
+          </div>
+
+          {/* Interactive Sliders & Options */}
+          <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              {/* Monthly Bandwidth */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-slate-300">Băng Thông Hàng Tháng (GB):</label>
+                  <span className="font-mono text-amber-300 font-bold">{monthlyBandwidthGb} GB</span>
+                </div>
+                <input
+                  type="range"
+                  min={50}
+                  max={3000}
+                  step={50}
+                  value={monthlyBandwidthGb}
+                  onChange={(e) => setMonthlyBandwidthGb(Number(e.target.value))}
+                  className="w-full accent-amber-400 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                  <span>50 GB</span>
+                  <span>1,000 GB (1 TB)</span>
+                  <span>3,000 GB (3 TB)</span>
+                </div>
+              </div>
+
+              {/* Monthly Requests */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-slate-300">Lượt Yêu Cầu / Tháng (Requests):</label>
+                  <span className="font-mono text-amber-300 font-bold">{(monthlyRequestsK / 1000).toFixed(1)} Triệu requests</span>
+                </div>
+                <input
+                  type="range"
+                  min={100}
+                  max={10000}
+                  step={100}
+                  value={monthlyRequestsK}
+                  onChange={(e) => setMonthlyRequestsK(Number(e.target.value))}
+                  className="w-full accent-amber-400 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                  <span>100K</span>
+                  <span>5M</span>
+                  <span>10M</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Checkbox Options */}
+            <div className="pt-2 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={needsWebSocket}
+                  onChange={(e) => setNeedsWebSocket(e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-400 cursor-pointer"
+                />
+                <span>Ứng dụng cần WebSocket / Realtime chat 24/7</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={needsBackgroundWorker}
+                  onChange={(e) => setNeedsBackgroundWorker(e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-400 cursor-pointer"
+                />
+                <span>Cần chạy tác vụ nền nặng &gt; 15s (AI RAG, Cron, PDF export)</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Cost Comparison Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            
+            {/* Vercel */}
+            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 flex flex-col justify-between">
+              <div className="space-y-1">
+                <div className="text-[11px] font-mono text-slate-400 uppercase font-semibold">1. Vercel Cloud PaaS</div>
+                <div className="text-2xl font-bold font-mono text-slate-100">
+                  ${hostingRoi.vercel.toFixed(0)} <span className="text-xs font-sans text-slate-400 font-normal">/ tháng</span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-snug">
+                  Bao gồm $20 phí Pro + phí vượt băng thông + phụ phí WebSocket.
+                </p>
+              </div>
+              {hostingRoi.isTimeoutRisk && (
+                <div className="p-2 rounded bg-red-950/40 border border-red-800/50 text-[10px] text-red-300">
+                  ⚠️ Nguy cơ lỗi 504 Timeout khi tác vụ chạy &gt; 60s
+                </div>
+              )}
+            </div>
+
+            {/* Self-Hosted VPS */}
+            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-800/60 space-y-2 flex flex-col justify-between shadow-lg">
+              <div className="space-y-1">
+                <div className="text-[11px] font-mono text-emerald-400 uppercase font-semibold flex items-center justify-between">
+                  <span>2. Self-Hosted VPS (Hetzner)</span>
+                  <span className="bg-emerald-900/60 px-2 py-0.5 rounded text-[10px] font-bold">Khuyên dùng</span>
+                </div>
+                <div className="text-2xl font-bold font-mono text-emerald-300">
+                  ${hostingRoi.vps.toFixed(0)} <span className="text-xs font-sans text-slate-400 font-normal">/ tháng (Flat)</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-snug">
+                  Đã bao gồm 20TB băng thông, chạy nền 24/7, WebSocket native, hỗ trợ Docker + Coolify.
+                </p>
+              </div>
+              <div className="p-2 rounded bg-emerald-950/60 border border-emerald-800/50 text-[10px] text-emerald-300">
+                ✅ Tiết kiệm ~${hostingRoi.yearlySavings.toFixed(0)} / năm so với PaaS!
+              </div>
+            </div>
+
+            {/* Hybrid */}
+            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 flex flex-col justify-between">
+              <div className="space-y-1">
+                <div className="text-[11px] font-mono text-cyan-400 uppercase font-semibold">3. Kiến Trúc Lai (Hybrid)</div>
+                <div className="text-2xl font-bold font-mono text-cyan-300">
+                  ${hostingRoi.hybrid.toFixed(0)} <span className="text-xs font-sans text-slate-400 font-normal">/ tháng</span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-snug">
+                  Frontend tĩnh trên Cloudflare Pages ($0) + Backend API trên VPS $5/tháng.
+                </p>
+              </div>
+              <div className="p-2 rounded bg-cyan-950/40 border border-cyan-800/50 text-[10px] text-cyan-300">
+                🚀 Tối ưu tốc độ Edge CDN + Sức mạnh VPS
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {/* 1. DNS SIMULATOR */}
       {activeTool === 'dns_simulator' && (

@@ -96,5 +96,37 @@ export const DOMAIN_FLASHCARDS: DomainFlashcard[] = [
     definition: 'Giai đoạn 30 ngày sau khi hết thời kỳ ân hạn (Grace Period), nơi tên miền bị khóa chuẩn bị xóa và chủ cũ phải trả phí phạt rất cao ($80-$250) nếu muốn chuộc lại.',
     practicalUsage: 'Cơ chế của Registry trung tâm nhằm tạo cơ hội cuối cùng cho chủ sở hữu cứu lại tài sản số quan trọng trước khi bị đưa vào hàng đợi xóa vĩnh viễn.',
     proTip: 'Đặt lịch nhắc nhở gia hạn trước ngày hết hạn 30 ngày để không bao giờ bị rơi vào giai đoạn chuộc tốn kém này.'
+  },
+  {
+    id: 'dfc-13',
+    term: 'Virtual Private Server (VPS)',
+    category: 'Web Hosting',
+    definition: 'Máy chủ ảo riêng biệt được phân chia tài nguyên độc lập (CPU, RAM, NVMe SSD) từ máy chủ vật lý, cung cấp toàn quyền quản trị cao nhất (Root Access) trên hệ điều hành Linux.',
+    practicalUsage: 'Triển khai Web App, Database (Postgres/MySQL), Cache (Redis), Cron jobs nền, WebSocket servers với chi phí cố định siêu rẻ ($4-$6/tháng).',
+    proTip: 'Hetzner Cloud, DigitalOcean, Linode và OVH là những nhà cung cấp VPS uy tín hàng đầu thế giới với băng thông đi kèm lên tới 20TB miễn phí.'
+  },
+  {
+    id: 'dfc-14',
+    term: 'Serverless PaaS',
+    category: 'Web Hosting',
+    definition: 'Nền tảng dịch vụ đám mây (như Vercel, Netlify) tự động đóng gói mã nguồn thành các hàm Serverless độc lập, tự động co giãn theo từng request và tính phí theo lượt gọi/băng thông.',
+    practicalUsage: 'Triển khai cực nhanh các website Frontend, ứng dụng Next.js/React, Landing page với cơ chế 1-Click Git Push-to-Deploy.',
+    proTip: 'Cần lưu ý giới hạn thời gian thực thi (Execution Timeout 10s trên gói Hobby) và chi phí phát sinh $20 cho mỗi 100GB băng thông vượt mức.'
+  },
+  {
+    id: 'dfc-15',
+    term: 'Cold Start Latency',
+    category: 'Web Hosting',
+    definition: 'Độ trễ phát sinh khi một Serverless Function đang ở trạng thái ngủ (idle) được kích hoạt lại bởi request đầu tiên của người dùng, đòi hỏi khởi tạo môi trường chạy và nạp mã nguồn vào bộ nhớ.',
+    practicalUsage: 'Khiến người dùng đầu tiên truy cập website bị trễ thêm 500ms đến 2,000ms so với máy chủ VPS luôn duy trì tiến trình trong RAM.',
+    proTip: 'Trên VPS hoặc máy chủ truyền thống, Cold-start bằng 0ms vì ứng dụng luôn ở trạng thái sẵn sàng trong RAM.'
+  },
+  {
+    id: 'dfc-16',
+    term: 'Coolify (Self-Hosted PaaS)',
+    category: 'Web Hosting',
+    definition: 'Nền tảng PaaS mã nguồn mở tự lưu trữ, biến bất kỳ VPS Linux nào thành một hệ sinh thái triển khai tự động hệt như Vercel/Render/Heroku hoàn toàn miễn phí.',
+    practicalUsage: 'Cung cấp Web UI quản lý container Docker, tự động pull code GitHub khi push, tự sinh Preview PR branch, tự cấp SSL Let\'s Encrypt và cài Database 1-click.',
+    proTip: 'Cài đặt Coolify chỉ bằng 1 câu lệnh duy nhất: `curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash`.'
   }
 ];

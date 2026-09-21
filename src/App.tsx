@@ -20,8 +20,20 @@ const WebDomainLearnView = lazy(() => import('./components/webDomain/WebDomainLe
 const WebDomainTestView = lazy(() => import('./components/webDomain/WebDomainTestView').then(m => ({ default: m.WebDomainTestView })));
 const WebDomainPlayView = lazy(() => import('./components/webDomain/WebDomainPlayView').then(m => ({ default: m.WebDomainPlayView })));
 
+// Lazy-loaded Database Unified Views
+const DatabaseLearnView = lazy(() => import('./components/database/DatabaseLearnView').then(m => ({ default: m.DatabaseLearnView })));
+const DatabaseTestView = lazy(() => import('./components/database/DatabaseTestView').then(m => ({ default: m.DatabaseTestView })));
+const DatabasePlayView = lazy(() => import('./components/database/DatabasePlayView').then(m => ({ default: m.DatabasePlayView })));
+
+// Lazy-loaded Linux Admin Unified Views
+const LinuxAdminLearnView = lazy(() => import('./components/linuxAdmin/LinuxAdminLearnView').then(m => ({ default: m.LinuxAdminLearnView })));
+const LinuxAdminTestView = lazy(() => import('./components/linuxAdmin/LinuxAdminTestView').then(m => ({ default: m.LinuxAdminTestView })));
+const LinuxAdminPlayView = lazy(() => import('./components/linuxAdmin/LinuxAdminPlayView').then(m => ({ default: m.LinuxAdminPlayView })));
+
 import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
+import { LoginScreen } from './components/LoginScreen';
+import { Server } from 'lucide-react';
 
 // Smooth view loading fallback
 const ViewFallback: React.FC = () => (
@@ -34,10 +46,29 @@ const ViewFallback: React.FC = () => (
 function AppContent() {
   const [activeTab, setActiveTab] = useState<NavTab>('learn');
   const [isReadingModalOpen, setIsReadingModalOpen] = useState<boolean>(false);
-  const { portalMode } = useLearning();
+  const { portalMode, authUser, authLoading } = useLearning();
+
+  // Show full loading spinner while checking initial Google session
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
+        <div className="text-xs text-slate-400 font-semibold tracking-wide">
+          Đang kết nối phiên đăng nhập...
+        </div>
+      </div>
+    );
+  }
+
+  // Enforce Google Login requirement
+  if (!authUser) {
+    return <LoginScreen />;
+  }
 
   const isFundamentals = portalMode === 'fundamentals';
   const isWebDomain = portalMode === 'web_domain';
+  const isDatabase = portalMode === 'database';
+  const isLinuxAdmin = portalMode === 'linux_admin';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -63,6 +94,32 @@ function AppContent() {
           return <WebDomainPlayView />;
         default:
           return <WebDomainLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
+    if (isDatabase) {
+      switch (activeTab) {
+        case 'learn':
+          return <DatabaseLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <DatabaseTestView />;
+        case 'play':
+          return <DatabasePlayView />;
+        default:
+          return <DatabaseLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
+    if (isLinuxAdmin) {
+      switch (activeTab) {
+        case 'learn':
+          return <LinuxAdminLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <LinuxAdminTestView />;
+        case 'play':
+          return <LinuxAdminPlayView />;
+        default:
+          return <LinuxAdminLearnView onNavigateTab={setActiveTab} />;
       }
     }
 
@@ -94,14 +151,14 @@ function AppContent() {
       <footer className="mt-16 bg-slate-900/90 border-t border-slate-800 text-slate-400 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : isWebDomain ? 'bg-emerald-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
-              {isFundamentals ? <Terminal className="w-4 h-4" /> : isWebDomain ? <Globe className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
+            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : isWebDomain ? 'bg-emerald-500 text-slate-950' : isDatabase ? 'bg-amber-500 text-slate-950' : isLinuxAdmin ? 'bg-emerald-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
+              {isFundamentals ? <Terminal className="w-4 h-4" /> : isWebDomain ? <Globe className="w-4 h-4" /> : isDatabase ? <Server className="w-4 h-4" /> : isLinuxAdmin ? <Terminal className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
             </div>
             <span className="font-bold text-slate-200">
-              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : isWebDomain ? 'Web Domain & Web Administration' : 'AWS Cloud Mastery'}
+              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : isWebDomain ? 'Web Domain & Web Administration' : isDatabase ? 'Database & Universal Free-DB Gateway' : isLinuxAdmin ? 'Linux & Unix Systems Administration' : 'AWS Cloud Mastery'}
             </span>
             <span className="text-slate-500">
-              {isFundamentals ? '— Nền tảng IT vững chắc' : isWebDomain ? '— Làm chủ tên miền & máy chủ' : '— Học, Test & Chơi thực chiến'}
+              {isFundamentals ? '— Nền tảng IT vững chắc' : isWebDomain ? '— Làm chủ tên miền & máy chủ' : isDatabase ? '— Bách khoa toàn thư Database & MCP Gateway' : isLinuxAdmin ? '— Quản trị máy chủ Web, App, DB & AWS' : '— Học, Test & Chơi thực chiến'}
             </span>
           </div>
 

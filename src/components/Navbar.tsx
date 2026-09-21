@@ -17,7 +17,8 @@ import {
   Coins, 
   Terminal, 
   Glasses,
-  Globe
+  Globe,
+  LogOut
 } from 'lucide-react';
 
 export type NavTab = 'learn' | 'test' | 'play';
@@ -34,6 +35,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     currentTrack, 
     setTrack, 
     userProfile,
+    authUser,
+    logoutUser,
     userPoints,
     currentStreak,
     fontSizeScale,
@@ -46,6 +49,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
   const isFundamentals = portalMode === 'fundamentals';
   const isWebDomain = portalMode === 'web_domain';
+  const isDatabase = portalMode === 'database';
+  const isLinuxAdmin = portalMode === 'linux_admin';
 
   const navItems: { 
     id: NavTab; 
@@ -76,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         {/* Top Minimal Utility Bar */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between text-xs border-b border-slate-900">
           
-          {/* Portal Switcher: 3 Minimal text pills */}
+          {/* Portal Switcher: 4 Minimal text pills */}
           <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-lg border border-slate-800 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setPortalMode('fundamentals')}
@@ -101,6 +106,30 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Web & Domain</span>
+            </button>
+            <button
+              onClick={() => setPortalMode('database')}
+              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                isDatabase
+                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Cổng Cơ Sở Dữ Liệu & Free-DB Gateway"
+            >
+              <Server className="w-3.5 h-3.5" />
+              <span>Database</span>
+            </button>
+            <button
+              onClick={() => setPortalMode('linux_admin')}
+              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                isLinuxAdmin
+                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Cổng Quản Trị Hệ Thống Linux & Unix Chuyên Gia"
+            >
+              <Terminal className="w-3.5 h-3.5" />
+              <span>Linux Admin</span>
             </button>
             <button
               onClick={() => setPortalMode('aws')}
@@ -177,12 +206,45 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
             {/* Sync Button */}
             <button
               onClick={() => setIsSyncModalOpen(true)}
-              className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
-              title={userProfile ? `Đã đồng bộ: ${userProfile.name}` : 'Đồng bộ đám mây'}
-              aria-label="Đồng bộ đám mây"
+              className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors cursor-pointer relative"
+              title="Tự động đồng bộ đa thiết bị (Quét QR)"
+              aria-label="Tự động đồng bộ đa thiết bị"
             >
-              {userProfile ? <UserCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Smartphone className="w-3.5 h-3.5" />}
+              <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
             </button>
+
+            {/* User Account / Logout */}
+            {authUser && (
+              <div className="flex items-center gap-1.5 pl-1 border-l border-slate-800">
+                {authUser.avatarUrl ? (
+                  <img
+                    src={authUser.avatarUrl}
+                    alt={authUser.name}
+                    className="w-5 h-5 rounded-full border border-amber-400/40 object-cover"
+                    title={`Đang đăng nhập: ${authUser.name}`}
+                  />
+                ) : (
+                  <div 
+                    className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center border border-amber-500/30"
+                    title={`Đang đăng nhập: ${authUser.name}`}
+                  >
+                    {authUser.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="text-[11px] font-medium text-slate-300 hidden md:inline max-w-[90px] truncate">
+                  {authUser.name}
+                </span>
+                <button
+                  onClick={logoutUser}
+                  className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+                  title="Đăng xuất"
+                  aria-label="Đăng xuất"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
         </div>
@@ -197,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
           >
             <BookOpen className="w-5 h-5 text-amber-400" />
             <span className="font-semibold text-sm tracking-tight">
-              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : 'Sách AWS Cloud'}
+              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : isDatabase ? 'Sách Cơ Sở Dữ Liệu' : isLinuxAdmin ? 'Sách Linux & Unix Sysadmin' : 'Sách AWS Cloud'}
             </span>
           </div>
 

@@ -1,14 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { CareerTrack, UserLevelInfo } from '../types';
 import { calculateUserLevel } from '../data/maturityLevels';
+import { getCurrentAuthUser, subscribeToAuth, signOutUser, AuthUser } from '../lib/authSession';
+import { fetchRemoteUserProgress, saveRemoteUserProgress } from '../lib/supabaseSync';
 
 export interface UserProfile {
   email: string;
   name: string;
   careerTrack: CareerTrack;
+  avatarUrl?: string;
 }
 
-export type PortalMode = 'fundamentals' | 'aws' | 'web_domain';
+export type PortalMode = 'fundamentals' | 'aws' | 'web_domain' | 'database' | 'linux_admin';
 
 interface LearningState {
   portalMode: PortalMode;
@@ -31,6 +34,7 @@ interface LearningState {
   totalIncorrectAnswers: number;
 
   // User & Cloud Sync State
+  syncKey: string;
   userProfile: UserProfile | null;
   syncStatus: 'synced' | 'syncing' | 'offline' | 'unsaved';
   lastSyncedAt: string | null;
@@ -50,7 +54,10 @@ export interface QuizAnswerFeedback {
 }
 
 interface LearningContextType extends LearningState {
+  authUser: AuthUser | null;
+  authLoading: boolean;
   levelInfo: UserLevelInfo;
+  getSyncUrl: () => string;
   setPortalMode: (mode: PortalMode) => void;
   setTrack: (track: CareerTrack) => void;
   toggleStageCompleted: (stageId: string) => void;
@@ -68,6 +75,7 @@ interface LearningContextType extends LearningState {
   recordQuizAnswer: (isCorrect: boolean, difficulty: string) => QuizAnswerFeedback;
   addBonusXP: (xp: number, points?: number) => void;
   loginUser: (email: string, name?: string) => Promise<boolean>;
+  updateDisplayName: (name: string) => void;
   logoutUser: () => void;
   forceSyncNow: () => Promise<void>;
   resetAllProgress: () => void;
@@ -80,7 +88,11 @@ interface LearningContextType extends LearningState {
   resetFontSize: () => void;
 }
 
-const STORAGE_KEY = 'aws_cloud_mastery_learning_state_v3';
+const STORAGE_KEY_PREFIX = 'aws_learning_user_v4_';
+
+const generateDefaultSyncKey = () => {
+  return 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36).substring(4);
+};
 
 const defaultState: LearningState = {
   portalMode: 'fundamentals',
@@ -99,6 +111,7 @@ const defaultState: LearningState = {
   highestStreak: 5,
   totalCorrectAnswers: 12,
   totalIncorrectAnswers: 3,
+  syncKey: '',
   userProfile: null,
   syncStatus: 'synced',
   lastSyncedAt: null,
@@ -109,34 +122,112 @@ const defaultState: LearningState = {
 const LearningContext = createContext<LearningContextType | undefined>(undefined);
 
 export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+
   const [state, setState] = useState<LearningState>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        return { ...defaultState, ...JSON.parse(saved) };
-      }
-      // Migrate from v2 if available
-      const oldV2 = localStorage.getItem('aws_cloud_mastery_learning_state_v2');
-      if (oldV2) {
-        return { ...defaultState, ...JSON.parse(oldV2) };
-      }
-    } catch {
-      // Use defaults if storage unavailable
-    }
     return defaultState;
   });
 
   // Calculate dynamic user maturity level
   const levelInfo = calculateUserLevel(state.userXP);
 
-  // Save to LocalStorage whenever state changes
-  useEffect(() => {
+  // Helper to get storage key for active user
+  const getUserStorageKey = useCallback((email?: string | null) => {
+    if (!email) return null;
+    return `${STORAGE_KEY_PREFIX}${email.toLowerCase().trim()}`;
+  }, []);
+
+  // Load user progress from LocalStorage or Supabase
+  const loadUserProgress = useCallback(async (user: AuthUser) => {
+    const storageKey = `${STORAGE_KEY_PREFIX}${user.email.toLowerCase().trim()}`;
+    let loadedState = { ...defaultState };
+
+    // 1. Check local storage for this specific user
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        loadedState = { ...defaultState, ...JSON.parse(saved) };
+      }
+    } catch {
+      // ignore
+    }
+
+    // Set profile from Google auth
+    loadedState.userProfile = {
+      email: user.email,
+      name: user.name,
+      avatarUrl: user.avatarUrl,
+      careerTrack: loadedState.currentTrack || 'cloud_engineer'
+    };
+
+    setState(loadedState);
+
+    // 2. Fetch remote progress from Supabase table `aws_user_progress`
+    try {
+      const remote = await fetchRemoteUserProgress(user.email);
+      if (remote) {
+        setState(prev => ({
+          ...prev,
+          currentTrack: (remote.currentTrack as CareerTrack) || prev.currentTrack,
+          completedStages: remote.completedStages || prev.completedStages,
+          completedLessons: remote.completedLessons || prev.completedLessons,
+          completedProjects: remote.completedProjects || prev.completedProjects,
+          completedTasks: remote.completedTasks || prev.completedTasks,
+          bookmarkedLessons: remote.bookmarkedLessons || prev.bookmarkedLessons,
+          flashcardsMastered: remote.flashcardsMastered || prev.flashcardsMastered,
+          quizScores: remote.quizScores || prev.quizScores,
+          studyHoursLogged: remote.studyHoursLogged ?? prev.studyHoursLogged,
+          userXP: remote.userXP ?? prev.userXP,
+          userPoints: remote.userPoints ?? prev.userPoints,
+          currentStreak: remote.currentStreak ?? prev.currentStreak,
+          highestStreak: remote.highestStreak ?? prev.highestStreak,
+          totalCorrectAnswers: remote.totalCorrectAnswers ?? prev.totalCorrectAnswers,
+          totalIncorrectAnswers: remote.totalIncorrectAnswers ?? prev.totalIncorrectAnswers,
+          syncStatus: 'synced',
+          lastSyncedAt: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+        }));
+      }
+    } catch (err) {
+      console.warn('Could not sync with Supabase on load:', err);
+    }
+  }, []);
+
+  // Subscribe to Supabase Auth changes (Google OAuth)
+  useEffect(() => {
+    getCurrentAuthUser().then((user) => {
+      setAuthUser(user);
+      setAuthLoading(false);
+      if (user) {
+        loadUserProgress(user);
+      }
+    });
+
+    const unsubscribe = subscribeToAuth((user) => {
+      setAuthUser(user);
+      setAuthLoading(false);
+      if (user) {
+        loadUserProgress(user);
+      } else {
+        setState(defaultState);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [loadUserProgress]);
+
+  // Save to LocalStorage per user whenever state changes
+  useEffect(() => {
+    if (!authUser?.email) return;
+    const storageKey = getUserStorageKey(authUser.email);
+    if (!storageKey) return;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
     } catch {
       // Ignore storage errors
     }
-  }, [state]);
+  }, [state, authUser, getUserStorageKey]);
 
   // Apply font size scale, inverse space compression, and reading mode class to document
   useEffect(() => {
@@ -147,15 +238,6 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const scaledPx = (scale / 100) * basePx;
       root.style.fontSize = `${scaledPx}px`;
 
-      // Dynamic Inverse Spacing Calculation:
-      // When font size increases, we compress base spacing so padding/margins shrink in pixels,
-      // allocating maximum horizontal and vertical space for large text.
-      // scale 100: compressionFactor = 1.00 -> spacing = 4.0px
-      // scale 120: compressionFactor = 0.85 -> spacing = 3.4px
-      // scale 140: compressionFactor = 0.70 -> spacing = 2.8px
-      // scale 165: compressionFactor = 0.55 -> spacing = 2.2px
-      // scale 190: compressionFactor = 0.42 -> spacing = 1.7px
-      // scale 220: compressionFactor = 0.32 -> spacing = 1.3px
       const scaleRatio = scale / 100;
       const compressionFactor = Math.max(0.32, Math.min(1.0, 1 - (scale - 100) * 0.0057));
       const targetSpacingPx = 4 * compressionFactor;
@@ -164,7 +246,6 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       root.style.setProperty('--spacing', `${targetSpacingPx.toFixed(2)}px`);
       root.style.setProperty('--spacing-compression', `${compressionFactor.toFixed(3)}`);
 
-      // Add zoom state classes to body for responsive layout compression
       if (scale > 115) {
         document.body.classList.add('font-zoomed-active');
       } else {
@@ -199,81 +280,61 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [state.fontSizeScale, state.isReadingMode]);
 
-  // Server Synchronization function
+  // Server Synchronization function (Syncs to Supabase table `aws_user_progress`)
   const syncWithCloud = useCallback(async (currentState: LearningState) => {
-    if (!currentState.userProfile?.email) return;
+    const userEmail = authUser?.email || currentState.userProfile?.email;
+    if (!userEmail) return;
 
     setState(prev => ({ ...prev, syncStatus: 'syncing' }));
 
-    try {
-      const res = await fetch('/api/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: currentState.userProfile.email,
-          progress: {
-            currentTrack: currentState.currentTrack,
-            completedStages: currentState.completedStages,
-            completedLessons: currentState.completedLessons,
-            completedProjects: currentState.completedProjects,
-            completedTasks: currentState.completedTasks,
-            bookmarkedLessons: currentState.bookmarkedLessons,
-            flashcardsMastered: currentState.flashcardsMastered,
-            quizScores: currentState.quizScores,
-            studyHoursLogged: currentState.studyHoursLogged,
-            userXP: currentState.userXP,
-            userPoints: currentState.userPoints,
-            currentStreak: currentState.currentStreak,
-            highestStreak: currentState.highestStreak,
-            totalCorrectAnswers: currentState.totalCorrectAnswers,
-            totalIncorrectAnswers: currentState.totalIncorrectAnswers
-          }
-        })
-      });
+    const payload = {
+      currentTrack: currentState.currentTrack,
+      completedStages: currentState.completedStages,
+      completedLessons: currentState.completedLessons,
+      completedProjects: currentState.completedProjects,
+      completedTasks: currentState.completedTasks,
+      bookmarkedLessons: currentState.bookmarkedLessons,
+      flashcardsMastered: currentState.flashcardsMastered,
+      quizScores: currentState.quizScores,
+      studyHoursLogged: currentState.studyHoursLogged,
+      userXP: currentState.userXP,
+      userPoints: currentState.userPoints,
+      currentStreak: currentState.currentStreak,
+      highestStreak: currentState.highestStreak,
+      totalCorrectAnswers: currentState.totalCorrectAnswers,
+      totalIncorrectAnswers: currentState.totalIncorrectAnswers
+    };
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.progress) {
-          const p = data.progress;
-          setState(prev => ({
-            ...prev,
-            currentTrack: p.currentTrack || prev.currentTrack,
-            completedStages: p.completedStages || prev.completedStages,
-            completedLessons: p.completedLessons || prev.completedLessons,
-            completedProjects: p.completedProjects || prev.completedProjects,
-            completedTasks: p.completedTasks || prev.completedTasks,
-            bookmarkedLessons: p.bookmarkedLessons || prev.bookmarkedLessons,
-            flashcardsMastered: p.flashcardsMastered || prev.flashcardsMastered,
-            quizScores: p.quizScores || prev.quizScores,
-            studyHoursLogged: p.studyHoursLogged ?? prev.studyHoursLogged,
-            userXP: p.userXP ?? prev.userXP,
-            userPoints: p.userPoints ?? prev.userPoints,
-            currentStreak: p.currentStreak ?? prev.currentStreak,
-            highestStreak: p.highestStreak ?? prev.highestStreak,
-            totalCorrectAnswers: p.totalCorrectAnswers ?? prev.totalCorrectAnswers,
-            totalIncorrectAnswers: p.totalIncorrectAnswers ?? prev.totalIncorrectAnswers,
-            syncStatus: 'synced',
-            lastSyncedAt: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-          }));
-          return;
-        }
-      }
-      setState(prev => ({ ...prev, syncStatus: 'unsaved' }));
-    } catch {
+    const userName = authUser?.name || currentState.userProfile?.name || userEmail.split('@')[0];
+    const success = await saveRemoteUserProgress(userEmail, userName, payload);
+
+    if (success) {
+      setState(prev => ({
+        ...prev,
+        syncStatus: 'synced',
+        lastSyncedAt: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+      }));
+    } else {
+      // Local fallback
       setState(prev => ({ ...prev, syncStatus: 'offline' }));
     }
-  }, []);
+  }, [authUser]);
 
   // Debounced auto-sync when state changes
   useEffect(() => {
-    if (!state.userProfile?.email) return;
+    if (!authUser?.email) return;
 
     const timer = setTimeout(() => {
       syncWithCloud(state);
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timer);
-  }, [state, syncWithCloud]);
+  }, [state, authUser, syncWithCloud]);
+
+  const getSyncUrl = (): string => {
+    if (typeof window === 'undefined') return '';
+    return window.location.origin;
+  };
 
   // Record Quiz Answer (Intelligent XP, Points, Streak & Penalty Engine)
   const recordQuizAnswer = (isCorrect: boolean, difficulty: string): QuizAnswerFeedback => {
@@ -282,7 +343,6 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     let newStreak = 0;
     let streakBonus = false;
 
-    // Base values per difficulty
     let baseXP = 20;
     let basePoints = 20;
     let penaltyPoints = 10;
@@ -312,7 +372,6 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     if (isCorrect) {
       newStreak = state.currentStreak + 1;
-      // Streak Multiplier bonus: +5 bonus points per streak
       const bonusMultiplier = Math.min(25, newStreak * 5);
       if (newStreak >= 3) {
         streakBonus = true;
@@ -320,9 +379,9 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       pointsChange = basePoints + bonusMultiplier;
       xpGain = baseXP + Math.floor(bonusMultiplier / 2);
     } else {
-      newStreak = 0; // Reset streak on error
-      pointsChange = -penaltyPoints; // Fair penalty deduction
-      xpGain = 0; // No XP gain on failure
+      newStreak = 0;
+      pointsChange = -penaltyPoints;
+      xpGain = 0;
     }
 
     let nextXP = state.userXP;
@@ -361,75 +420,24 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const loginUser = async (email: string, name?: string): Promise<boolean> => {
-    setState(prev => ({ ...prev, syncStatus: 'syncing' }));
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          name,
-          careerTrack: state.currentTrack
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.user) {
-          const profile: UserProfile = {
-            email: data.user.email,
-            name: data.user.name,
-            careerTrack: data.user.careerTrack
-          };
-
-          const p = data.progress;
-          setState(prev => ({
-            ...prev,
-            userProfile: profile,
-            currentTrack: p?.currentTrack || prev.currentTrack,
-            completedStages: p?.completedStages?.length ? p.completedStages : prev.completedStages,
-            completedLessons: p?.completedLessons?.length ? p.completedLessons : prev.completedLessons,
-            completedProjects: p?.completedProjects?.length ? p.completedProjects : prev.completedProjects,
-            completedTasks: p?.completedTasks?.length ? p.completedTasks : prev.completedTasks,
-            bookmarkedLessons: p?.bookmarkedLessons?.length ? p.bookmarkedLessons : prev.bookmarkedLessons,
-            flashcardsMastered: p?.flashcardsMastered?.length ? p.flashcardsMastered : prev.flashcardsMastered,
-            quizScores: p?.quizScores && Object.keys(p.quizScores).length ? p.quizScores : prev.quizScores,
-            studyHoursLogged: p?.studyHoursLogged ? Math.max(p.studyHoursLogged, prev.studyHoursLogged) : prev.studyHoursLogged,
-            userXP: p?.userXP ?? prev.userXP,
-            userPoints: p?.userPoints ?? prev.userPoints,
-            currentStreak: p?.currentStreak ?? prev.currentStreak,
-            highestStreak: p?.highestStreak ?? prev.highestStreak,
-            totalCorrectAnswers: p?.totalCorrectAnswers ?? prev.totalCorrectAnswers,
-            totalIncorrectAnswers: p?.totalIncorrectAnswers ?? prev.totalIncorrectAnswers,
-            syncStatus: 'synced',
-            lastSyncedAt: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-          }));
-          return true;
-        }
-      }
-    } catch {
-      // Local fallback
-      setState(prev => ({
-        ...prev,
-        userProfile: {
-          email,
-          name: name || email.split('@')[0] || 'Học viên AWS',
-          careerTrack: prev.currentTrack
-        },
-        syncStatus: 'offline'
-      }));
-      return true;
-    }
+    if (authUser) return true;
     return false;
   };
 
-  const logoutUser = () => {
+  const updateDisplayName = (name: string) => {
     setState(prev => ({
       ...prev,
-      userProfile: null,
-      syncStatus: 'synced',
-      lastSyncedAt: null
+      userProfile: prev.userProfile ? {
+        ...prev.userProfile,
+        name: name.trim() || prev.userProfile.name
+      } : null
     }));
+  };
+
+  const logoutUser = async () => {
+    await signOutUser();
+    setAuthUser(null);
+    setState(defaultState);
   };
 
   const forceSyncNow = async () => {
@@ -615,7 +623,10 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     <LearningContext.Provider
       value={{
         ...state,
+        authUser,
+        authLoading,
         levelInfo,
+        getSyncUrl,
         setPortalMode,
         setTrack,
         toggleStageCompleted,
@@ -633,6 +644,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         recordQuizAnswer,
         addBonusXP,
         loginUser,
+        updateDisplayName,
         logoutUser,
         forceSyncNow,
         resetAllProgress,

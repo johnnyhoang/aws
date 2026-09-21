@@ -1,20 +1,21 @@
-export type DomainCategory = 
-  | 'fundamentals'
-  | 'dns_architecture'
-  | 'dns_records'
-  | 'lifecycle_transfer'
-  | 'security_dnssec'
-  | 'web_admin_servers'
-  | 'pro_tips_troubleshooting'
-  | 'web_hosting_architectures'
-  | 'self_hosted_vps_paas';
+export type LinuxAdminCategory =
+  | 'linux_fundamentals'
+  | 'shell_command_line'
+  | 'user_security_permissions'
+  | 'process_systemd_cron'
+  | 'storage_fhs_lvm'
+  | 'networking_remote_ssh'
+  | 'web_app_docker_servers'
+  | 'database_tuning_linux'
+  | 'aws_linux_administration'
+  | 'monitoring_troubleshooting';
 
-export interface DomainChapter {
+export interface LinuxAdminChapter {
   id: string;
   chapterNumber: number;
   title: string;
   subtitle: string;
-  category: DomainCategory;
+  category: LinuxAdminCategory;
   readTimeMinutes: number;
   level: 'Cơ bản' | 'Trung cấp' | 'Nâng cao' | 'Chuyên gia';
   summary: string;
@@ -42,7 +43,7 @@ export interface DomainChapter {
   masteryChecklist: string[];
 }
 
-export interface DomainQuizQuestion {
+export interface LinuxAdminQuizQuestion {
   id: string;
   category: string;
   difficulty: 'Cơ bản' | 'Trung bình' | 'Khó' | 'Chuyên gia';
@@ -62,11 +63,20 @@ export interface DomainQuizQuestion {
   };
 }
 
-export interface DomainFlashcard {
+export interface LinuxAdminFlashcard {
   id: string;
   term: string;
   category: string;
   definition: string;
   practicalUsage: string;
   proTip: string;
+}
+
+export interface LinuxAdminCommandReference {
+  command: string;
+  category: string;
+  syntax: string;
+  description: string;
+  example: string;
+  dangerLevel: 'safe' | 'caution' | 'dangerous';
 }

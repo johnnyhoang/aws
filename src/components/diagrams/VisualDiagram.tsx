@@ -55,7 +55,15 @@ export type DiagramType =
   | 'email-security-shield'
   | 'cloudflare-proxy-flow'
   | 'zero-downtime-migration'
-  | 'nginx-reverse-proxy-flow';
+  | 'nginx-reverse-proxy-flow'
+  | 'database-classification-tree'
+  | 'cap-theorem-triangle'
+  | 'btree-index-structure'
+  | 'postgres-mvcc'
+  | 'redis-caching-patterns'
+  | 'vector-search-hnsw'
+  | 'universal-free-db-gateway'
+  | 'self-hosted-vps-vs-paas';
 
 interface VisualDiagramProps {
   type: DiagramType | string;
@@ -111,6 +119,22 @@ export const VisualDiagram: React.FC<VisualDiagramProps> = ({ type, title, fallb
       return <ZeroDowntimeMigrationDiagram title={title} />;
     case 'nginx-reverse-proxy-flow':
       return <NginxReverseProxyFlowDiagram title={title} />;
+    case 'database-classification-tree':
+      return <DatabaseClassificationTreeDiagram title={title} />;
+    case 'cap-theorem-triangle':
+      return <CapTheoremTriangleDiagram title={title} />;
+    case 'btree-index-structure':
+      return <BTreeIndexStructureDiagram title={title} />;
+    case 'postgres-mvcc':
+      return <PostgresMvccDiagram title={title} />;
+    case 'redis-caching-patterns':
+      return <RedisCachingPatternsDiagram title={title} />;
+    case 'vector-search-hnsw':
+      return <VectorSearchHnswDiagram title={title} />;
+    case 'universal-free-db-gateway':
+      return <UniversalFreeDbGatewayDiagram title={title} />;
+    case 'self-hosted-vps-vs-paas':
+      return <SelfHostedVpsVsPaaSComparisonDiagram title={title} />;
     default:
       if (fallbackCode) {
         return (
@@ -1454,3 +1478,412 @@ const NginxReverseProxyFlowDiagram: React.FC<{ title?: string }> = ({ title }) =
     </div>
   );
 };
+
+/* =========================================================================
+   24. DATABASE CLASSIFICATION TREE (7 FAMILIES)
+   ========================================================================= */
+const DatabaseClassificationTreeDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  const families = [
+    { name: 'Relational (SQL)', examples: 'PostgreSQL, MySQL, SQLite, Neon', role: 'ACID, Giao dịch tài chính, Schema chặt chẽ', color: 'border-blue-500/40 bg-blue-950/20 text-blue-300' },
+    { name: 'Document NoSQL', examples: 'MongoDB, Firestore, CouchDB', role: 'JSON linh hoạt, Đa dạng schema, Mobile CMS', color: 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300' },
+    { name: 'Key-Value / Cache', examples: 'Redis, Upstash, Memcached', role: 'In-Memory RAM < 1ms, Cache-Aside, Session', color: 'border-amber-500/40 bg-amber-950/20 text-amber-300' },
+    { name: 'Vector Database', examples: 'Qdrant, Pinecone, pgvector', role: 'AI Embeddings, RAG Chatbot, Tìm kiếm ngữ nghĩa', color: 'border-purple-500/40 bg-purple-950/20 text-purple-300' },
+    { name: 'Columnar OLAP', examples: 'ClickHouse, DuckDB, BigQuery', role: 'Phân tích dữ liệu lớn, Nén cột, BI Dashboard', color: 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300' },
+    { name: 'Time-Series', examples: 'TimescaleDB, InfluxDB', role: 'Chuỗi thời gian, IoT Sensor, Server Metrics', color: 'border-rose-500/40 bg-rose-950/20 text-rose-300' }
+  ];
+
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <FolderTree className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Sơ Đồ Phân Loại 7 Họ Cơ Sở Dữ Liệu Hiện Đại'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-slate-400">Polyglot Persistence</span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+        {families.map((f, i) => (
+          <div key={i} className={`p-3.5 rounded-lg border space-y-1.5 ${f.color}`}>
+            <div className="font-bold font-mono text-sm text-slate-100">{f.name}</div>
+            <div className="text-[11px] font-medium text-slate-300">{f.examples}</div>
+            <p className="text-[10px] text-slate-400 leading-snug">{f.role}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   25. CAP THEOREM TRIANGLE
+   ========================================================================= */
+const CapTheoremTriangleDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Định Lý CAP Trong Cơ Sở Dữ Liệu Phân Tán (Consistency - Availability - Partition Tolerance)'}
+          </h4>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="p-4 rounded-lg bg-blue-950/20 border border-blue-800/40 space-y-2">
+          <div className="font-bold text-blue-300 font-mono flex items-center justify-between">
+            <span>CP Systems</span>
+            <span className="text-[10px] bg-blue-900/40 px-2 py-0.5 rounded">Consistency + P</span>
+          </div>
+          <p className="text-[11px] text-slate-300">
+            Ưu tiên dữ liệu luôn chính xác 100%. Nếu mạng đứt, tạm dừng nhận ghi (CockroachDB, MongoDB, Redis Cluster).
+          </p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-emerald-950/20 border border-emerald-800/40 space-y-2">
+          <div className="font-bold text-emerald-300 font-mono flex items-center justify-between">
+            <span>AP Systems</span>
+            <span className="text-[10px] bg-emerald-900/40 px-2 py-0.5 rounded">Availability + P</span>
+          </div>
+          <p className="text-[11px] text-slate-300">
+            Ưu tiên luôn trả lời request người dùng. Dữ liệu chấp nhận đồng bộ trễ sau (Cassandra, DynamoDB, CouchDB).
+          </p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-amber-950/20 border border-amber-800/40 space-y-2">
+          <div className="font-bold text-amber-300 font-mono flex items-center justify-between">
+            <span>CA Systems</span>
+            <span className="text-[10px] bg-amber-900/40 px-2 py-0.5 rounded">Single-Node</span>
+          </div>
+          <p className="text-[11px] text-slate-300">
+            Hệ thống chạy 1 máy đơn lẻ, không chấp nhận đứt mạng (PostgreSQL đơn máy, SQLite, MySQL truyền thống).
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   26. B-TREE INDEX STRUCTURE
+   ========================================================================= */
+const BTreeIndexStructureDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Layers className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Cấu Trúc Cây Chỉ Mục B-Tree & Con Trỏ Dữ Liệu (O(log N))'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-emerald-400">Self-Balancing Tree</span>
+      </div>
+
+      <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-4">
+        {/* Root Node */}
+        <div className="flex flex-col items-center">
+          <div className="px-5 py-2 rounded-lg bg-purple-950/60 border border-purple-500 text-purple-300 font-mono text-xs font-bold text-center">
+            Root Page: [ 50 | 100 ]
+          </div>
+          <ArrowDown className="w-4 h-4 text-slate-500 my-1" />
+        </div>
+
+        {/* Branch Nodes */}
+        <div className="grid grid-cols-3 gap-3 text-center font-mono text-xs">
+          <div className="p-2.5 rounded-lg bg-indigo-950/40 border border-indigo-700/50 text-indigo-300">
+            Branch: [ &lt; 50 ]
+          </div>
+          <div className="p-2.5 rounded-lg bg-indigo-950/40 border border-indigo-700/50 text-indigo-300">
+            Branch: [ 50 - 100 ]
+          </div>
+          <div className="p-2.5 rounded-lg bg-indigo-950/40 border border-indigo-700/50 text-indigo-300">
+            Branch: [ &gt; 100 ]
+          </div>
+        </div>
+
+        {/* Leaf Nodes */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center font-mono text-[11px]">
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">10 ➔ Tid</div>
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">30 ➔ Tid</div>
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">60 ➔ Tid</div>
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">85 ➔ Tid</div>
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">120 ➔ Tid</div>
+          <div className="p-2 bg-slate-900 rounded border border-emerald-800/40 text-emerald-300">180 ➔ Tid</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   27. POSTGRES MVCC (XMIN / XMAX)
+   ========================================================================= */
+const PostgresMvccDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Database className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Cơ Chế PostgreSQL MVCC: Non-Blocking Read & Tuple Versioning'}
+          </h4>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+        <div className="p-3.5 bg-blue-950/20 rounded-lg border border-blue-800/40 space-y-1">
+          <div className="font-bold text-blue-300">1. INSERT (Tx 101)</div>
+          <div className="text-slate-300 text-[11px]">xmin = 101, xmax = 0</div>
+          <p className="text-[10px] text-slate-400 font-sans">Dòng mới được ghi nhận hiệu lực từ giao dịch 101.</p>
+        </div>
+
+        <div className="p-3.5 bg-amber-950/20 rounded-lg border border-amber-800/40 space-y-1">
+          <div className="font-bold text-amber-300">2. UPDATE (Tx 102)</div>
+          <div className="text-slate-300 text-[11px]">Dòng cũ: xmax = 102<br/>Dòng mới: xmin = 102</div>
+          <p className="text-[10px] text-slate-400 font-sans">Dòng cũ chuyển thành Dead Tuple; dòng mới thay thế.</p>
+        </div>
+
+        <div className="p-3.5 bg-emerald-950/20 rounded-lg border border-emerald-800/40 space-y-1">
+          <div className="font-bold text-emerald-300">3. AUTOVACUUM</div>
+          <div className="text-slate-300 text-[11px]">Thu hồi bộ nhớ</div>
+          <p className="text-[10px] text-slate-400 font-sans">Dọn dẹp dead tuples không còn transaction nào nhìn thấy.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   28. REDIS CACHING PATTERNS
+   ========================================================================= */
+const RedisCachingPatternsDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Chiến Lược Caching Redis: Cache-Aside vs Write-Through'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-amber-400">&lt; 1ms Latency</span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+        <div className="p-4 bg-slate-950 rounded-lg border border-slate-800 space-y-2">
+          <div className="font-bold text-cyan-300">CACHE-ASIDE (90% DỰ ÁN)</div>
+          <div className="space-y-1 text-slate-300 text-[11px] leading-relaxed font-sans">
+            1. App kiểm tra Redis.<br/>
+            2. Nếu có ➔ <strong>Cache Hit</strong> trả về ngay.<br/>
+            3. Nếu không ➔ <strong>Cache Miss</strong> đọc SQL rồi ghi bù vào Redis kèm TTL + Jitter.
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-950 rounded-lg border border-slate-800 space-y-2">
+          <div className="font-bold text-emerald-300">WRITE-THROUGH / WRITE-BEHIND</div>
+          <div className="space-y-1 text-slate-300 text-[11px] leading-relaxed font-sans">
+            1. App ghi vào Cache trước.<br/>
+            2. Cache tự đồng bộ ghi xuống DB chính (đồng bộ hoặc bất đồng bộ batch).<br/>
+            3. Đảm bảo dữ liệu trong Cache không bao giờ bị cũ (Stale).
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   29. VECTOR SEARCH HNSW DIAGRAM
+   ========================================================================= */
+const VectorSearchHnswDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Network className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Kiến Trúc Đồ Thị Phân Tầng HNSW (Hierarchical Navigable Small World)'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-purple-400">AI Vector Retrieval</span>
+      </div>
+
+      <div className="space-y-2.5 text-xs font-mono">
+        <div className="p-3 bg-purple-950/30 rounded-lg border border-purple-800/40 flex items-center justify-between">
+          <span className="font-bold text-purple-300">Layer 2 (Expressway - Bước nhảy xa):</span>
+          <span className="text-slate-300 text-[11px]">Định vị nhanh vùng không gian vector mục tiêu</span>
+        </div>
+        <div className="p-3 bg-indigo-950/30 rounded-lg border border-indigo-800/40 flex items-center justify-between">
+          <span className="font-bold text-indigo-300">Layer 1 (Medium Navigation):</span>
+          <span className="text-slate-300 text-[11px]">Thu hẹp phạm vi các cụm lân cận</span>
+        </div>
+        <div className="p-3 bg-emerald-950/30 rounded-lg border border-emerald-800/40 flex items-center justify-between">
+          <span className="font-bold text-emerald-300">Layer 0 (Dense Ground Layer):</span>
+          <span className="text-slate-300 text-[11px]">Xác định chính xác Top-K láng giềng gần nhất (Cosine Similarity) 🎯</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   30. UNIVERSAL FREE-DB GATEWAY & MCP SERVER ARCHITECTURE
+   ========================================================================= */
+const UniversalFreeDbGatewayDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-5 shadow-xl overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Share2 className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Kiến Trúc Universal Free Database Gateway & Model Context Protocol (MCP)'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
+          Zero Lock-in • Auto Failover • 100% Free Tiers
+        </span>
+      </div>
+
+      <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-4">
+        {/* Front-end layer */}
+        <div className="p-3 bg-cyan-950/30 border border-cyan-800/50 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 font-bold text-cyan-300">
+            <Laptop className="w-4 h-4 text-cyan-400" />
+            <span>Phía Trước: Web App, Mobile App & AI Agents (Claude, Cursor, Antigravity)</span>
+          </div>
+          <span className="text-[11px] font-mono text-slate-400">Gọi 1 SDK duy nhất qua REST / GraphQL / MCP Tools</span>
+        </div>
+
+        <div className="flex items-center justify-center text-amber-400 text-xs font-mono gap-2">
+          <ArrowDown className="w-4 h-4 animate-bounce" />
+          <span className="px-3 py-1 bg-amber-950/50 border border-amber-800/60 rounded-full font-semibold">
+            Universal DB Gateway Core (Cloudflare Workers / Node.js MCP)
+          </span>
+          <ArrowDown className="w-4 h-4 animate-bounce" />
+        </div>
+
+        {/* Backend drivers layer */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-center font-mono">
+          <div className="p-3 bg-blue-950/30 border border-blue-800/50 rounded-lg space-y-1">
+            <div className="text-blue-300 font-bold">SQL Cluster</div>
+            <div className="text-[10px] text-slate-400">Supabase + Neon</div>
+            <div className="text-[10px] text-emerald-400">Auto Failover</div>
+          </div>
+
+          <div className="p-3 bg-amber-950/30 border border-amber-800/50 rounded-lg space-y-1">
+            <div className="text-amber-300 font-bold">Cache Tier</div>
+            <div className="text-[10px] text-slate-400">Upstash Redis</div>
+            <div className="text-[10px] text-emerald-400">Rate Limit & Session</div>
+          </div>
+
+          <div className="p-3 bg-purple-950/30 border border-purple-800/50 rounded-lg space-y-1">
+            <div className="text-purple-300 font-bold">Vector AI Tier</div>
+            <div className="text-[10px] text-slate-400">Qdrant + Pinecone</div>
+            <div className="text-[10px] text-emerald-400">RAG & Embeddings</div>
+          </div>
+
+          <div className="p-3 bg-emerald-950/30 border border-emerald-800/50 rounded-lg space-y-1">
+            <div className="text-emerald-300 font-bold">Edge SQLite</div>
+            <div className="text-[10px] text-slate-400">Turso + D1</div>
+            <div className="text-[10px] text-emerald-400">&lt; 10ms Global Latency</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================================
+   31. SELF-HOSTED VPS VS CLOUD PAAS (VERCEL) COMPARISON
+   ========================================================================= */
+const SelfHostedVpsVsPaaSComparisonDiagram: React.FC<{ title?: string }> = ({ title }) => {
+  return (
+    <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-4 shadow-xl overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <Server className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-semibold text-slate-100">
+            {title || 'Sơ Đồ Đối Đầu Kiến Trúc: Self-Hosted VPS vs Serverless Cloud PaaS (Vercel)'}
+          </h4>
+        </div>
+        <span className="text-[11px] font-mono text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/40">
+          Chi phí • Timeout • WebSocket • Caching
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        {/* Left Column: Self-Hosted VPS */}
+        <div className="p-4 rounded-xl bg-slate-950 border border-emerald-900/40 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span className="font-bold text-emerald-300 font-mono text-sm">SELF-HOSTED VPS ($4-$6/mo)</span>
+            <span className="text-[10px] bg-emerald-950/60 text-emerald-300 px-2 py-0.5 rounded font-mono">
+              Toàn quyền Root
+            </span>
+          </div>
+
+          <ul className="space-y-2 text-slate-300 text-[11px] leading-relaxed">
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 font-bold">✓</span>
+              <span><strong>Băng thông khổng lồ:</strong> Đi kèm 20 TB (20,000 GB) miễn phí, không lo hóa đơn phát sinh.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 font-bold">✓</span>
+              <span><strong>Không giới hạn Timeout:</strong> Chạy nền 24/7/365, tác vụ AI, Web scraping, xuất file nặng thoải mái.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 font-bold">✓</span>
+              <span><strong>WebSocket & Realtime:</strong> Hỗ trợ native Socket.io/WebRTC không tốn phí dịch vụ ngoài.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 font-bold">✓</span>
+              <span><strong>In-Memory RAM:</strong> Phản hồi tức thì &lt; 5ms, 0ms Cold-start.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 font-bold">✓</span>
+              <span><strong>Đa năng:</strong> Chạy cả Web App, Database (Postgres), Cache (Redis) trên cùng 1 server.</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Right Column: Serverless Cloud PaaS (Vercel) */}
+        <div className="p-4 rounded-xl bg-slate-950 border border-indigo-900/40 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span className="font-bold text-indigo-300 font-mono text-sm">SERVERLESS PAAS (VERCEL)</span>
+            <span className="text-[10px] bg-indigo-950/60 text-indigo-300 px-2 py-0.5 rounded font-mono">
+              1-Click Deploy
+            </span>
+          </div>
+
+          <ul className="space-y-2 text-slate-300 text-[11px] leading-relaxed">
+            <li className="flex items-start gap-2">
+              <span className="text-amber-400 font-bold">⚡</span>
+              <span><strong>Cực kỳ tiện lợi:</strong> 1-Click GitHub push-to-deploy, tự cấu hình CDN toàn cầu.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 font-bold">✕</span>
+              <span><strong>Bẫy băng thông đắt đỏ:</strong> Phí vượt gói $20 cho mỗi 100GB (dễ nhận bill bất ngờ).</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 font-bold">✕</span>
+              <span><strong>Giới hạn Timeout ngắn:</strong> 10s (Hobby) / 60s (Pro) gây lỗi 504 Gateway Timeout.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 font-bold">✕</span>
+              <span><strong>Cold-start Latency:</strong> Bị trễ 500ms - 2,000ms khi hàm thức dậy.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 font-bold">✕</span>
+              <span><strong>Không có Database nội bộ:</strong> Bắt buộc phải mua thêm dịch vụ DB bên ngoài.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+

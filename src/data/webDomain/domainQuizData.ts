@@ -102,5 +102,39 @@ export const DOMAIN_QUIZ_QUESTIONS: DomainQuizQuestion[] = [
       whyCorrect: 'Đây là kịch bản kinh điển của Subdomain Takeover: bản ghi CNAME trỏ về một dịch vụ bên thứ ba (GitBook, S3, Heroku) nhưng tài nguyên đó đã bị xóa (Dangling DNS). Bất kỳ ai cũng có thể đăng ký tài khoản GitBook mới với tên miền tương ứng và chiếm quyền kiểm soát toàn bộ subdomain docs.company.com.',
       proTip: 'Luôn thực hiện quy trình Audit DNS định kỳ: khi giải phóng bất kỳ tài nguyên Cloud nào, phải lập tức xóa bỏ bản ghi DNS tương ứng.'
     }
+  },
+  {
+    id: 'dq-7',
+    category: 'Hosting & Serverless Architecture',
+    difficulty: 'Khó',
+    scenario: 'Một ứng dụng Next.js triển khai trên Vercel gói Hobby thường xuyên bị lỗi 504 Gateway Timeout khi người dùng bấm nút "Xuất Báo Cáo PDF Dài 100 Trang" hoặc "Xử lý Video ngắn". Nguyên nhân cốt lõi và giải pháp kiến trúc tối ưu nhất là gì?',
+    options: [
+      { id: 'opt-a', text: 'Do Vercel Serverless Function bị giới hạn Execution Timeout (10 giây trên gói Hobby); giải pháp là chuyển tác vụ nặng sang một VPS cá nhân chạy worker tiến trình nền hoặc nâng cấp kiến trúc hàng đợi' },
+      { id: 'opt-b', text: 'Do tên miền chưa cấu hình DNSSEC' },
+      { id: 'opt-c', text: 'Do ổ cứng SSD của Vercel bị đầy dung lượng' },
+      { id: 'opt-d', text: 'Do máy tính người dùng chưa cài đặt phần mềm Adobe Acrobat' }
+    ],
+    correctOptionId: 'opt-a',
+    explanation: {
+      whyCorrect: 'Các dịch vụ Serverless PaaS như Vercel áp dụng cơ chế giới hạn thời gian thực thi (Execution Timeout 10s trên Hobby, 60s trên Pro) để ngăn các hàm chạy vô tận làm tốn tài nguyên. Với các tác vụ nặng cần xử lý > 10s, VPS cá nhân hoặc Background Worker là giải pháp bắt buộc.',
+      proTip: 'Trên VPS, tiến trình nền có thể chạy vô hạn 24/7/365 mà không bao giờ bị ngắt kết nối HTTP 504.'
+    }
+  },
+  {
+    id: 'dq-8',
+    category: 'Hosting Strategy & Cost Optimization',
+    difficulty: 'Trung bình',
+    scenario: 'Đâu là lợi thế kinh tế và kỹ thuật vượt trội của việc tự dựng Self-Hosted PaaS (sử dụng VPS Hetzner / DigitalOcean $4/tháng kết hợp Coolify / Docker) so với phụ thuộc hoàn toàn vào các nền tảng PaaS thương mại?',
+    options: [
+      { id: 'opt-a', text: 'Tiết kiệm chi phí băng thông (VPS đi kèm 20TB băng thông miễn phí thay vì bị tính $20/100GB như PaaS), hỗ trợ native WebSocket 24/7, không bị Cold-start, và có thể cài đặt cả Database/Redis trên cùng 1 server' },
+      { id: 'opt-b', text: 'Tự động biến server thành một trạm phát sóng Wi-Fi vệ tinh' },
+      { id: 'opt-c', text: 'Không cần kết nối Internet máy chủ vẫn phục vụ người dùng toàn cầu' },
+      { id: 'opt-d', text: 'Tự động dịch mã nguồn sang mọi ngôn ngữ trên thế giới' }
+    ],
+    correctOptionId: 'opt-a',
+    explanation: {
+      whyCorrect: 'VPS cá nhân cung cấp tài nguyên phần cứng chuyên dụng với chi phí cố định cực rẻ ($4-$6/tháng), đi kèm 20TB băng thông, hỗ trợ toàn diện WebSocket, Cron jobs, Database nội bộ mà không bị bẫy chi phí phát sinh bất ngờ hay giới hạn hàm Serverless.',
+      proTip: 'Coolify giúp bạn có 100% trải nghiệm Git Push-to-Deploy, Preview PR, SSL tự động như Vercel Pro trên chính VPS cá nhân của bạn.'
+    }
   }
 ];

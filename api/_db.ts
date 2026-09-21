@@ -37,8 +37,8 @@ const memoryUsers = new Map<string, UserProfile>();
 const memoryProgress = new Map<string, UserProgressData>();
 
 // Default seed
-const defaultProgress = (email: string): UserProgressData => ({
-  email,
+const defaultProgress = (key: string): UserProgressData => ({
+  email: key,
   currentTrack: 'cloud_engineer',
   completedStages: [],
   completedLessons: ['networking-security-core'],
@@ -57,8 +57,8 @@ const defaultProgress = (email: string): UserProgressData => ({
   lastSyncedAt: new Date().toISOString()
 });
 
-export async function getUserProfile(email: string): Promise<UserProfile | null> {
-  const normalized = email.toLowerCase().trim();
+export async function getUserProfile(identifier: string): Promise<UserProfile | null> {
+  const normalized = identifier.toLowerCase().trim();
   return memoryUsers.get(normalized) || null;
 }
 
@@ -71,8 +71,8 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
   });
 }
 
-export async function getUserProgress(email: string): Promise<UserProgressData> {
-  const normalized = email.toLowerCase().trim();
+export async function getUserProgress(identifier: string): Promise<UserProgressData> {
+  const normalized = identifier.toLowerCase().trim();
   const existing = memoryProgress.get(normalized);
   if (existing) {
     return existing;
@@ -94,10 +94,10 @@ export async function saveUserProgress(data: UserProgressData): Promise<UserProg
 }
 
 export async function mergeUserProgress(
-  email: string, 
+  identifier: string, 
   incomingData: Partial<UserProgressData>
 ): Promise<UserProgressData> {
-  const current = await getUserProgress(email);
+  const current = await getUserProgress(identifier);
 
   // Union arrays so no completed item is lost across devices
   const mergeArrays = (a: string[] = [], b: string[] = []) => Array.from(new Set([...a, ...b]));

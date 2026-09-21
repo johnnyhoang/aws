@@ -20,20 +20,21 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
         bodyData += chunk;
       }
       const body = bodyData ? JSON.parse(bodyData) : {};
-      const { email, progress } = body;
+      const { email, key, progress } = body;
+      const identifier = key || email;
 
-      if (!email || !progress) {
+      if (!identifier || !progress) {
         res.statusCode = 400;
-        res.end(JSON.stringify({ error: 'Thiếu thông tin đồng bộ hợp nhất.' }));
+        res.end(JSON.stringify({ error: 'Thiếu thông tin nhận diện đồng bộ.' }));
         return;
       }
 
-      const merged = await mergeUserProgress(email, progress);
+      const merged = await mergeUserProgress(identifier, progress);
 
       res.statusCode = 200;
       res.end(JSON.stringify({
         success: true,
-        message: 'Hợp nhất dữ liệu giữa các thiết bị thành công.',
+        message: 'Tự động đồng bộ và hợp nhất dữ liệu thành công.',
         progress: merged
       }));
       return;
@@ -43,6 +44,6 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
     res.end(JSON.stringify({ error: 'Phương thức không được hỗ trợ.' }));
   } catch {
     res.statusCode = 500;
-    res.end(JSON.stringify({ error: 'Không thể đồng bộ hợp nhất dữ liệu.' }));
+    res.end(JSON.stringify({ error: 'Không thể tự động đồng bộ dữ liệu.' }));
   }
 }

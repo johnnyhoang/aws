@@ -1,20 +1,20 @@
-export type DomainCategory = 
-  | 'fundamentals'
-  | 'dns_architecture'
-  | 'dns_records'
-  | 'lifecycle_transfer'
-  | 'security_dnssec'
-  | 'web_admin_servers'
-  | 'pro_tips_troubleshooting'
-  | 'web_hosting_architectures'
-  | 'self_hosted_vps_paas';
+export type DatabaseCategory = 
+  | 'fundamentals_principles'
+  | 'relational_rdbms'
+  | 'nosql_document'
+  | 'keyvalue_cache'
+  | 'vector_ai_rag'
+  | 'analytics_columnar'
+  | 'optimization_tuning'
+  | 'free_tier_directory'
+  | 'universal_mcp_gateway';
 
-export interface DomainChapter {
+export interface DatabaseChapter {
   id: string;
   chapterNumber: number;
   title: string;
   subtitle: string;
-  category: DomainCategory;
+  category: DatabaseCategory;
   readTimeMinutes: number;
   level: 'Cơ bản' | 'Trung cấp' | 'Nâng cao' | 'Chuyên gia';
   summary: string;
@@ -42,7 +42,7 @@ export interface DomainChapter {
   masteryChecklist: string[];
 }
 
-export interface DomainQuizQuestion {
+export interface DatabaseQuizQuestion {
   id: string;
   category: string;
   difficulty: 'Cơ bản' | 'Trung bình' | 'Khó' | 'Chuyên gia';
@@ -62,11 +62,25 @@ export interface DomainQuizQuestion {
   };
 }
 
-export interface DomainFlashcard {
+export interface DatabaseFlashcard {
   id: string;
   term: string;
   category: string;
   definition: string;
   practicalUsage: string;
   proTip: string;
+}
+
+export interface FreeDatabaseProvider {
+  id: string;
+  name: string;
+  type: string;
+  badge: string;
+  freeQuota: string;
+  keyFeatures: string[];
+  bestFor: string;
+  pros: string[];
+  limitations: string[];
+  signupUrl: string;
+  connectionSnippet: string;
 }
