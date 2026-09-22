@@ -4,6 +4,7 @@ import { CloudSyncModal } from './CloudSyncModal';
 import { UserLevelModal } from './UserLevelModal';
 import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevelModal';
 import { ReadingModeModal } from './ReadingModeModal';
+import { BookshelfMenu } from './BookshelfMenu';
 import { 
   Cloud, 
   BookOpen, 
@@ -18,7 +19,9 @@ import {
   Terminal, 
   Glasses,
   Globe,
-  LogOut
+  LogOut,
+  Sparkles,
+  Layers
 } from 'lucide-react';
 
 export type NavTab = 'learn' | 'test' | 'play';
@@ -46,6 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
   const [isReadingModalOpen, setIsReadingModalOpen] = useState(false);
+  const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
 
   const isFundamentals = portalMode === 'fundamentals';
   const isWebDomain = portalMode === 'web_domain';
@@ -81,68 +85,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         {/* Top Minimal Utility Bar */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between text-xs border-b border-slate-900">
           
-          {/* Portal Switcher: 4 Minimal text pills */}
-          <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-lg border border-slate-800 overflow-x-auto no-scrollbar">
+          {/* Bookshelf Menu Bar (Compact Books Spines) */}
+          <div className="flex items-center gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 overflow-x-auto no-scrollbar max-w-[65%] sm:max-w-[75%]">
             <button
-              onClick={() => setPortalMode('fundamentals')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                isFundamentals
-                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Cổng IT Fundamentals"
+              onClick={() => setIsBookshelfModalOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-all font-semibold cursor-pointer shrink-0"
+              title="Mở toàn bộ Kệ Sách 3D"
             >
-              <Terminal className="w-3.5 h-3.5" />
-              <span>IT Nền Tảng</span>
+              <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">Kệ Sách</span>
             </button>
-            <button
-              onClick={() => setPortalMode('web_domain')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                isWebDomain
-                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Cổng Web Domain & Quản Trị Hệ Thống"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Web & Domain</span>
-            </button>
-            <button
-              onClick={() => setPortalMode('database')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                isDatabase
-                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Cổng Cơ Sở Dữ Liệu & Free-DB Gateway"
-            >
-              <Server className="w-3.5 h-3.5" />
-              <span>Database</span>
-            </button>
-            <button
-              onClick={() => setPortalMode('linux_admin')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                isLinuxAdmin
-                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Cổng Quản Trị Hệ Thống Linux & Unix Chuyên Gia"
-            >
-              <Terminal className="w-3.5 h-3.5" />
-              <span>Linux Admin</span>
-            </button>
-            <button
-              onClick={() => setPortalMode('aws')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                portalMode === 'aws'
-                  ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Cổng AWS Cloud"
-            >
-              <Cloud className="w-3.5 h-3.5" />
-              <span>AWS Cloud</span>
-            </button>
+            <div className="h-4 w-px bg-slate-800 shrink-0" />
+            <BookshelfMenu compact={true} />
           </div>
 
           {/* Utility Tools (Minimal Icon Buttons with tooltips) */}
@@ -337,6 +291,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
           isOpen={isLevelModalOpen}
           onClose={() => setIsLevelModalOpen(false)}
         />
+      )}
+
+      {/* Bookshelf Interactive Modal */}
+      {isBookshelfModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto no-scrollbar rounded-2xl border border-slate-800 shadow-2xl">
+            <button
+              onClick={() => setIsBookshelfModalOpen(false)}
+              className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-slate-100 flex items-center justify-center cursor-pointer transition-colors"
+              title="Đóng Kệ Sách"
+            >
+              ✕
+            </button>
+            <BookshelfMenu onSelectBook={() => setIsBookshelfModalOpen(false)} />
+          </div>
+        </div>
       )}
     </>
   );
