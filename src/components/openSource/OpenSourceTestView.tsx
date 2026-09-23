@@ -148,8 +148,8 @@ export const OpenSourceTestView: React.FC = () => {
             </div>
           </div>
 
-          {/* Question Card */}
-          <div className="p-5 sm:p-6 bg-slate-900/80 rounded-2xl border border-slate-800 shadow-xl space-y-6">
+          {/* Question Section (Seamless, không lồng khung) */}
+          <div className="space-y-6 pt-2">
             
             {/* Scenario Text */}
             <div className="space-y-2">
@@ -159,19 +159,19 @@ export const OpenSourceTestView: React.FC = () => {
             </div>
 
             {/* Answer Options */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {currentQuestion.options.map((opt) => {
                 const isSelected = selectedOptionId === opt.id;
                 const isCorrect = opt.id === currentQuestion.correctOptionId;
 
-                let btnStyle = 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300';
+                let btnStyle = 'bg-slate-900/70 hover:bg-slate-800/80 text-slate-300 border border-slate-800/70';
                 if (isAnswered) {
                   if (isCorrect) {
-                    btnStyle = 'bg-emerald-950/40 border-emerald-500/80 text-emerald-200 ring-1 ring-emerald-500/50';
+                    btnStyle = 'bg-emerald-950/40 border-l-4 border-l-emerald-500 border-transparent text-emerald-200';
                   } else if (isSelected && !isCorrect) {
-                    btnStyle = 'bg-red-950/40 border-red-500/80 text-red-200 ring-1 ring-red-500/50';
+                    btnStyle = 'bg-red-950/40 border-l-4 border-l-red-500 border-transparent text-red-200';
                   } else {
-                    btnStyle = 'bg-slate-950/40 border-slate-900 text-slate-500 opacity-60';
+                    btnStyle = 'bg-slate-950/30 border-transparent text-slate-500 opacity-50';
                   }
                 }
 
@@ -180,9 +180,9 @@ export const OpenSourceTestView: React.FC = () => {
                     key={opt.id}
                     onClick={() => handleSelectOption(opt.id)}
                     disabled={isAnswered}
-                    className={`w-full p-3.5 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all duration-200 flex items-start gap-3 cursor-pointer ${btnStyle}`}
+                    className={`w-full p-3.5 rounded-xl text-left text-xs sm:text-sm font-medium transition-all duration-150 flex items-start gap-3 cursor-pointer ${btnStyle}`}
                   >
-                    <div className="w-6 h-6 rounded-lg bg-slate-800/80 flex items-center justify-center font-mono font-bold text-xs shrink-0 mt-0.5">
+                    <div className="w-5 h-5 rounded flex items-center justify-center font-mono font-bold text-xs shrink-0 mt-0.5 text-slate-400">
                       {isAnswered && isCorrect ? (
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       ) : isAnswered && isSelected && !isCorrect ? (
@@ -199,7 +199,7 @@ export const OpenSourceTestView: React.FC = () => {
 
             {/* Answer Feedback & Explanation */}
             {isAnswered && (
-              <div className="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3 animate-fadeIn">
+              <div className="pt-4 border-t border-slate-800 space-y-3 animate-fadeIn">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {selectedOptionId === currentQuestion.correctOptionId ? (
@@ -221,7 +221,7 @@ export const OpenSourceTestView: React.FC = () => {
                   </p>
 
                   {currentQuestion.explanation.proTip && (
-                    <div className="p-2.5 rounded-lg bg-purple-950/30 border border-purple-900/40 text-purple-200 text-xs">
+                    <div className="border-l-2 border-purple-400/80 pl-3 py-1 text-purple-200 text-xs bg-purple-950/20 rounded-r-lg">
                       <span>{currentQuestion.explanation.proTip}</span>
                     </div>
                   )}
@@ -231,7 +231,7 @@ export const OpenSourceTestView: React.FC = () => {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={handleNextQuestion}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-lg shadow-purple-900/30 flex items-center gap-1.5 cursor-pointer transition-all"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all"
                   >
                     <span>{isLastQuestion ? 'Xem kết quả tổng kết' : 'Câu tiếp theo'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />

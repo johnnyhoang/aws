@@ -132,7 +132,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
           </div>
 
           {/* Chapter Navigation List */}
-          <nav className="space-y-1.5 max-h-[60vh] overflow-y-auto no-scrollbar pr-1">
+          <nav className="space-y-1 max-h-[60vh] overflow-y-auto no-scrollbar pr-1">
             {filteredChapters.map((ch) => {
               const isSelected = ch.id === currentChapter.id;
               const isDone = completedLessons.includes(ch.id);
@@ -141,10 +141,10 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                 <div
                   key={ch.id}
                   onClick={() => handleSelectChapter(ch.id)}
-                  className={`cursor-pointer px-3 py-2.5 rounded-lg transition-all flex items-start justify-between gap-2.5 border ${
+                  className={`cursor-pointer px-3 py-2 rounded-lg transition-all flex items-start justify-between gap-2.5 ${
                     isSelected
-                      ? 'bg-slate-800/90 text-purple-300 border-purple-500/50 shadow-md font-medium translate-x-1'
-                      : 'hover:bg-slate-900 text-slate-400 hover:text-slate-200 border-slate-800/80'
+                      ? 'bg-purple-950/40 text-purple-200 font-medium border-l-2 border-purple-500'
+                      : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <div className="space-y-0.5 min-w-0 flex-1">
@@ -153,7 +153,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                       <span className="truncate">{ch.title.split(':')[0]}</span>
                     </div>
                     <div className="text-[11px] text-slate-500 flex items-center gap-2">
-                      <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 text-[10px]">{ch.level}</span>
+                      <span className="text-slate-400 text-[10px]">{ch.level}</span>
                       <span>•</span>
                       <span>{ch.readTimeMinutes}p đọc</span>
                     </div>
@@ -163,7 +163,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                     {isDone ? (
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     ) : (
-                      <Circle className="w-4 h-4 text-slate-600" />
+                      <Circle className="w-4 h-4 text-slate-700" />
                     )}
                   </div>
                 </div>
@@ -173,17 +173,17 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
           {/* Quick CTA to Test & Play */}
           {onNavigateTab && (
-            <div className="pt-3 border-t border-slate-800/80 space-y-2 text-xs">
+            <div className="pt-3 border-t border-slate-800/80 space-y-1.5 text-xs">
               <button
                 onClick={() => onNavigateTab('test')}
-                className="w-full py-2 px-3 rounded-lg bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
+                className="w-full py-2 px-3 rounded-lg hover:bg-slate-900/80 text-slate-400 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
               >
                 <span>Luyện Đề Trắc Nghiệm Tình Huống</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
               </button>
               <button
                 onClick={() => onNavigateTab('play')}
-                className="w-full py-2 px-3 rounded-lg bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
+                className="w-full py-2 px-3 rounded-lg hover:bg-slate-900/80 text-slate-400 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
               >
                 <span>Lab Chọn License & PR Simulator</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
@@ -199,7 +199,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
           <div className="space-y-4 pb-4 border-b border-slate-800">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs text-slate-400">
-                <span className="font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold uppercase">
+                <span className="font-mono text-purple-300 font-semibold uppercase">
                   {currentChapter.level}
                 </span>
                 <span>•</span>
@@ -218,7 +218,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
                 <button
                   onClick={() => startReadingArticle(currentChapter.title, currentChapter.sections)}
-                  className={`p-2 rounded-lg border transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer flex items-center gap-1.5 ${
                     isPlaying && articleTitle === currentChapter.title
                       ? 'bg-purple-500/20 text-purple-300 border-purple-500/50 shadow-sm animate-pulse'
                       : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-purple-300 hover:border-slate-700'
@@ -231,7 +231,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
                 <button
                   onClick={() => toggleLessonBookmark(currentChapter.id)}
-                  className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                  className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                     isBookmarked
                       ? 'bg-amber-950/40 text-amber-400 border-amber-800/50'
                       : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
@@ -244,7 +244,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
                 <button
                   onClick={() => toggleLessonCompleted(currentChapter.id)}
-                  className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                  className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                     isCompleted
                       ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50'
                       : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
@@ -266,10 +266,10 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
             </p>
           </div>
 
-          {/* Hook Story Box (Câu chuyện dẫn chứng kích thích hứng thú) */}
+          {/* Hook Story Box (Không dùng khung hộp nặng, dùng border-l nhấn thanh lịch) */}
           {currentChapter.hookStory && (
-            <div className="p-4 rounded-xl bg-gradient-to-br from-purple-950/30 via-slate-900 to-slate-950 border border-purple-500/30 space-y-2 relative overflow-hidden">
-              <div className="text-xs font-bold text-purple-400 uppercase tracking-wider">
+            <div className="border-l-2 border-purple-500/80 pl-4 py-1.5 space-y-1 bg-purple-950/10 rounded-r-lg">
+              <div className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">
                 Câu Chuyện Thực Tế Kích Thích Tư Duy
               </div>
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
@@ -289,7 +289,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
             {currentChapter.sections.map((section, sIdx) => (
               <section key={sIdx} className="space-y-3.5">
                 <h3 className="text-base sm:text-lg font-bold text-slate-100 tracking-tight flex items-center gap-2">
-                  <span className="w-2 h-4 bg-purple-400 rounded-full inline-block" />
+                  <span className="w-1.5 h-4 bg-purple-400 rounded-full inline-block" />
                   <span>{section.heading}</span>
                 </h3>
 
@@ -305,7 +305,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
                 {/* Speaker Quote if any */}
                 {section.storyQuote && (
-                  <div className="p-3.5 rounded-lg bg-slate-900/80 border-l-4 border-amber-400 text-xs sm:text-sm text-slate-200 space-y-1">
+                  <div className="border-l-2 border-amber-400 pl-4 py-2 text-xs sm:text-sm text-slate-200 space-y-1 bg-slate-900/30 rounded-r-lg">
                     <p className="italic font-serif leading-relaxed">
                       "{section.storyQuote.quote}"
                     </p>
@@ -324,34 +324,34 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                   </ul>
                 )}
 
-                {/* Mindset Shift Box if any */}
+                {/* Mindset Shift Box: Chuyển từ khung lồng khung sang cấu trúc thông thoáng */}
                 {section.mindsetShift && (
-                  <div className="p-3.5 rounded-lg bg-slate-900/70 border border-slate-800 space-y-2 text-xs">
+                  <div className="p-3.5 rounded-lg bg-slate-900/40 border-l-2 border-purple-500 space-y-2.5 text-xs">
                     <div className="font-bold text-purple-400 uppercase tracking-wide">
                       Bước Nhảy Vọt Tư Duy (Mindset Shift)
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300">
-                      <div className="p-2 rounded bg-red-950/20 border border-red-900/30 text-red-200/90">
-                        <span className="font-semibold text-red-400 block mb-1">❌ Tư duy cũ:</span>
-                        {section.mindsetShift.from}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-300">
+                      <div className="space-y-0.5">
+                        <span className="font-semibold text-red-400 block">❌ Tư duy cũ:</span>
+                        <p className="text-slate-300 leading-relaxed">{section.mindsetShift.from}</p>
                       </div>
-                      <div className="p-2 rounded bg-emerald-950/20 border border-emerald-900/30 text-emerald-200/90">
-                        <span className="font-semibold text-emerald-400 block mb-1">✅ Tư duy Open Source Master:</span>
-                        {section.mindsetShift.to}
+                      <div className="space-y-0.5">
+                        <span className="font-semibold text-emerald-400 block">✅ Tư duy Open Source Master:</span>
+                        <p className="text-slate-300 leading-relaxed">{section.mindsetShift.to}</p>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 pt-1">
+                    <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
                       <strong className="text-slate-300">Tác động: </strong>
                       {section.mindsetShift.impact}
                     </p>
                   </div>
                 )}
 
-                {/* Code Block if any */}
+                {/* Code Block */}
                 {section.codeBlock && (
-                  <div className="space-y-1.5 pt-1">
+                  <div className="space-y-1 pt-1">
                     {section.codeBlock.title && (
-                      <div className="flex items-center justify-between text-xs text-slate-400">
+                      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
                         <span className="font-mono text-[11px] text-purple-300">{section.codeBlock.title}</span>
                         <button
                           onClick={() => handleCopyCode(section.codeBlock?.code || '', `sec-${sIdx}`)}
@@ -362,26 +362,24 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                         </button>
                       </div>
                     )}
-                    <div className="rounded-lg bg-slate-900 border border-slate-800 overflow-hidden">
-                      <pre className="p-3.5 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed">
-                        <code>{section.codeBlock.code}</code>
-                      </pre>
-                    </div>
+                    <pre className="p-3.5 text-xs font-mono text-slate-200 bg-slate-900/90 rounded-lg overflow-x-auto leading-relaxed border border-slate-800/70">
+                      <code>{section.codeBlock.code}</code>
+                    </pre>
                   </div>
                 )}
 
-                {/* Pro Tip Alert */}
+                {/* Pro Tip: Dùng border-l thanh lịch thay vì hộp viền 4 phía */}
                 {section.proTip && (
-                  <div className="p-3 rounded-lg bg-amber-950/20 border border-amber-900/40 text-xs sm:text-sm text-amber-200/90 leading-relaxed">
-                    <strong className="font-semibold text-amber-300">Bí quyết thực chiến đỉnh cao: </strong>
+                  <div className="border-l-2 border-amber-400/80 pl-3.5 py-1.5 text-xs sm:text-sm text-slate-300 leading-relaxed bg-amber-950/10 rounded-r-lg">
+                    <strong className="font-semibold text-amber-300">Bí quyết thực chiến: </strong>
                     {section.proTip}
                   </div>
                 )}
 
-                {/* Warning Note Alert */}
+                {/* Warning Note */}
                 {section.warningNote && (
-                  <div className="p-3 rounded-lg bg-red-950/20 border border-red-900/40 text-xs sm:text-sm text-red-200/90 leading-relaxed">
-                    <strong className="font-semibold text-red-300">Cạm bẫy cần tránh: </strong>
+                  <div className="border-l-2 border-red-500/80 pl-3.5 py-1.5 text-xs sm:text-sm text-slate-300 leading-relaxed bg-red-950/10 rounded-r-lg">
+                    <strong className="font-semibold text-red-300">Lưu ý quan trọng: </strong>
                     {section.warningNote}
                   </div>
                 )}
@@ -389,16 +387,16 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
             ))}
           </div>
 
-          {/* Practical CLI Commands */}
+          {/* Practical CLI Commands: Bỏ lồng khung kép */}
           {currentChapter.practicalCommands && currentChapter.practicalCommands.length > 0 && (
             <div className="space-y-3 pt-4 border-t border-slate-800">
               <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
                 Lệnh Terminal Thực Hành Đóng Góp OSS
               </h3>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {currentChapter.practicalCommands.map((cmd, cIdx) => (
-                  <div key={cIdx} className="p-3 bg-slate-900/60 rounded-lg border border-slate-800 space-y-1.5 text-xs">
+                  <div key={cIdx} className="space-y-1 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-slate-200">{cmd.title}</span>
                       <button
@@ -409,7 +407,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                         {copiedCodeIndex === `cmd-${cIdx}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     </div>
-                    <pre className="p-2.5 bg-slate-950 rounded font-mono text-purple-300 overflow-x-auto">
+                    <pre className="p-2.5 bg-slate-900/90 border border-slate-800/70 rounded-lg font-mono text-purple-300 overflow-x-auto">
                       <code>{cmd.command}</code>
                     </pre>
                     <p className="text-slate-400 text-[11px]">{cmd.description}</p>
@@ -418,6 +416,21 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
               </div>
             </div>
           )}
+
+          {/* Chapter Mastery Checklist */}
+          <div className="space-y-3 pt-4 border-t border-slate-800">
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
+              Tiêu Chuẩn Đạt Chuẩn Chương Này (Mastery Checklist)
+            </h3>
+            <div className="space-y-1.5">
+              {currentChapter.masteryChecklist.map((item, mIdx) => (
+                <div key={mIdx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
+                  <span className="text-purple-400 font-bold">•</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Chapter Mastery Checklist */}
           <div className="space-y-3 pt-4 border-t border-slate-800">

@@ -254,7 +254,7 @@ export const OpenSourcePlayView: React.FC = () => {
 
       {/* Tab 2: License Selector Lab */}
       {activeTab === 'license_lab' && (
-        <div className="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-6 shadow-xl">
+        <div className="space-y-6 pt-2">
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-100">
               Công Cụ Định Hướng Chọn Giấy Phép (License Selector)
@@ -294,10 +294,10 @@ export const OpenSourcePlayView: React.FC = () => {
               <div
                 key={item.id}
                 onClick={() => setProjectGoal(item.id as any)}
-                className={`p-4 rounded-xl border cursor-pointer transition-all space-y-2 ${
+                className={`p-4 rounded-xl cursor-pointer transition-all space-y-1.5 ${
                   projectGoal === item.id
-                    ? 'bg-purple-950/40 border-purple-500 text-purple-200 ring-2 ring-purple-500/30'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400'
+                    ? 'bg-purple-950/40 text-purple-200 border-l-4 border-purple-500'
+                    : 'bg-slate-900/60 hover:bg-slate-900 text-slate-400 border border-slate-800/60'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -309,35 +309,35 @@ export const OpenSourcePlayView: React.FC = () => {
             ))}
           </div>
 
-          {/* License Detail Card */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-wide">
+          {/* License Detail */}
+          <div className="pt-4 border-t border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-purple-400 uppercase tracking-wide">
                 Khuyến nghị giấy phép cho lựa chọn của bạn:
               </span>
-              <span className="text-xs font-mono bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/40">
+              <span className="text-xs font-mono bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">
                 {projectGoal === 'permissive' ? 'MIT hoặc Apache-2.0' : projectGoal === 'copyleft' ? 'GNU GPLv3' : projectGoal === 'saas_protection' ? 'GNU AGPLv3' : 'GNU LGPLv3 / MPL-2.0'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-900/30 space-y-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div className="space-y-1 border-l-2 border-emerald-500 pl-3">
                 <span className="font-bold text-emerald-400 block">✓ Người dùng ĐƯỢC:</span>
-                <p className="text-slate-300">
+                <p className="text-slate-300 leading-relaxed">
                   {projectGoal === 'permissive' ? 'Thương mại hóa, sửa đổi, phân phối, đóng mã nguồn dẫn xuất tùy ý.' : 'Sử dụng miễn phí, chỉnh sửa, phân phối lại, xem toàn bộ mã nguồn.'}
                 </p>
               </div>
 
-              <div className="p-3 rounded-lg bg-red-950/20 border border-red-900/30 space-y-1">
+              <div className="space-y-1 border-l-2 border-red-500 pl-3">
                 <span className="font-bold text-red-400 block">✗ Người dùng KHÔNG ĐƯỢC:</span>
-                <p className="text-slate-300">
+                <p className="text-slate-300 leading-relaxed">
                   {projectGoal === 'permissive' ? 'Bỏ tên tác giả khỏi thông báo bản quyền, đòi hỏi tác giả bồi thường khi code bị lỗi.' : 'Đóng mã nguồn dẫn xuất khi phân phối cho khách hàng.'}
                 </p>
               </div>
 
-              <div className="p-3 rounded-lg bg-purple-950/20 border border-purple-900/30 space-y-1">
+              <div className="space-y-1 border-l-2 border-purple-500 pl-3">
                 <span className="font-bold text-purple-400 block">★ Dự án tiêu biểu:</span>
-                <p className="text-slate-300">
+                <p className="text-slate-300 leading-relaxed">
                   {projectGoal === 'permissive' ? 'React, Vue, Node.js, Kubernetes, VS Code, Tailwind CSS.' : projectGoal === 'copyleft' ? 'Linux Kernel, Git, Bash, Blender, GIMP.' : projectGoal === 'saas_protection' ? 'Grafana, Mastodon, Plausible, Nextcloud.' : 'VLC Media Player, Firefox (MPL).'}
                 </p>
               </div>
@@ -348,7 +348,7 @@ export const OpenSourcePlayView: React.FC = () => {
 
       {/* Tab 3: PR Simulator */}
       {activeTab === 'pr_simulator' && (
-        <div className="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-6 shadow-xl">
+        <div className="space-y-6 pt-2">
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-100">
               Mô Phỏng Gửi Pull Request & Vượt Qua CI Quality Gate
@@ -365,7 +365,7 @@ export const OpenSourcePlayView: React.FC = () => {
                 type="text"
                 value={prTitle}
                 onChange={(e) => setPrTitle(e.target.value)}
-                className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-purple-300 focus:outline-none focus:border-purple-500"
+                className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-purple-300 focus:outline-none focus:border-purple-500"
               />
             </div>
 
@@ -375,7 +375,7 @@ export const OpenSourcePlayView: React.FC = () => {
                 value={prDescription}
                 onChange={(e) => setPrDescription(e.target.value)}
                 rows={3}
-                className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
               />
             </div>
 
@@ -383,7 +383,7 @@ export const OpenSourcePlayView: React.FC = () => {
               <button
                 onClick={handleSimulatePR}
                 disabled={ciStatus === 'running'}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-semibold cursor-pointer shadow-lg shadow-purple-900/30 transition-all disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-semibold cursor-pointer shadow-md transition-all disabled:opacity-50"
               >
                 <span>{ciStatus === 'running' ? 'Đang kích hoạt GitHub Actions...' : 'Gửi Pull Request & Chạy CI Test'}</span>
               </button>
@@ -392,8 +392,8 @@ export const OpenSourcePlayView: React.FC = () => {
 
           {/* CI Checks Simulation Output */}
           {isPrSubmitted && (
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 animate-fadeIn">
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+            <div className="pt-4 border-t border-slate-800 space-y-3 animate-fadeIn">
+              <div className="flex items-center justify-between pb-1">
                 <span className="text-xs font-mono text-slate-400">
                   GitHub Actions Quality Gate • Pipeline #1042
                 </span>
@@ -426,7 +426,7 @@ export const OpenSourcePlayView: React.FC = () => {
               </div>
 
               {ciStatus === 'passed' && (
-                <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-900/40 text-xs text-emerald-200 flex items-center justify-between">
+                <div className="border-l-2 border-emerald-500 pl-3 py-1.5 text-xs text-emerald-200 flex items-center justify-between bg-emerald-950/20 rounded-r-lg">
                   <span>🎉 Chúc mừng! PR của bạn đã sẵn sàng để Core Maintainer duyệt và Merge!</span>
                   <span className="font-bold text-amber-400">+50 XP</span>
                 </div>
@@ -438,7 +438,7 @@ export const OpenSourcePlayView: React.FC = () => {
 
       {/* Tab 4: Git OSS Cheatsheet */}
       {activeTab === 'git_cheatsheet' && (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               {
@@ -472,9 +472,9 @@ export const OpenSourcePlayView: React.FC = () => {
                 desc: 'Bảo vệ không vô tình ghi đè code nếu có ai khác đẩy lên remote'
               }
             ].map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2">
+              <div key={idx} className="space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">{item.title}</span>
+                  <span className="font-semibold text-slate-200">{item.title}</span>
                   <button
                     onClick={() => handleCopy(item.cmd, `git-${idx}`)}
                     className="text-slate-400 hover:text-slate-200 cursor-pointer"
@@ -483,7 +483,7 @@ export const OpenSourcePlayView: React.FC = () => {
                     {copiedCode === `git-${idx}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
-                <pre className="p-2.5 bg-slate-950 rounded-lg text-xs font-mono text-purple-300 overflow-x-auto">
+                <pre className="p-2.5 bg-slate-900/90 border border-slate-800/70 rounded-lg text-xs font-mono text-purple-300 overflow-x-auto">
                   <code>{item.cmd}</code>
                 </pre>
                 <p className="text-[11px] text-slate-400">{item.desc}</p>
