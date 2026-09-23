@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLearning, PortalMode } from '../context/LearningContext';
-import { Terminal, Globe, Server, Cloud, BookOpen, CheckCircle, Sparkles, GitBranch } from 'lucide-react';
+import { Terminal, Globe, Server, Cloud, BookOpen, CheckCircle, GitBranch } from 'lucide-react';
 
 interface BookItem {
   id: PortalMode;
@@ -142,9 +142,8 @@ export const BookshelfMenu: React.FC<BookshelfMenuProps> = ({ onSelectBook, comp
             <BookOpen className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-100 tracking-wide flex items-center gap-2">
+            <h3 className="text-sm font-bold text-slate-100 tracking-wide">
               KỆ SÁCH HỌC TẬP MULTI-MODULE
-              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
             </h3>
             <p className="text-xs text-slate-400">Chọn một cuốn sách để bắt đầu chương trình học tương ứng</p>
           </div>

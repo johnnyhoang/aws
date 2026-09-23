@@ -6,21 +6,9 @@ import {
   ChevronRight, 
   Copy, 
   Check, 
-  Clock, 
   CheckCircle2, 
   Circle,
-  Lightbulb,
-  AlertTriangle,
-  Terminal,
-  Bookmark,
-  Sparkles,
-  Volume2,
-  GitBranch,
-  Quote,
-  Flame,
-  Filter,
-  Layers,
-  ArrowRight
+  Bookmark
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 import { useAudioReader } from '../../context/AudioReaderContext';
@@ -82,9 +70,8 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
       {/* Book Hero Header */}
       <div className="space-y-3 pb-6 border-b border-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 uppercase tracking-wider">
-            <GitBranch className="w-4 h-4" />
-            <span>Sách Chuyên Khảo: Bách Khoa Toàn Thư Open Source & FOSS</span>
+          <div className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
+            Sách Chuyên Khảo: Bách Khoa Toàn Thư Open Source & FOSS
           </div>
 
           <div className="flex items-center gap-3 text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
@@ -113,10 +100,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
         {/* Left Sidebar: Table of Contents */}
         <aside className="lg:col-span-4 space-y-3 lg:sticky lg:top-20">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            <div className="flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-purple-400" />
-              <span>Mục Lục 10 Chương</span>
-            </div>
+            <span>Mục Lục 10 Chương</span>
             <span className="font-mono text-slate-500">{filteredChapters.length} bài</span>
           </div>
 
@@ -194,20 +178,14 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                 onClick={() => onNavigateTab('test')}
                 className="w-full py-2 px-3 rounded-lg bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Luyện Đề Trắc Nghiệm Tình Huống</span>
-                </div>
+                <span>Luyện Đề Trắc Nghiệm Tình Huống</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
               </button>
               <button
                 onClick={() => onNavigateTab('play')}
                 className="w-full py-2 px-3 rounded-lg bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 transition-colors text-left flex items-center justify-between cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Lab Chọn License & PR Simulator</span>
-                </div>
+                <span>Lab Chọn License & PR Simulator</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
               </button>
             </div>
@@ -229,8 +207,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                   {CATEGORY_NAMES[currentChapter.category]}
                 </span>
                 <span>•</span>
-                <span className="flex items-center gap-1 text-slate-400">
-                  <Clock className="w-3.5 h-3.5" />
+                <span className="text-slate-400 font-mono">
                   ~{currentChapter.readTimeMinutes} phút đọc
                 </span>
               </div>
@@ -249,8 +226,7 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                   title="Nghe giọng đọc toàn bộ chương này"
                   aria-label="Nghe bài đọc"
                 >
-                  <Volume2 className="w-4 h-4" />
-                  <span className="text-[11px] font-medium hidden sm:inline">Nghe bài</span>
+                  <span className="text-[11px] font-medium">Nghe bài</span>
                 </button>
 
                 <button
@@ -293,9 +269,8 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
           {/* Hook Story Box (Câu chuyện dẫn chứng kích thích hứng thú) */}
           {currentChapter.hookStory && (
             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-950/30 via-slate-900 to-slate-950 border border-purple-500/30 space-y-2 relative overflow-hidden">
-              <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider">
-                <Quote className="w-4 h-4" />
-                <span>Câu Chuyện Thực Tế Kích Thích Tư Duy</span>
+              <div className="text-xs font-bold text-purple-400 uppercase tracking-wider">
+                Câu Chuyện Thực Tế Kích Thích Tư Duy
               </div>
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
                 "{currentChapter.hookStory}"
@@ -352,9 +327,8 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
                 {/* Mindset Shift Box if any */}
                 {section.mindsetShift && (
                   <div className="p-3.5 rounded-lg bg-slate-900/70 border border-slate-800 space-y-2 text-xs">
-                    <div className="font-bold text-purple-400 uppercase tracking-wide flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Bước Nhảy Vọt Tư Duy (Mindset Shift)</span>
+                    <div className="font-bold text-purple-400 uppercase tracking-wide">
+                      Bước Nhảy Vọt Tư Duy (Mindset Shift)
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300">
                       <div className="p-2 rounded bg-red-950/20 border border-red-900/30 text-red-200/90">
@@ -398,23 +372,17 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
                 {/* Pro Tip Alert */}
                 {section.proTip && (
-                  <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-950/20 border border-amber-900/40 text-xs sm:text-sm text-amber-200/90 leading-relaxed">
-                    <Lightbulb className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="font-semibold text-amber-300">Bí quyết thực chiến đỉnh cao: </strong>
-                      {section.proTip}
-                    </div>
+                  <div className="p-3 rounded-lg bg-amber-950/20 border border-amber-900/40 text-xs sm:text-sm text-amber-200/90 leading-relaxed">
+                    <strong className="font-semibold text-amber-300">Bí quyết thực chiến đỉnh cao: </strong>
+                    {section.proTip}
                   </div>
                 )}
 
                 {/* Warning Note Alert */}
                 {section.warningNote && (
-                  <div className="flex items-start gap-2.5 p-3 rounded-lg bg-red-950/20 border border-red-900/40 text-xs sm:text-sm text-red-200/90 leading-relaxed">
-                    <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="font-semibold text-red-300">Cạm bẫy cần tránh: </strong>
-                      {section.warningNote}
-                    </div>
+                  <div className="p-3 rounded-lg bg-red-950/20 border border-red-900/40 text-xs sm:text-sm text-red-200/90 leading-relaxed">
+                    <strong className="font-semibold text-red-300">Cạm bẫy cần tránh: </strong>
+                    {section.warningNote}
                   </div>
                 )}
               </section>
@@ -424,9 +392,8 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
           {/* Practical CLI Commands */}
           {currentChapter.practicalCommands && currentChapter.practicalCommands.length > 0 && (
             <div className="space-y-3 pt-4 border-t border-slate-800">
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-purple-400" />
-                <span>Lệnh Terminal Thực Hành Đóng Góp OSS</span>
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
+                Lệnh Terminal Thực Hành Đóng Góp OSS
               </h3>
 
               <div className="space-y-2.5">
@@ -454,14 +421,13 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
 
           {/* Chapter Mastery Checklist */}
           <div className="space-y-3 pt-4 border-t border-slate-800">
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Tiêu Chuẩn Đạt Chuẩn Chương Này (Mastery Checklist)</span>
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
+              Tiêu Chuẩn Đạt Chuẩn Chương Này (Mastery Checklist)
             </h3>
             <div className="space-y-1.5">
               {currentChapter.masteryChecklist.map((item, mIdx) => (
                 <div key={mIdx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                  <span className="text-purple-400 font-bold">•</span>
                   <span>{item}</span>
                 </div>
               ))}

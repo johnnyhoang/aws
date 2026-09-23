@@ -2,24 +2,12 @@ import React, { useState } from 'react';
 import { OPEN_SOURCE_FLASHCARDS } from '../../data/openSource/openSourceFlashcardsData';
 import { OpenSourceFlashcard } from '../../types/openSourceModule';
 import { 
-  Sparkles, 
-  Layers, 
-  RotateCw, 
   CheckCircle2, 
   ChevronLeft, 
   ChevronRight, 
   Shuffle, 
-  Lightbulb, 
-  GitPullRequest, 
-  ShieldCheck, 
-  Scale, 
-  Terminal, 
   Copy, 
-  Check, 
-  Send,
-  HelpCircle,
-  FileCode,
-  Flame
+  Check
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 
@@ -92,9 +80,8 @@ export const OpenSourcePlayView: React.FC = () => {
       
       {/* Hero Header */}
       <div className="space-y-3 pb-6 border-b border-slate-800">
-        <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 uppercase tracking-wider">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span>Open Source Interactive Labs & Simulations</span>
+        <div className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
+          Phòng Thực Hành Tương Tác Open Source
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight">
@@ -108,50 +95,46 @@ export const OpenSourcePlayView: React.FC = () => {
         <div className="flex flex-wrap gap-2 pt-2">
           <button
             onClick={() => setActiveTab('flashcards')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'flashcards'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30'
                 : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
             }`}
           >
-            <Layers className="w-4 h-4" />
-            <span>Thẻ Nhớ Thuật Ngữ (Flashcards)</span>
+            Thẻ Nhớ Thuật Ngữ (Flashcards)
           </button>
 
           <button
             onClick={() => setActiveTab('license_lab')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'license_lab'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30'
                 : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
             }`}
           >
-            <Scale className="w-4 h-4" />
-            <span>Lab Chọn Giấy Phép (License Selector)</span>
+            Lab Chọn Giấy Phép (License Selector)
           </button>
 
           <button
             onClick={() => setActiveTab('pr_simulator')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'pr_simulator'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30'
                 : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
             }`}
           >
-            <GitPullRequest className="w-4 h-4" />
-            <span>Mô Phỏng Pull Request & CI Gate</span>
+            Mô Phỏng Pull Request & CI Gate
           </button>
 
           <button
             onClick={() => setActiveTab('git_cheatsheet')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'git_cheatsheet'
                 ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/30'
                 : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
             }`}
           >
-            <Terminal className="w-4 h-4" />
-            <span>Git OSS Cheatsheet</span>
+            Git OSS Cheatsheet
           </button>
         </div>
       </div>
@@ -166,7 +149,7 @@ export const OpenSourcePlayView: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleShuffle}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors cursor-pointer"
                 title="Xáo trộn ngẫu nhiên"
               >
                 <Shuffle className="w-3.5 h-3.5" />
@@ -185,8 +168,7 @@ export const OpenSourcePlayView: React.FC = () => {
               <span className="px-2.5 py-1 rounded-full bg-purple-950 text-purple-300 border border-purple-800 text-xs font-mono">
                 {currentCard.category}
               </span>
-              <div className="text-xs text-slate-500 flex items-center gap-1 group-hover:text-purple-400 transition-colors">
-                <RotateCw className="w-3.5 h-3.5" />
+              <div className="text-xs text-slate-500 group-hover:text-purple-400 transition-colors">
                 <span>Nhấn để lật mặt</span>
               </div>
             </div>
@@ -218,8 +200,7 @@ export const OpenSourcePlayView: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-purple-950/40 border border-purple-900/50 flex items-start gap-2 text-xs text-purple-200">
-                    <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="p-2.5 rounded-lg bg-purple-950/40 border border-purple-900/50 text-xs text-purple-200">
                     <span><strong>ProTip:</strong> {currentCard.proTip}</span>
                   </div>
                 </div>
@@ -275,9 +256,8 @@ export const OpenSourcePlayView: React.FC = () => {
       {activeTab === 'license_lab' && (
         <div className="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-6 shadow-xl">
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <Scale className="w-5 h-5 text-purple-400" />
-              <span>Công Cụ Định Hướng Chọn Giấy Phép (License Selector)</span>
+            <h3 className="text-lg font-bold text-slate-100">
+              Công Cụ Định Hướng Chọn Giấy Phép (License Selector)
             </h3>
             <p className="text-xs text-slate-400">
               Chọn mục tiêu của dự án để nhận khuyến nghị giấy phép tối ưu nhất cho bạn.
@@ -370,9 +350,8 @@ export const OpenSourcePlayView: React.FC = () => {
       {activeTab === 'pr_simulator' && (
         <div className="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-6 shadow-xl">
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <GitPullRequest className="w-5 h-5 text-purple-400" />
-              <span>Mô Phỏng Gửi Pull Request & Vượt Qua CI Quality Gate</span>
+            <h3 className="text-lg font-bold text-slate-100">
+              Mô Phỏng Gửi Pull Request & Vượt Qua CI Quality Gate
             </h3>
             <p className="text-xs text-slate-400">
               Trải nghiệm quy trình gửi PR chuẩn kỹ sư quốc tế: Viết commit Conventional, mô tả PR và theo dõi GitHub Actions chạy test.
@@ -404,9 +383,8 @@ export const OpenSourcePlayView: React.FC = () => {
               <button
                 onClick={handleSimulatePR}
                 disabled={ciStatus === 'running'}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-purple-900/30 transition-all disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-semibold cursor-pointer shadow-lg shadow-purple-900/30 transition-all disabled:opacity-50"
               >
-                <Send className="w-3.5 h-3.5" />
                 <span>{ciStatus === 'running' ? 'Đang kích hoạt GitHub Actions...' : 'Gửi Pull Request & Chạy CI Test'}</span>
               </button>
             </div>

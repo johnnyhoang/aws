@@ -5,15 +5,7 @@ import {
   CheckCircle2, 
   XCircle, 
   RotateCcw, 
-  HelpCircle, 
-  Sparkles, 
-  Flame, 
-  Coins, 
-  ArrowRight,
-  Filter,
-  Award,
-  ChevronRight,
-  Lightbulb
+  ArrowRight
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 
@@ -85,20 +77,17 @@ export const OpenSourceTestView: React.FC = () => {
       {/* Test Hero Header */}
       <div className="space-y-3 pb-6 border-b border-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 uppercase tracking-wider">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Đấu Trường Trắc Nghiệm: Open Source & FOSS Master</span>
+          <div className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
+            Đấu Trường Trắc Nghiệm: Open Source & FOSS Master
           </div>
 
           <div className="flex items-center gap-3 text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
-            <span className="flex items-center gap-1 text-amber-400 font-mono font-bold">
-              <Flame className="w-3.5 h-3.5" />
+            <span className="text-amber-400 font-mono font-bold">
               {currentStreak}x Streak
             </span>
             <span className="text-slate-600">|</span>
-            <span className="flex items-center gap-1 text-amber-300 font-mono font-bold">
-              <Coins className="w-3.5 h-3.5" />
-              +{userPoints} Points
+            <span className="text-amber-300 font-mono font-bold">
+              +{userPoints} Pts
             </span>
           </div>
         </div>
@@ -112,8 +101,8 @@ export const OpenSourceTestView: React.FC = () => {
 
         {/* Difficulty Filter Bar */}
         <div className="flex items-center gap-2 pt-2">
-          <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-            <Filter className="w-3 h-3" /> Mức độ:
+          <span className="text-xs text-slate-500 font-semibold">
+            Mức độ:
           </span>
           {['all', 'Cơ bản', 'Trung bình', 'Khó', 'Chuyên gia'].map((diff) => (
             <button
@@ -133,7 +122,6 @@ export const OpenSourceTestView: React.FC = () => {
 
       {filteredQuestions.length === 0 ? (
         <div className="p-12 text-center bg-slate-900/60 rounded-2xl border border-slate-800 space-y-4">
-          <HelpCircle className="w-12 h-12 text-slate-600 mx-auto" />
           <p className="text-slate-400">Không tìm thấy câu hỏi phù hợp với bộ lọc này.</p>
           <button
             onClick={() => handleFilterChange('all')}
@@ -233,8 +221,7 @@ export const OpenSourceTestView: React.FC = () => {
                   </p>
 
                   {currentQuestion.explanation.proTip && (
-                    <div className="flex items-start gap-2 p-2.5 rounded-lg bg-purple-950/30 border border-purple-900/40 text-purple-200 text-xs">
-                      <Lightbulb className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <div className="p-2.5 rounded-lg bg-purple-950/30 border border-purple-900/40 text-purple-200 text-xs">
                       <span>{currentQuestion.explanation.proTip}</span>
                     </div>
                   )}
