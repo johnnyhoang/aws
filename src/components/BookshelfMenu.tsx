@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLearning, PortalMode } from '../context/LearningContext';
-import { Terminal, Globe, Server, Cloud, BookOpen, CheckCircle, Sparkles } from 'lucide-react';
+import { Terminal, Globe, Server, Cloud, BookOpen, CheckCircle, Sparkles, GitBranch } from 'lucide-react';
 
 interface BookItem {
   id: PortalMode;
@@ -75,6 +75,18 @@ const BOOKS: BookItem[] = [
     borderColor: 'border-sky-400/40',
     glowColor: 'shadow-sky-400/20 ring-sky-400/50',
     badgeText: 'Tập 5'
+  },
+  {
+    id: 'open_source',
+    title: 'Open Source & FOSS Mastery',
+    subtitle: 'Tư Tưởng, Git & Contributor',
+    author: 'Tập 6 • Open Source',
+    icon: GitBranch,
+    spineBg: 'bg-purple-950 border-purple-600/60 text-purple-200',
+    coverGradient: 'from-purple-900 via-purple-950 to-slate-950',
+    borderColor: 'border-purple-400/40',
+    glowColor: 'shadow-purple-400/20 ring-purple-400/50',
+    badgeText: 'Tập 6'
   }
 ];
 
@@ -138,14 +150,14 @@ export const BookshelfMenu: React.FC<BookshelfMenuProps> = ({ onSelectBook, comp
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-amber-400/80 bg-amber-950/40 px-3 py-1 rounded-full border border-amber-900/50">
-          <span>5 TẬP BÁCH KHOA TOÀN THƯ</span>
+          <span>6 TẬP BÁCH KHOA TOÀN THƯ</span>
         </div>
       </div>
 
       {/* Bookshelf Rack Visual */}
       <div className="relative pt-2 pb-6 px-2">
         {/* Books Container */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 relative z-10">
           {BOOKS.map((book) => {
             const isSelected = portalMode === book.id;
             const Icon = book.icon;

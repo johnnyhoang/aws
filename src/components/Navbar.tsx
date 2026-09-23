@@ -55,6 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const isWebDomain = portalMode === 'web_domain';
   const isDatabase = portalMode === 'database';
   const isLinuxAdmin = portalMode === 'linux_admin';
+  const isOpenSource = portalMode === 'open_source';
 
   const navItems: { 
     id: NavTab; 
@@ -213,7 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
           >
             <BookOpen className="w-5 h-5 text-amber-400" />
             <span className="font-semibold text-sm tracking-tight">
-              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : isDatabase ? 'Sách Cơ Sở Dữ Liệu' : isLinuxAdmin ? 'Sách Linux & Unix Sysadmin' : 'Sách AWS Cloud'}
+              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : isDatabase ? 'Sách Cơ Sở Dữ Liệu' : isLinuxAdmin ? 'Sách Linux & Unix Sysadmin' : isOpenSource ? 'Sách Open Source & FOSS' : 'Sách AWS Cloud'}
             </span>
           </div>
 

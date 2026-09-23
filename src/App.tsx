@@ -30,10 +30,15 @@ const LinuxAdminLearnView = lazy(() => import('./components/linuxAdmin/LinuxAdmi
 const LinuxAdminTestView = lazy(() => import('./components/linuxAdmin/LinuxAdminTestView').then(m => ({ default: m.LinuxAdminTestView })));
 const LinuxAdminPlayView = lazy(() => import('./components/linuxAdmin/LinuxAdminPlayView').then(m => ({ default: m.LinuxAdminPlayView })));
 
+// Lazy-loaded Open Source Unified Views
+const OpenSourceLearnView = lazy(() => import('./components/openSource/OpenSourceLearnView').then(m => ({ default: m.OpenSourceLearnView })));
+const OpenSourceTestView = lazy(() => import('./components/openSource/OpenSourceTestView').then(m => ({ default: m.OpenSourceTestView })));
+const OpenSourcePlayView = lazy(() => import('./components/openSource/OpenSourcePlayView').then(m => ({ default: m.OpenSourcePlayView })));
+
 import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
 import { LoginScreen } from './components/LoginScreen';
-import { Server } from 'lucide-react';
+import { Server, GitBranch } from 'lucide-react';
 
 // Smooth view loading fallback
 const ViewFallback: React.FC = () => (
@@ -69,6 +74,7 @@ function AppContent() {
   const isWebDomain = portalMode === 'web_domain';
   const isDatabase = portalMode === 'database';
   const isLinuxAdmin = portalMode === 'linux_admin';
+  const isOpenSource = portalMode === 'open_source';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -123,6 +129,19 @@ function AppContent() {
       }
     }
 
+    if (isOpenSource) {
+      switch (activeTab) {
+        case 'learn':
+          return <OpenSourceLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <OpenSourceTestView />;
+        case 'play':
+          return <OpenSourcePlayView />;
+        default:
+          return <OpenSourceLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
     switch (activeTab) {
       case 'learn':
         return <AwsLearnView onNavigateTab={setActiveTab} />;
@@ -151,14 +170,14 @@ function AppContent() {
       <footer className="mt-16 bg-slate-900/90 border-t border-slate-800 text-slate-400 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : isWebDomain ? 'bg-emerald-500 text-slate-950' : isDatabase ? 'bg-amber-500 text-slate-950' : isLinuxAdmin ? 'bg-emerald-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
-              {isFundamentals ? <Terminal className="w-4 h-4" /> : isWebDomain ? <Globe className="w-4 h-4" /> : isDatabase ? <Server className="w-4 h-4" /> : isLinuxAdmin ? <Terminal className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
+            <div className={`w-6 h-6 rounded-lg ${isFundamentals ? 'bg-amber-500 text-slate-950' : isWebDomain ? 'bg-emerald-500 text-slate-950' : isDatabase ? 'bg-amber-500 text-slate-950' : isLinuxAdmin ? 'bg-emerald-500 text-slate-950' : isOpenSource ? 'bg-purple-500 text-slate-950' : 'bg-sky-500 text-white'} flex items-center justify-center font-black`}>
+              {isFundamentals ? <Terminal className="w-4 h-4" /> : isWebDomain ? <Globe className="w-4 h-4" /> : isDatabase ? <Server className="w-4 h-4" /> : isLinuxAdmin ? <Terminal className="w-4 h-4" /> : isOpenSource ? <GitBranch className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
             </div>
             <span className="font-bold text-slate-200">
-              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : isWebDomain ? 'Web Domain & Web Administration' : isDatabase ? 'Database & Universal Free-DB Gateway' : isLinuxAdmin ? 'Linux & Unix Systems Administration' : 'AWS Cloud Mastery'}
+              {isFundamentals ? 'Pre-AWS IT & Cloud Fundamentals' : isWebDomain ? 'Web Domain & Web Administration' : isDatabase ? 'Database & Universal Free-DB Gateway' : isLinuxAdmin ? 'Linux & Unix Systems Administration' : isOpenSource ? 'Open Source & FOSS Mastery' : 'AWS Cloud Mastery'}
             </span>
             <span className="text-slate-500">
-              {isFundamentals ? '— Nền tảng IT vững chắc' : isWebDomain ? '— Làm chủ tên miền & máy chủ' : isDatabase ? '— Bách khoa toàn thư Database & MCP Gateway' : isLinuxAdmin ? '— Quản trị máy chủ Web, App, DB & AWS' : '— Học, Test & Chơi thực chiến'}
+              {isFundamentals ? '— Nền tảng IT vững chắc' : isWebDomain ? '— Làm chủ tên miền & máy chủ' : isDatabase ? '— Bách khoa toàn thư Database & MCP Gateway' : isLinuxAdmin ? '— Quản trị máy chủ Web, App, DB & AWS' : isOpenSource ? '— Tư tưởng, Kỹ thuật Git & Trở thành Contributor/Maintainer' : '— Học, Test & Chơi thực chiến'}
             </span>
           </div>
 
