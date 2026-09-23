@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { LearningProvider, useLearning } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { ReadingModeFab } from './components/ReadingModeFab';
@@ -39,6 +39,7 @@ import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
 import { LoginScreen } from './components/LoginScreen';
 import { Server, GitBranch } from 'lucide-react';
+import { parseCurrentUrl, syncUrlRoute } from './utils/routeHelper';
 
 // Smooth view loading fallback
 const ViewFallback: React.FC = () => (
@@ -49,9 +50,38 @@ const ViewFallback: React.FC = () => (
 );
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<NavTab>('learn');
+  const [activeTab, setActiveTab] = useState<NavTab>(() => {
+    if (typeof window !== 'undefined') {
+      const initial = parseCurrentUrl();
+      if (initial.activeTab) return initial.activeTab;
+    }
+    return 'learn';
+  });
   const [isReadingModalOpen, setIsReadingModalOpen] = useState<boolean>(false);
-  const { portalMode, authUser, authLoading } = useLearning();
+  const { portalMode, setPortalMode, authUser, authLoading } = useLearning();
+
+  // Sync URL when portalMode or activeTab changes
+  useEffect(() => {
+    if (portalMode && activeTab) {
+      syncUrlRoute(portalMode, activeTab);
+    }
+  }, [portalMode, activeTab]);
+
+  // Listen to browser Back/Forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = parseCurrentUrl();
+      if (route.portalMode && route.portalMode !== portalMode) {
+        setPortalMode(route.portalMode);
+      }
+      if (route.activeTab && route.activeTab !== activeTab) {
+        setActiveTab(route.activeTab);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [portalMode, activeTab, setPortalMode]);
 
   // Show full loading spinner while checking initial Google session
   if (authLoading) {

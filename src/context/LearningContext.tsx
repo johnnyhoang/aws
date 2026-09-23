@@ -3,6 +3,7 @@ import { CareerTrack, UserLevelInfo } from '../types';
 import { calculateUserLevel } from '../data/maturityLevels';
 import { getCurrentAuthUser, subscribeToAuth, signOutUser, AuthUser } from '../lib/authSession';
 import { fetchRemoteUserProgress, saveRemoteUserProgress } from '../lib/supabaseSync';
+import { parseCurrentUrl } from '../utils/routeHelper';
 
 export interface UserProfile {
   email: string;
@@ -94,8 +95,10 @@ const generateDefaultSyncKey = () => {
   return 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36).substring(4);
 };
 
+const initialRoute = typeof window !== 'undefined' ? parseCurrentUrl() : {};
+
 const defaultState: LearningState = {
-  portalMode: 'fundamentals',
+  portalMode: initialRoute.portalMode || 'fundamentals',
   currentTrack: 'cloud_engineer',
   completedStages: [],
   completedLessons: ['networking-security-core'],
