@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useLearning } from '../../context/LearningContext';
 import { useAudioReader } from '../../context/AudioReaderContext';
+import { FontSizeControl } from '../FontSizeControl';
 
 interface OpenSourceLearnViewProps {
   onNavigateTab?: (tab: 'learn' | 'test' | 'play') => void;
@@ -235,7 +236,9 @@ export const OpenSourceLearnView: React.FC<OpenSourceLearnViewProps> = ({ onNavi
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <FontSizeControl />
+
                 <button
                   onClick={() => startReadingArticle(currentChapter.title, currentChapter.sections)}
                   className={`p-2 rounded-lg border transition-colors cursor-pointer flex items-center gap-1.5 ${

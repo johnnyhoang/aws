@@ -23,6 +23,7 @@ import {
 import { useLearning } from '../../context/LearningContext';
 import { useAudioReader } from '../../context/AudioReaderContext';
 import { VisualDiagram } from '../diagrams/VisualDiagram';
+import { FontSizeControl } from '../FontSizeControl';
 
 interface DatabaseLearnViewProps {
   onNavigateTab?: (tab: 'learn' | 'test' | 'play') => void;
@@ -266,7 +267,9 @@ export const DatabaseLearnView: React.FC<DatabaseLearnViewProps> = ({ onNavigate
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <FontSizeControl />
+
                   <button
                     onClick={() => startReadingArticle(currentChapter.title, currentChapter.sections)}
                     className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${

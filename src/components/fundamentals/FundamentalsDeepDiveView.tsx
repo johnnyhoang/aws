@@ -14,6 +14,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { VisualDiagram } from '../diagrams/VisualDiagram';
+import { FontSizeControl } from '../FontSizeControl';
 
 interface FundamentalsDeepDiveViewProps {
   initialDomainId?: FundamentalDomainId;
@@ -126,7 +127,9 @@ export const FundamentalsDeepDiveView: React.FC<FundamentalsDeepDiveViewProps> =
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <FontSizeControl />
+
                 <button
                   onClick={() => startReadingArticle(currentLesson.title, currentLesson.coreConcepts)}
                   className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${

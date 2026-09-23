@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAudioReader } from '../context/AudioReaderContext';
 import { VisualDiagram } from './diagrams/VisualDiagram';
+import { FontSizeControl } from './FontSizeControl';
 
 interface DeepDiveViewProps {
   initialTopicId?: string;
@@ -184,7 +185,9 @@ export const DeepDiveView: React.FC<DeepDiveViewProps> = ({ initialTopicId }) =>
               </div>
 
               {/* Minimal Icon Buttons */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <FontSizeControl />
+
                 <button
                   onClick={() => startReadingArticle(selectedTopic.title, selectedTopic.coreConcepts)}
                   className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${

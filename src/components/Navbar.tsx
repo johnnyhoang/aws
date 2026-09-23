@@ -5,6 +5,7 @@ import { UserLevelModal } from './UserLevelModal';
 import { FundamentalsUserLevelModal } from './fundamentals/FundamentalsUserLevelModal';
 import { ReadingModeModal } from './ReadingModeModal';
 import { BookshelfMenu } from './BookshelfMenu';
+import { FontSizeControl } from './FontSizeControl';
 import { 
   Cloud, 
   BookOpen, 
@@ -143,6 +144,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
               <Coins className="w-3.5 h-3.5 text-amber-400" />
               <span className="font-mono">{userPoints}</span>
             </button>
+
+            {/* Quick Inline Font Size Control */}
+            <FontSizeControl className="hidden sm:inline-flex" />
 
             {/* Reading Mode Button */}
             <button
