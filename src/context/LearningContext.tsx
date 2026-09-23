@@ -249,7 +249,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       root.style.setProperty('--spacing', `${targetSpacingPx.toFixed(2)}px`);
       root.style.setProperty('--spacing-compression', `${compressionFactor.toFixed(3)}`);
 
-      if (scale > 115) {
+      if (scale > 100) {
         document.body.classList.add('font-zoomed-active');
       } else {
         document.body.classList.remove('font-zoomed-active');
