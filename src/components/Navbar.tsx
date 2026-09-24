@@ -57,6 +57,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
   const isDatabase = portalMode === 'database';
   const isLinuxAdmin = portalMode === 'linux_admin';
   const isOpenSource = portalMode === 'open_source';
+  const isEmailMastery = portalMode === 'email_mastery';
+  const isVercel = portalMode === 'vercel';
+  const isResend = portalMode === 'resend';
+  const isSupabase = portalMode === 'supabase';
+  const isNeon = portalMode === 'neon';
+  const isAppSystem = portalMode === 'app_system';
 
   const navItems: { 
     id: NavTab; 
@@ -218,7 +224,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
           >
             <BookOpen className="w-5 h-5 text-amber-400" />
             <span className="font-semibold text-sm tracking-tight">
-              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : isDatabase ? 'Sách Cơ Sở Dữ Liệu' : isLinuxAdmin ? 'Sách Linux & Unix Sysadmin' : isOpenSource ? 'Sách Open Source & FOSS' : 'Sách AWS Cloud'}
+              {isFundamentals ? 'Sách IT Nền Tảng' : isWebDomain ? 'Sách Web & Domain' : isDatabase ? 'Sách Cơ Sở Dữ Liệu' : isLinuxAdmin ? 'Sách Linux & Unix Sysadmin' : isOpenSource ? 'Sách Open Source & FOSS' : isEmailMastery ? 'Sách Email & Mail Server' : isVercel ? 'Sách Vercel Cloud' : isResend ? 'Sách Resend Email API' : isSupabase ? 'Sách Supabase Postgres' : isNeon ? 'Sách Neon Serverless DB' : isAppSystem ? 'Sách Unified-App-Infra BaaS' : 'Sách AWS Cloud'}
             </span>
           </div>
 

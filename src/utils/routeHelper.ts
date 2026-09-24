@@ -7,7 +7,13 @@ export const PORTAL_SLUGS: Record<PortalMode, string> = {
   database: 'database',
   linux_admin: 'linux',
   aws: 'aws',
-  open_source: 'opensource'
+  open_source: 'opensource',
+  email_mastery: 'email',
+  vercel: 'vercel',
+  resend: 'resend',
+  supabase: 'supabase',
+  neon: 'neon',
+  app_system: 'app-system'
 };
 
 export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
@@ -29,7 +35,26 @@ export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
   'opensource': 'open_source',
   'open-source': 'open_source',
   'open_source': 'open_source',
-  'oss': 'open_source'
+  'oss': 'open_source',
+  'email': 'email_mastery',
+  'mail': 'email_mastery',
+  'email-mastery': 'email_mastery',
+  'email_mastery': 'email_mastery',
+  'vercel': 'vercel',
+  'frontend-cloud': 'vercel',
+  'resend': 'resend',
+  'email-api': 'resend',
+  'supabase': 'supabase',
+  'baas': 'supabase',
+  'neon': 'neon',
+  'neon-db': 'neon',
+  'serverless-postgres': 'neon',
+  'app-system': 'app_system',
+  'app_system': 'app_system',
+  'unified-infra': 'app_system',
+  'unified_infra': 'app_system',
+  'infra': 'app_system',
+  'app': 'app_system'
 };
 
 export interface ParsedRoute {

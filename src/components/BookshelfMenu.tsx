@@ -1,6 +1,20 @@
 import React from 'react';
 import { useLearning, PortalMode } from '../context/LearningContext';
-import { Terminal, Globe, Server, Cloud, BookOpen, CheckCircle, GitBranch } from 'lucide-react';
+import { 
+  Terminal, 
+  Globe, 
+  Server, 
+  Cloud, 
+  BookOpen, 
+  CheckCircle, 
+  GitBranch, 
+  Mail, 
+  Triangle, 
+  Send, 
+  Database, 
+  Zap,
+  Layers 
+} from 'lucide-react';
 
 interface BookItem {
   id: PortalMode;
@@ -87,6 +101,78 @@ const BOOKS: BookItem[] = [
     borderColor: 'border-purple-400/40',
     glowColor: 'shadow-purple-400/20 ring-purple-400/50',
     badgeText: 'Tập 6'
+  },
+  {
+    id: 'email_mastery',
+    title: 'Email & Mail Server Systems',
+    subtitle: 'Giao Thức, DNS, Postfix & Cloud',
+    author: 'Tập 7 • Email Master',
+    icon: Mail,
+    spineBg: 'bg-sky-950 border-sky-500/60 text-sky-200',
+    coverGradient: 'from-sky-900 via-sky-950 to-slate-950',
+    borderColor: 'border-sky-400/40',
+    glowColor: 'shadow-sky-400/20 ring-sky-400/50',
+    badgeText: 'Tập 7'
+  },
+  {
+    id: 'vercel',
+    title: 'Vercel Cloud & Edge Platform',
+    subtitle: 'Next.js, Serverless & Monorepo',
+    author: 'Tập 8 • Frontend Cloud',
+    icon: Triangle,
+    spineBg: 'bg-indigo-950 border-indigo-500/60 text-indigo-200',
+    coverGradient: 'from-indigo-900 via-indigo-950 to-slate-950',
+    borderColor: 'border-indigo-400/40',
+    glowColor: 'shadow-indigo-400/20 ring-indigo-400/50',
+    badgeText: 'Tập 8'
+  },
+  {
+    id: 'resend',
+    title: 'Resend & Modern Email APIs',
+    subtitle: 'React Email, REST & Webhooks',
+    author: 'Tập 9 • Email API',
+    icon: Send,
+    spineBg: 'bg-rose-950 border-rose-500/60 text-rose-200',
+    coverGradient: 'from-rose-900 via-rose-950 to-slate-950',
+    borderColor: 'border-rose-400/40',
+    glowColor: 'shadow-rose-400/20 ring-rose-400/50',
+    badgeText: 'Tập 9'
+  },
+  {
+    id: 'supabase',
+    title: 'Supabase — Open Source Firebase',
+    subtitle: 'Postgres, RLS, Auth & Realtime',
+    author: 'Tập 10 • Fullstack BaaS',
+    icon: Database,
+    spineBg: 'bg-emerald-950 border-emerald-500/60 text-emerald-200',
+    coverGradient: 'from-emerald-900 via-emerald-950 to-slate-950',
+    borderColor: 'border-emerald-400/40',
+    glowColor: 'shadow-emerald-400/20 ring-emerald-400/50',
+    badgeText: 'Tập 10'
+  },
+  {
+    id: 'neon',
+    title: 'Neon Serverless Postgres',
+    subtitle: 'Separation & Branching',
+    author: 'Tập 11 • Serverless DB',
+    icon: Zap,
+    spineBg: 'bg-cyan-950 border-cyan-500/60 text-cyan-200',
+    coverGradient: 'from-cyan-900 via-cyan-950 to-slate-950',
+    borderColor: 'border-cyan-400/40',
+    glowColor: 'shadow-cyan-400/20 ring-cyan-400/50',
+    badgeText: 'Tập 11'
+  },
+  {
+    id: 'app_system',
+    title: 'Unified-App-Infra BaaS',
+    subtitle: 'Self-hosted & Future Roadmap',
+    author: 'Tập 12 • BaaS Platform',
+    icon: Layers,
+    spineBg: 'bg-violet-950 border-violet-500/60 text-violet-200',
+    coverGradient: 'from-violet-900 via-violet-950 to-slate-950',
+    borderColor: 'border-violet-400/40',
+    glowColor: 'shadow-violet-400/20 ring-violet-400/50',
+    badgeText: 'Tập 12'
   }
 ];
 
@@ -149,14 +235,14 @@ export const BookshelfMenu: React.FC<BookshelfMenuProps> = ({ onSelectBook, comp
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-amber-400/80 bg-amber-950/40 px-3 py-1 rounded-full border border-amber-900/50">
-          <span>6 TẬP BÁCH KHOA TOÀN THƯ</span>
+          <span>12 TẬP BÁCH KHOA TOÀN THƯ</span>
         </div>
       </div>
 
       {/* Bookshelf Rack Visual */}
       <div className="relative pt-2 pb-6 px-2">
         {/* Books Container */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 relative z-10">
           {BOOKS.map((book) => {
             const isSelected = portalMode === book.id;
             const Icon = book.icon;

@@ -12,7 +12,19 @@ export interface UserProfile {
   avatarUrl?: string;
 }
 
-export type PortalMode = 'fundamentals' | 'aws' | 'web_domain' | 'database' | 'linux_admin' | 'open_source';
+export type PortalMode = 
+  | 'fundamentals' 
+  | 'aws' 
+  | 'web_domain' 
+  | 'database' 
+  | 'linux_admin' 
+  | 'open_source' 
+  | 'email_mastery'
+  | 'vercel'
+  | 'resend'
+  | 'supabase'
+  | 'neon'
+  | 'app_system';
 
 interface LearningState {
   portalMode: PortalMode;
