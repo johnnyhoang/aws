@@ -25,7 +25,8 @@ export type PortalMode =
   | 'supabase'
   | 'neon'
   | 'app_system'
-  | 'azure';
+  | 'azure'
+  | 'token_wallet';
 
 interface LearningState {
   portalMode: PortalMode;

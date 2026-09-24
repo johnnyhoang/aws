@@ -3,7 +3,7 @@ import { LearningProvider, useLearning } from './context/LearningContext';
 import { Navbar, NavTab } from './components/Navbar';
 import { ReadingModeFab } from './components/ReadingModeFab';
 import { ReadingModeModal } from './components/ReadingModeModal';
-import { Cloud, Terminal, Globe, Loader2, BookOpen, CheckCircle2, Gamepad2, Server, GitBranch, Mail, Triangle, Send, Database, Zap, Layers } from 'lucide-react';
+import { Cloud, Terminal, Globe, Loader2, BookOpen, CheckCircle2, Gamepad2, Server, GitBranch, Mail, Triangle, Send, Database, Zap, Layers, Wallet } from 'lucide-react';
 
 // Lazy-loaded AWS Unified Views
 const AwsLearnView = lazy(() => import('./components/unified/AwsLearnView').then(m => ({ default: m.AwsLearnView })));
@@ -69,6 +69,11 @@ const AppSystemPlayView = lazy(() => import('./components/appSystem/AppSystemPla
 const AzureLearnView = lazy(() => import('./components/azure/AzureLearnView').then(m => ({ default: m.AzureLearnView })));
 const AzureTestView = lazy(() => import('./components/azure/AzureTestView').then(m => ({ default: m.AzureTestView })));
 const AzurePlayView = lazy(() => import('./components/azure/AzurePlayView').then(m => ({ default: m.AzurePlayView })));
+
+// Lazy-loaded Token Wallet Views (Volume 14)
+const TokenWalletLearnView = lazy(() => import('./components/tokenWallet/TokenWalletLearnView').then(m => ({ default: m.TokenWalletLearnView })));
+const TokenWalletTestView = lazy(() => import('./components/tokenWallet/TokenWalletTestView').then(m => ({ default: m.TokenWalletTestView })));
+const TokenWalletPlayView = lazy(() => import('./components/tokenWallet/TokenWalletPlayView').then(m => ({ default: m.TokenWalletPlayView })));
 
 import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
@@ -146,6 +151,7 @@ function AppContent() {
   const isNeon = portalMode === 'neon';
   const isAppSystem = portalMode === 'app_system';
   const isAzure = portalMode === 'azure';
+  const isTokenWallet = portalMode === 'token_wallet';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -304,6 +310,19 @@ function AppContent() {
       }
     }
 
+    if (isTokenWallet) {
+      switch (activeTab) {
+        case 'learn':
+          return <TokenWalletLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <TokenWalletTestView />;
+        case 'play':
+          return <TokenWalletPlayView />;
+        default:
+          return <TokenWalletLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
     switch (activeTab) {
       case 'learn':
         return <AwsLearnView onNavigateTab={setActiveTab} />;
@@ -411,6 +430,14 @@ function AppContent() {
         badgeColor: 'bg-blue-600 text-white',
         title: 'Microsoft Azure Cloud Solutions Mastery',
         subtitle: '— Enterprise Architecture & Lộ trình AZ-900 / AZ-104 / AZ-305'
+      };
+    }
+    if (isTokenWallet) {
+      return {
+        icon: <Wallet className="w-4 h-4" />,
+        badgeColor: 'bg-emerald-500 text-slate-950',
+        title: "JohnnyHoang's Token Wallet Mastery",
+        subtitle: '— Quản trị Quota AI, Cashflow SaaS & Hệ sinh thái 17+ Apps'
       };
     }
     return {

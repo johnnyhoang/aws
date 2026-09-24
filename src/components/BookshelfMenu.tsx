@@ -13,7 +13,8 @@ import {
   Send, 
   Database, 
   Zap,
-  Layers 
+  Layers,
+  Wallet
 } from 'lucide-react';
 
 interface BookItem {
@@ -185,6 +186,18 @@ const BOOKS: BookItem[] = [
     borderColor: 'border-blue-400/40',
     glowColor: 'shadow-blue-400/20 ring-blue-400/50',
     badgeText: 'Tập 13'
+  },
+  {
+    id: 'token_wallet',
+    title: "JohnnyHoang's Token Wallet",
+    subtitle: 'AI Quota, Cashflow & Ecosystem',
+    author: 'Tập 14 • AI Orchestrator',
+    icon: Wallet,
+    spineBg: 'bg-emerald-950 border-emerald-500/60 text-emerald-200',
+    coverGradient: 'from-emerald-900 via-emerald-950 to-slate-950',
+    borderColor: 'border-emerald-400/40',
+    glowColor: 'shadow-emerald-400/20 ring-emerald-400/50',
+    badgeText: 'Tập 14'
   }
 ];
 
