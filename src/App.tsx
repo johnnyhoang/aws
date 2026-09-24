@@ -502,7 +502,7 @@ function AppContent() {
           </div>
 
           <div className="text-slate-500 text-center md:text-right">
-            <span>Đồng hành cùng sự nghiệp Cloud & Systems Engineer tại Đại học Mỹ</span>
+            <span>JohnnyHoang Engineering Library &bull; 14 Tập Bách Khoa Toàn Thư Kỹ Sư & Hệ Sinh Thái Ứng Dụng</span>
           </div>
         </div>
       </footer>

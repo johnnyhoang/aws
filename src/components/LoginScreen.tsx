@@ -46,12 +46,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
       {/* Top Header */}
       <header className="p-4 sm:p-6 border-b border-slate-900 flex items-center justify-between max-w-6xl mx-auto w-full z-10">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 font-black">
-            <Cloud className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 font-black">
+            <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-bold text-sm sm:text-base text-white tracking-tight">AWS Cloud Mastery</div>
-            <div className="text-[10px] sm:text-xs text-slate-400">Nền Tảng Học & Luyện Thi Kỹ Sư Công Nghệ</div>
+            <div className="font-bold text-sm sm:text-base text-white tracking-tight">JohnnyHoang Engineering Library</div>
+            <div className="text-[10px] sm:text-xs text-slate-400">14 Tập Bách Khoa Toàn Thư Kỹ Sư & Hệ Sinh Thái AI</div>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
           <div className="flex flex-col items-center space-y-3">
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3.5 py-1 rounded-full border border-amber-500/20">
               <GraduationCap className="w-4 h-4" />
-              <span>Cổng Đăng Nhập Học Viên</span>
+              <span>Cổng Đăng Nhập Kỹ Sư & Học Viên</span>
             </div>
 
             <div className="flex items-center gap-2 py-1">
@@ -88,10 +88,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
             </div>
 
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Khám Phá & Chinh Phục AWS
+              Khám Phá Toàn Diện Hệ Sinh Thái
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-              Đăng nhập với Google để lưu giữ tiến độ cá nhân, điểm thưởng XP và đồng bộ học tập xuyên suốt trên mọi thiết bị.
+              Đăng nhập với Google để truy cập 14 bộ sách chuyên khảo, lưu giữ tiến độ học tập, điểm thưởng XP và đồng bộ trên mọi thiết bị.
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
 
       {/* Footer */}
       <footer className="p-4 text-center text-xs text-slate-500 border-t border-slate-900 z-10">
-        <span>AWS Cloud Mastery &bull; Nền tảng học tập chuẩn kiến trúc sư đám mây</span>
+        <span>JohnnyHoang Engineering Library &bull; 14 Tập Bách Khoa Toàn Thư Kỹ Sư & Hệ Sinh Thái Công Nghệ</span>
       </footer>
 
     </div>
