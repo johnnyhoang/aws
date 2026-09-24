@@ -65,6 +65,11 @@ const AppSystemLearnView = lazy(() => import('./components/appSystem/AppSystemLe
 const AppSystemTestView = lazy(() => import('./components/appSystem/AppSystemTestView').then(m => ({ default: m.AppSystemTestView })));
 const AppSystemPlayView = lazy(() => import('./components/appSystem/AppSystemPlayView').then(m => ({ default: m.AppSystemPlayView })));
 
+// Lazy-loaded Azure Views (Volume 13)
+const AzureLearnView = lazy(() => import('./components/azure/AzureLearnView').then(m => ({ default: m.AzureLearnView })));
+const AzureTestView = lazy(() => import('./components/azure/AzureTestView').then(m => ({ default: m.AzureTestView })));
+const AzurePlayView = lazy(() => import('./components/azure/AzurePlayView').then(m => ({ default: m.AzurePlayView })));
+
 import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
 import { LoginScreen } from './components/LoginScreen';
@@ -140,6 +145,7 @@ function AppContent() {
   const isSupabase = portalMode === 'supabase';
   const isNeon = portalMode === 'neon';
   const isAppSystem = portalMode === 'app_system';
+  const isAzure = portalMode === 'azure';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -285,6 +291,19 @@ function AppContent() {
       }
     }
 
+    if (isAzure) {
+      switch (activeTab) {
+        case 'learn':
+          return <AzureLearnView onNavigateTab={setActiveTab} />;
+        case 'test':
+          return <AzureTestView />;
+        case 'play':
+          return <AzurePlayView />;
+        default:
+          return <AzureLearnView onNavigateTab={setActiveTab} />;
+      }
+    }
+
     switch (activeTab) {
       case 'learn':
         return <AwsLearnView onNavigateTab={setActiveTab} />;
@@ -384,6 +403,14 @@ function AppContent() {
         badgeColor: 'bg-violet-500 text-white',
         title: 'Unified-App-Infra BaaS & Platform Roadmap',
         subtitle: '— Kiến trúc BaaS tự host & Lộ trình 6 tính năng tương lai'
+      };
+    }
+    if (isAzure) {
+      return {
+        icon: <Cloud className="w-4 h-4" />,
+        badgeColor: 'bg-blue-600 text-white',
+        title: 'Microsoft Azure Cloud Solutions Mastery',
+        subtitle: '— Enterprise Architecture & Lộ trình AZ-900 / AZ-104 / AZ-305'
       };
     }
     return {

@@ -13,7 +13,8 @@ export const PORTAL_SLUGS: Record<PortalMode, string> = {
   resend: 'resend',
   supabase: 'supabase',
   neon: 'neon',
-  app_system: 'app-system'
+  app_system: 'app-system',
+  azure: 'azure'
 };
 
 export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
@@ -54,7 +55,11 @@ export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
   'unified-infra': 'app_system',
   'unified_infra': 'app_system',
   'infra': 'app_system',
-  'app': 'app_system'
+  'app': 'app_system',
+  'azure': 'azure',
+  'ms-azure': 'azure',
+  'microsoft-azure': 'azure',
+  'az': 'azure'
 };
 
 export interface ParsedRoute {

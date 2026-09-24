@@ -1,6 +1,8 @@
 import { supabase } from './supabaseClient';
 
 export interface UserProgressPayload {
+  portalMode?: string;
+  activeTab?: string;
   currentTrack: string;
   completedStages: string[];
   completedLessons: string[];

@@ -173,6 +173,18 @@ const BOOKS: BookItem[] = [
     borderColor: 'border-violet-400/40',
     glowColor: 'shadow-violet-400/20 ring-violet-400/50',
     badgeText: 'Tập 12'
+  },
+  {
+    id: 'azure',
+    title: 'Microsoft Azure Cloud',
+    subtitle: 'Enterprise Solutions Architect',
+    author: 'Tập 13 • Azure Master',
+    icon: Cloud,
+    spineBg: 'bg-blue-950 border-blue-500/60 text-blue-200',
+    coverGradient: 'from-blue-900 via-blue-950 to-slate-950',
+    borderColor: 'border-blue-400/40',
+    glowColor: 'shadow-blue-400/20 ring-blue-400/50',
+    badgeText: 'Tập 13'
   }
 ];
 
@@ -235,7 +247,7 @@ export const BookshelfMenu: React.FC<BookshelfMenuProps> = ({ onSelectBook, comp
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-amber-400/80 bg-amber-950/40 px-3 py-1 rounded-full border border-amber-900/50">
-          <span>12 TẬP BÁCH KHOA TOÀN THƯ</span>
+          <span>13 TẬP BÁCH KHOA TOÀN THƯ</span>
         </div>
       </div>
 

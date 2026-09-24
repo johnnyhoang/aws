@@ -24,7 +24,8 @@ export type PortalMode =
   | 'resend'
   | 'supabase'
   | 'neon'
-  | 'app_system';
+  | 'app_system'
+  | 'azure';
 
 interface LearningState {
   portalMode: PortalMode;
@@ -184,6 +185,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (remote) {
         setState(prev => ({
           ...prev,
+          portalMode: (remote.portalMode as PortalMode) || prev.portalMode,
           currentTrack: (remote.currentTrack as CareerTrack) || prev.currentTrack,
           completedStages: remote.completedStages || prev.completedStages,
           completedLessons: remote.completedLessons || prev.completedLessons,
@@ -303,6 +305,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setState(prev => ({ ...prev, syncStatus: 'syncing' }));
 
     const payload = {
+      portalMode: currentState.portalMode,
       currentTrack: currentState.currentTrack,
       completedStages: currentState.completedStages,
       completedLessons: currentState.completedLessons,
