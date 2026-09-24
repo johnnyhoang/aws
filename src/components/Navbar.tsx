@@ -40,7 +40,7 @@ const PORTAL_SHORT_TITLES: Record<PortalMode, { vol: number; title: string }> = 
   neon: { vol: 11, title: 'Neon Serverless' },
   app_system: { vol: 12, title: 'App System BaaS' },
   azure: { vol: 13, title: 'Azure Cloud' },
-  token_wallet: { vol: 14, title: 'Token Wallet' }
+  app_wallet: { vol: 14, title: 'App Wallet' }
 };
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {

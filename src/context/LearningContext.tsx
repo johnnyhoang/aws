@@ -26,7 +26,7 @@ export type PortalMode =
   | 'neon'
   | 'app_system'
   | 'azure'
-  | 'token_wallet';
+  | 'app_wallet';
 
 interface LearningState {
   portalMode: PortalMode;

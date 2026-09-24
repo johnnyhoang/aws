@@ -15,7 +15,7 @@ export const PORTAL_SLUGS: Record<PortalMode, string> = {
   neon: 'neon',
   app_system: 'app-system',
   azure: 'azure',
-  token_wallet: 'token-wallet'
+  app_wallet: 'app-wallet'
 };
 
 export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
@@ -61,11 +61,14 @@ export const SLUG_TO_PORTAL: Record<string, PortalMode> = {
   'ms-azure': 'azure',
   'microsoft-azure': 'azure',
   'az': 'azure',
-  'token-wallet': 'token_wallet',
-  'token_wallet': 'token_wallet',
-  'tokenwallet': 'token_wallet',
-  'wallet': 'token_wallet',
-  'jwallet': 'token_wallet'
+  'app-wallet': 'app_wallet',
+  'app_wallet': 'app_wallet',
+  'appwallet': 'app_wallet',
+  'wallet': 'app_wallet',
+  'jwallet': 'app_wallet',
+  'token-wallet': 'app_wallet',
+  'token_wallet': 'app_wallet',
+  'tokenwallet': 'app_wallet'
 };
 
 export interface ParsedRoute {

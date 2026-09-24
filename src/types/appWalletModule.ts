@@ -1,15 +1,15 @@
-export interface TokenWalletLesson {
+export interface AppWalletLesson {
   id: string;
   chapterNumber: number;
   title: string;
   subtitle: string;
   readingTimeMinutes: number;
   summary: string;
-  content: string; // Markdown formatted detailed textbook chapter
+  content: string;
   keyTakeaways: string[];
 }
 
-export interface TokenWalletQuizQuestion {
+export interface AppWalletQuizQuestion {
   id: string;
   chapterNumber: number;
   question: string;
@@ -19,10 +19,10 @@ export interface TokenWalletQuizQuestion {
   scenario?: string;
 }
 
-export interface TokenWalletFlashcard {
+export interface AppWalletFlashcard {
   id: string;
   term: string;
-  category: 'Architecture' | 'AI Quota' | 'Regex Parser' | 'Database RLS' | 'App Portfolio' | 'Future Roadmap';
+  category: 'Architecture' | 'App Portfolio' | 'AI SRS Builder' | 'Database RLS' | 'In-App Backlog' | 'Future Roadmap';
   definition: string;
   exampleOrFormula: string;
 }

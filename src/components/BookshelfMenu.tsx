@@ -141,10 +141,10 @@ const BOOKS: BookItem[] = [
     icon: Layers
   },
   {
-    id: 'token_wallet',
+    id: 'app_wallet',
     volumeNumber: 14,
-    title: "JohnnyHoang's Token Wallet",
-    subtitle: 'AI Quota Reset Math, Cashflow SaaS & Hệ Sinh Thái 17+ Apps',
+    title: "JohnnyHoang's App Wallet",
+    subtitle: 'Quản Trị Hệ Sinh Thái 17+ Apps, AI SRS Builder & In-App Backlog',
     category: 'ai_orchestrator',
     icon: Wallet
   }

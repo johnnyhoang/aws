@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TOKEN_WALLET_LESSONS } from '../../data/tokenWallet/tokenWalletLessonsData';
+import { APP_WALLET_LESSONS } from '../../data/appWallet/appWalletLessonsData';
 import { BookTocDrawer, TocChapterItem } from '../BookTocDrawer';
 import { 
   Wallet, 
@@ -16,19 +16,19 @@ import {
   ListOrdered
 } from 'lucide-react';
 
-interface TokenWalletLearnViewProps {
+interface AppWalletLearnViewProps {
   onNavigateTab?: (tab: 'learn' | 'test' | 'play') => void;
 }
 
-export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNavigateTab }) => {
+export const AppWalletLearnView: React.FC<AppWalletLearnViewProps> = ({ onNavigateTab }) => {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [isTocOpen, setIsTocOpen] = useState(false);
   const [completedChapters, setCompletedChapters] = useState<string[]>(() => {
-    const saved = localStorage.getItem('tokenwallet_completed_chapters');
-    return saved ? JSON.parse(saved) : ['tw-ch1-tong-quan-kien-truc'];
+    const saved = localStorage.getItem('appwallet_completed_chapters');
+    return saved ? JSON.parse(saved) : ['aw-ch1-tong-quan-app-wallet'];
   });
 
-  const currentChapter = TOKEN_WALLET_LESSONS[selectedChapterIndex];
+  const currentChapter = APP_WALLET_LESSONS[selectedChapterIndex];
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -39,11 +39,11 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
       ? completedChapters.filter(c => c !== chapterId)
       : [...completedChapters, chapterId];
     setCompletedChapters(updated);
-    localStorage.setItem('tokenwallet_completed_chapters', JSON.stringify(updated));
+    localStorage.setItem('appwallet_completed_chapters', JSON.stringify(updated));
   };
 
   const nextChapter = () => {
-    if (selectedChapterIndex < TOKEN_WALLET_LESSONS.length - 1) {
+    if (selectedChapterIndex < APP_WALLET_LESSONS.length - 1) {
       if (!completedChapters.includes(currentChapter.id)) {
         toggleComplete(currentChapter.id);
       }
@@ -57,7 +57,7 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
     }
   };
 
-  const tocChapters: TocChapterItem[] = TOKEN_WALLET_LESSONS.map((chap) => ({
+  const tocChapters: TocChapterItem[] = APP_WALLET_LESSONS.map((chap) => ({
     id: chap.id,
     chapterNumber: chap.chapterNumber,
     title: chap.title.split(':')[1]?.trim() || chap.title,
@@ -67,7 +67,7 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
   }));
 
   const handleSelectChapter = (id: string) => {
-    const idx = TOKEN_WALLET_LESSONS.findIndex(c => c.id === id);
+    const idx = APP_WALLET_LESSONS.findIndex(c => c.id === id);
     if (idx !== -1) {
       setSelectedChapterIndex(idx);
     }
@@ -132,10 +132,10 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
         completedLessonIds={completedChapters}
         onSelectChapter={handleSelectChapter}
         accentColorClass="text-emerald-400"
-        bookTitle="Tập 14: JohnnyHoang's Token Wallet"
+        bookTitle="Tập 14: JohnnyHoang's App Wallet"
         onNavigateTab={onNavigateTab}
         testTabLabel="Luyện Thi Trắc Nghiệm & Flashcards"
-        playTabLabel="Mô Phỏng Quota & Parser Labs"
+        playTabLabel="Mô Phỏng AI SRS Builder & Portfolio Labs"
       />
 
       {/* Floating TOC Trigger Button */}
@@ -153,7 +153,7 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
           <div className="flex items-center gap-3 mb-4">
             <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-full uppercase tracking-wider flex items-center gap-1.5">
-              <Wallet className="w-3.5 h-3.5" /> Tập 14: JohnnyHoang's Token Wallet
+              <Wallet className="w-3.5 h-3.5" /> Tập 14: JohnnyHoang's App Wallet
             </span>
             <span className="text-slate-500 text-xs flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" /> {currentChapter.readingTimeMinutes} phút đọc
@@ -170,12 +170,12 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-slate-400">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-emerald-400" />
-              <span>Chương {currentChapter.chapterNumber} / {TOKEN_WALLET_LESSONS.length}</span>
+              <span>Chương {currentChapter.chapterNumber} / {APP_WALLET_LESSONS.length}</span>
             </div>
             <div className="w-1 h-1 bg-slate-700 rounded-full" />
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Đã hoàn thành {completedChapters.length}/{TOKEN_WALLET_LESSONS.length} chương</span>
+              <span>Đã hoàn thành {completedChapters.length}/{APP_WALLET_LESSONS.length} chương</span>
             </div>
           </div>
         </div>
@@ -184,14 +184,14 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
       {/* Main Chapter Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {/* Chapter Summary Lead */}
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-emerald-500/20 mb-8 backdrop-blur-sm">
+        <div className="p-6 rounded-xl bg-slate-900/80 border border-emerald-500/20 mb-8 backdrop-blur-sm">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0 mt-0.5">
+            <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 shrink-0 mt-0.5">
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-emerald-400 mb-1">Tóm tắt chương</h3>
-              <p className="text-slate-200 leading-relaxed">{currentChapter.summary}</p>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">Tóm tắt chương</h3>
+              <p className="text-slate-200 leading-relaxed text-sm">{currentChapter.summary}</p>
             </div>
           </div>
         </div>
@@ -202,14 +202,14 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
         </article>
 
         {/* Key Takeaways */}
-        <div className="mt-12 p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-emerald-950/30 border border-emerald-500/30">
-          <h3 className="text-base font-bold text-white flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
+        <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-slate-900 to-emerald-950/30 border border-emerald-500/30">
+          <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
             Điểm Cốt Lõi Cần Ghi Nhớ
           </h3>
           <ul className="space-y-2.5">
             {currentChapter.keyTakeaways.map((takeaway, idx) => (
-              <li key={idx} className="flex items-start gap-3 text-slate-300 text-sm">
+              <li key={idx} className="flex items-start gap-3 text-slate-300 text-xs sm:text-sm">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span>{takeaway}</span>
               </li>
@@ -222,7 +222,7 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
           <button
             onClick={prevChapter}
             disabled={selectedChapterIndex === 0}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors ${
               selectedChapterIndex === 0
                 ? 'opacity-40 cursor-not-allowed text-slate-500'
                 : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700'
@@ -234,7 +234,7 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
 
           <button
             onClick={() => toggleComplete(currentChapter.id)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-all ${
               completedChapters.includes(currentChapter.id)
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 : 'bg-slate-900 text-slate-300 border border-slate-700 hover:border-emerald-500/40'
@@ -246,9 +246,9 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
 
           <button
             onClick={nextChapter}
-            disabled={selectedChapterIndex === TOKEN_WALLET_LESSONS.length - 1}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm transition-all ${
-              selectedChapterIndex === TOKEN_WALLET_LESSONS.length - 1
+            disabled={selectedChapterIndex === APP_WALLET_LESSONS.length - 1}
+            className={`flex items-center gap-2 px-5 py-2 rounded-lg font-semibold text-xs transition-all ${
+              selectedChapterIndex === APP_WALLET_LESSONS.length - 1
                 ? 'opacity-40 cursor-not-allowed text-slate-500'
                 : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20'
             }`}
@@ -262,4 +262,4 @@ export const TokenWalletLearnView: React.FC<TokenWalletLearnViewProps> = ({ onNa
   );
 };
 
-export default TokenWalletLearnView;
+export default AppWalletLearnView;

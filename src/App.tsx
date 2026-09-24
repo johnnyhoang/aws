@@ -70,10 +70,10 @@ const AzureLearnView = lazy(() => import('./components/azure/AzureLearnView').th
 const AzureTestView = lazy(() => import('./components/azure/AzureTestView').then(m => ({ default: m.AzureTestView })));
 const AzurePlayView = lazy(() => import('./components/azure/AzurePlayView').then(m => ({ default: m.AzurePlayView })));
 
-// Lazy-loaded Token Wallet Views (Volume 14)
-const TokenWalletLearnView = lazy(() => import('./components/tokenWallet/TokenWalletLearnView').then(m => ({ default: m.TokenWalletLearnView })));
-const TokenWalletTestView = lazy(() => import('./components/tokenWallet/TokenWalletTestView').then(m => ({ default: m.TokenWalletTestView })));
-const TokenWalletPlayView = lazy(() => import('./components/tokenWallet/TokenWalletPlayView').then(m => ({ default: m.TokenWalletPlayView })));
+// Lazy-loaded App Wallet Views (Volume 14)
+const AppWalletLearnView = lazy(() => import('./components/appWallet/AppWalletLearnView').then(m => ({ default: m.AppWalletLearnView })));
+const AppWalletTestView = lazy(() => import('./components/appWallet/AppWalletTestView').then(m => ({ default: m.AppWalletTestView })));
+const AppWalletPlayView = lazy(() => import('./components/appWallet/AppWalletPlayView').then(m => ({ default: m.AppWalletPlayView })));
 
 import { AudioReaderProvider } from './context/AudioReaderContext';
 import { AudioReaderBar } from './components/AudioReaderBar';
@@ -151,7 +151,7 @@ function AppContent() {
   const isNeon = portalMode === 'neon';
   const isAppSystem = portalMode === 'app_system';
   const isAzure = portalMode === 'azure';
-  const isTokenWallet = portalMode === 'token_wallet';
+  const isAppWallet = portalMode === 'app_wallet';
 
   const renderActiveView = () => {
     if (isFundamentals) {
@@ -310,16 +310,16 @@ function AppContent() {
       }
     }
 
-    if (isTokenWallet) {
+    if (isAppWallet) {
       switch (activeTab) {
         case 'learn':
-          return <TokenWalletLearnView onNavigateTab={setActiveTab} />;
+          return <AppWalletLearnView onNavigateTab={setActiveTab} />;
         case 'test':
-          return <TokenWalletTestView />;
+          return <AppWalletTestView />;
         case 'play':
-          return <TokenWalletPlayView />;
+          return <AppWalletPlayView />;
         default:
-          return <TokenWalletLearnView onNavigateTab={setActiveTab} />;
+          return <AppWalletLearnView onNavigateTab={setActiveTab} />;
       }
     }
 
@@ -432,12 +432,12 @@ function AppContent() {
         subtitle: '— Enterprise Architecture & Lộ trình AZ-900 / AZ-104 / AZ-305'
       };
     }
-    if (isTokenWallet) {
+    if (isAppWallet) {
       return {
         icon: <Wallet className="w-4 h-4" />,
         badgeColor: 'bg-emerald-500 text-slate-950',
-        title: "JohnnyHoang's Token Wallet Mastery",
-        subtitle: '— Quản trị Quota AI, Cashflow SaaS & Hệ sinh thái 17+ Apps'
+        title: "JohnnyHoang's App Wallet Mastery",
+        subtitle: '— Quản trị Hệ sinh thái 17+ Apps, AI SRS Builder & In-App Backlog'
       };
     }
     return {
